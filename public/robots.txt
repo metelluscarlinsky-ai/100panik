@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin-100panik
+Disallow: /api/admin
+Disallow: /uploads
+Allow: /
+
+Sitemap: https://100panik.com/sitemap.xml

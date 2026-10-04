@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.local
+server/database.sqlite
+server/database.sqlite-shm
+server/database.sqlite-wal
+uploads/*
+!uploads/.gitkeep
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<title>Admin — 100PANIK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  body { overflow-x: hidden; }
+  .login-screen {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.15), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 64, 0.08), transparent 50%),
+      var(--bg);
+  }
+  .login-box {
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--border-strong);
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 80px rgba(0, 240, 255, 0.15);
+  }
+  .login-box h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .login-box p { color: var(--text-2); font-size: 13px; margin-bottom: 32px; }
+  .admin-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .admin-topbar-left { display: flex; align-items: center; gap: 16px; }
+  .admin-mobile-menu {
+    display: none;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    align-items: center; justify-content: center;
+  }
+  @media (max-width: 900px) {
+    .admin-mobile-menu { display: flex; }
+  }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; }
+  .admin-modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .size-picker-item, .color-picker-item {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border-radius: 100px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+    margin: 4px;
+  }
+  .size-picker-item.on, .color-picker-item.on {
+    background: var(--neon); color: #000; border-color: var(--neon);
+  }
+  .upload-preview {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px; margin-top: 12px;
+  }
+  .upload-preview .thumb {
+    aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+    position: relative; border: 1px solid var(--border);
+  }
+  .upload-preview .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .upload-preview .thumb button {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(255,0,64,0.9); color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 14px; line-height: 1; padding: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+      <span style="width:10px;height:10px;background:var(--neon);border-radius:50%;box-shadow:0 0 14px var(--neon);"></span>
+      <span style="font-family:var(--font-brand);font-weight:900;letter-spacing:0.15em;background:var(--grad-neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">100PANIK</span>
+    </div>
+    <h1>Panel Admin</h1>
+    <p>Idantifye pou kontinye.</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Imèl</label>
+        <input type="email" name="username" class="form-input" required autocomplete="username" placeholder="metalluscarlinsky@gmail.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modpas</label>
+        <input type="password" name="password" class="form-input" required autocomplete="current-password" placeholder="--------">
+      </div>
+      <div id="login-error" class="form-error" style="margin-bottom:16px;"></div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg">Konekte</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ ADMIN APP ============ -->
+<div id="admin-app" class="hidden">
+  <div class="admin-topbar">
+    <div class="admin-topbar-left">
+      <button class="admin-mobile-menu" id="menu-toggle" aria-label="Meni">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <span style="font-family:var(--font-brand);font-weight:900;letter-spacing:0.12em;background:var(--grad-neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">100PANIK</span>
+      <span class="text-muted" style="font-size:12px;padding-left:12px;border-left:1px solid var(--border);">Admin</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a href="/" target="_blank" class="btn btn-outline btn-sm">Wè Sit</a>
+      <button class="btn btn-outline btn-sm" id="logout-btn">Dekonekte</button>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <nav>
+        <a class="admin-nav-item active" data-page="dashboard">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Dashboard
+        </a>
+        <a class="admin-nav-item" data-page="products">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>
+          Pwodwi
+        </a>
+        <a class="admin-nav-item" data-page="orders">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/></svg>
+          Kòmand
+        </a>
+        <a class="admin-nav-item" data-page="customers">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Kliyan
+        </a>
+        <a class="admin-nav-item" data-page="shipping">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+          Livrezon
+        </a>
+        <a class="admin-nav-item" data-page="promos">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>
+          Kòd Pwomo
+        </a>
+        <a class="admin-nav-item" data-page="settings">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Konfigirasyon
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <!-- ============ DASHBOARD ============ -->
+      <section class="admin-section active" data-section="dashboard">
+        <h1 style="margin-bottom:24px;">Dashboard</h1>
+        <div class="admin-grid" id="stats-grid"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;" id="dash-bottom">
+          <div class="table-wrap">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-weight:600;">Kòmand Resan</div>
+            <div id="recent-orders"></div>
+          </div>
+          <div class="table-wrap">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-weight:600;">Pwodwi Popilè</div>
+            <div id="top-products"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PWODWI ============ -->
+      <section class="admin-section" data-section="products">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h1>Pwodwi</h1>
+          <button class="btn btn-primary" id="add-product-btn">+ Ajoute Pwodwi</button>
+        </div>
+        <div class="table-wrap">
+          <table id="products-table">
+            <thead>
+              <tr>
+                <th>Imaj</th>
+                <th>Non</th>
+                <th>Kategori</th>
+                <th>Pri</th>
+                <th>Stock</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ KÒMAND ============ -->
+      <section class="admin-section" data-section="orders">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h1>Kòmand</h1>
+          <select id="order-status-filter" class="form-select" style="max-width:200px;">
+            <option value="">Tout estati</option>
+            <option value="pending">An atant</option>
+            <option value="confirmed">Konfime</option>
+            <option value="shipped">An kous</option>
+            <option value="delivered">Livre</option>
+            <option value="cancelled">Anile</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table id="orders-table">
+            <thead>
+              <tr>
+                <th>Nimewo</th>
+                <th>Kliyan</th>
+                <th>Telefòn</th>
+                <th>Total</th>
+                <th>Estati</th>
+                <th>Dat</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ KLIYAN ============ -->
+      <section class="admin-section" data-section="customers">
+        <h1 style="margin-bottom:24px;">Kliyan</h1>
+        <div class="table-wrap">
+          <table id="customers-table">
+            <thead>
+              <tr>
+                <th>Non</th>
+                <th>Telefòn</th>
+                <th>Imèl</th>
+                <th>Kòmand</th>
+                <th>Total depanse</th>
+                <th>Dènye kòmand</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ LIVREZON ============ -->
+      <section class="admin-section" data-section="shipping">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h1>Zòn Livrezon</h1>
+          <button class="btn btn-primary" id="add-zone-btn">+ Ajoute Zòn</button>
+        </div>
+        <div class="table-wrap">
+          <table id="shipping-table">
+            <thead>
+              <tr>
+                <th>Zòn</th>
+                <th>Pri Estanda</th>
+                <th>Pri Eksprime</th>
+                <th>Estime</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ PWOMO ============ -->
+      <section class="admin-section" data-section="promos">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h1>Kòd Pwomosyon</h1>
+          <button class="btn btn-primary" id="add-promo-btn">+ Ajoute Kòd</button>
+        </div>
+        <div class="table-wrap">
+          <table id="promos-table">
+            <thead>
+              <tr>
+                <th>Kòd</th>
+                <th>Tip</th>
+                <th>Valè</th>
+                <th>Minimòm</th>
+                <th>Itilizasyon</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ KONFIGIRASYON ============ -->
+      <section class="admin-section" data-section="settings">
+        <h1 style="margin-bottom:24px;">Konfigirasyon Sit</h1>
+
+        <div class="card" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:16px;">Enfòmasyon Mak</h3>
+          <form id="settings-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Non Mak</label>
+                <input class="form-input" name="brand_name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Slogan</label>
+                <input class="form-input" name="tagline">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Imèl Kontak</label>
+                <input class="form-input" name="contact_email">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefòn Kontak</label>
+                <input class="form-input" name="contact_phone">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Enstagram</label>
+                <input class="form-input" name="instagram">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Facebook</label>
+                <input class="form-input" name="facebook">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">TikTok</label>
+                <input class="form-input" name="tiktok">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Koulè Prensipal (hex)</label>
+                <input class="form-input" name="primary_color" placeholder="#00f0ff">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Anrejistre</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:16px;">Chanje Modpas Admin</h3>
+          <form id="password-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Modpas Aktyèl</label>
+                <input type="password" class="form-input" name="current" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Modpas Nouvo</label>
+                <input type="password" class="form-input" name="next" required minlength="6">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Chanje Modpas</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ============ MODAL MOUNT ============ -->
+<div id="modal-mount"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="100PANIK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<title>Kòmande — 100PANIK</title>
+</head>
+<body>
+<div id="header-mount"></div>
+
+<main class="section">
+  <h1 style="margin-bottom:32px;">Finalize Kòmand</h1>
+
+  <div style="display:grid;grid-template-columns:1fr 400px;gap:32px;" id="checkout-layout">
+    <form id="checkout-form" class="card">
+      <h3 style="margin-bottom:24px;">Enfòmasyon Kliyan</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Non konplè *</label>
+          <input type="text" name="customer_name" class="form-input" required placeholder="Jan Batis">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefòn *</label>
+          <input type="tel" name="phone" class="form-input" required placeholder="+509 0000-0000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Imèl</label>
+        <input type="email" name="email" class="form-input" placeholder="ou@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Adrès *</label>
+        <input type="text" name="address" class="form-input" required placeholder="Ri, nimewo, katye">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Depatman *</label>
+          <select name="department" class="form-select" id="department-select" required>
+            <option value="">Chwazi...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vil / Komin</label>
+          <input type="text" name="city" class="form-input" placeholder="Port-au-Prince">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Metòd Livrezon</label>
+        <div style="display:flex;gap:12px;">
+          <label style="flex:1;cursor:pointer;">
+            <input type="radio" name="shipping_method" value="standard" checked style="display:none;">
+            <div class="ship-opt card" data-val="standard" style="cursor:pointer;padding:16px;border:2px solid var(--neon);">
+              <div style="font-weight:600;font-size:14px;">Estanda</div>
+              <div class="text-muted" style="font-size:12px;margin-top:4px;" id="ship-standard">3-5 jou</div>
+            </div>
+          </label>
+          <label style="flex:1;cursor:pointer;">
+            <input type="radio" name="shipping_method" value="express" style="display:none;">
+            <div class="ship-opt card" data-val="express" style="cursor:pointer;padding:16px;">
+              <div style="font-weight:600;font-size:14px;">Eksprime</div>
+              <div class="text-muted" style="font-size:12px;margin-top:4px;" id="ship-express">24-48h</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Metòd Peman</label>
+        <select name="payment_method" class="form-select" required>
+          <option value="cod">Peman sou livrezon (Cash)</option>
+          <option value="moncash">MonCash</option>
+          <option value="natcash">NatCash</option>
+          <option value="transfer">Transfè labank</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nòt pou kòmand (opsyonèl)</label>
+        <textarea name="notes" class="form-textarea" placeholder="Enstriksyon espesyal..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg btn-full" id="submit-btn">
+        Konfime Kòmand
+      </button>
+    </form>
+
+    <aside>
+      <div class="card" style="position:sticky;top:100px;">
+        <h3 style="margin-bottom:20px;">Rezime</h3>
+        <div id="checkout-items" style="max-height:300px;overflow-y:auto;margin-bottom:20px;"></div>
+
+        <div class="form-group">
+          <label class="form-label">Kòd Pwomosyon</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="promo-input" class="form-input" placeholder="PROMO2026">
+            <button type="button" class="btn btn-outline btn-sm" id="promo-btn">Aplike</button>
+          </div>
+          <div id="promo-msg" style="font-size:12px;margin-top:6px;"></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;">
+            <span class="text-muted">Sou-total</span>
+            <span id="sub-val">0 HTG</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span class="text-muted">Livrezon</span>
+            <span id="ship-val">-</span>
+          </div>
+          <div id="discount-row" style="display:none;justify-content:space-between;color:var(--success);">
+            <span>Rabè</span>
+            <span id="discount-val">0 HTG</span>
+          </div>
+          <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:16px;display:flex;justify-content:space-between;font-weight:700;font-size:20px;">
+            <span>Total</span>
+            <span id="total-val" style="color:var(--neon);">0 HTG</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div id="footer-mount"></div>
+
+<script src="/js/app.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/pwa.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const { Store, api, formatPrice, toast, escapeHTML } = window.Panik;
+
+  if (Store.cart.length === 0) {
+    document.getElementById('checkout-form').outerHTML =
+      '<div class="card text-center" style="padding:60px 20px;"><h3>Panier ou vid</h3><a href="/collection.html" class="btn btn-primary" style="margin-top:16px;">Wè Koleksyon</a></div>';
+    return;
+  }
+
+  function adjustLayout() {
+    const layout = document.getElementById('checkout-layout');
+    if (!layout) return;
+    layout.style.gridTemplateColumns = window.innerWidth < 900 ? '1fr' : '1fr 400px';
+  }
+  adjustLayout();
+  window.addEventListener('resize', adjustLayout);
+
+  // Rezime pyès
+  const itemsEl = document.getElementById('checkout-items');
+  itemsEl.innerHTML = Store.cart.map(i => `
+    <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center;">
+      <img src="${i.image || '/images/placeholder.jpg'}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;">
+      <div style="flex:1;font-size:13px;">
+        <div style="font-weight:600;">${escapeHTML(i.name)}</div>
+        <div class="text-muted" style="font-size:11px;">x${i.quantity}${i.size ? ' - ' + i.size : ''}${i.color ? ' / ' + i.color : ''}</div>
+      </div>
+      <div style="font-weight:600;font-size:13px;color:var(--neon);">${formatPrice(i.price * i.quantity)}</div>
+    </div>
+  `).join('');
+
+  // Chaje zòn yo
+  let zones = [];
+  try {
+    zones = await api('/api/shipping/zones');
+    const sel = document.getElementById('department-select');
+    zones.forEach(z => {
+      const opt = document.createElement('option');
+      opt.value = z.name;
+      opt.textContent = z.name;
+      sel.appendChild(opt);
+    });
+  } catch (e) {}
+
+  const subtotal = window.PanikCart.cartSubtotal();
+  document.getElementById('sub-val').textContent = formatPrice(subtotal);
+
+  let shippingCost = 0;
+  let discount = 0;
+  let promoCode = null;
+
+  function recalc() {
+    const total = Math.max(0, subtotal + shippingCost - discount);
+    document.getElementById('ship-val').textContent = shippingCost > 0 ? formatPrice(shippingCost) : '-';
+    document.getElementById('total-val').textContent = formatPrice(total);
+    if (discount > 0) {
+      document.getElementById('discount-row').style.display = 'flex';
+      document.getElementById('discount-val').textContent = '-' + formatPrice(discount);
+    } else {
+      document.getElementById('discount-row').style.display = 'none';
+    }
+  }
+
+  // Metòd livrezon vizyèl
+  const methodRadios = document.querySelectorAll('input[name="shipping_method"]');
+  methodRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      document.querySelectorAll('.ship-opt').forEach(el => {
+        el.style.borderColor = el.dataset.val === r.value ? 'var(--neon)' : 'var(--border)';
+      });
+      quoteShipping();
+    });
+  });
+
+  // Depatman chanje
+  document.getElementById('department-select').addEventListener('change', quoteShipping);
+
+  async function quoteShipping() {
+    const dep = document.getElementById('department-select').value;
+    const method = document.querySelector('input[name="shipping_method"]:checked').value;
+    if (!dep) { shippingCost = 0; recalc(); return; }
+    try {
+      const q = await api('/api/shipping/quote', { method: 'POST', body: { department: dep, method } });
+      shippingCost = q.cost;
+      document.getElementById('ship-standard').textContent = `Estanda - ${formatPrice(zones.find(z => z.name === dep)?.price || 0)}`;
+      document.getElementById('ship-express').textContent = `Eksprime - ${formatPrice(zones.find(z => z.name === dep)?.express_price || 0)}`;
+      recalc();
+    } catch (e) {
+      toast(e.message, 'error');
+    }
+  }
+
+  // Pwomo
+  document.getElementById('promo-btn').onclick = async () => {
+    const code = document.getElementById('promo-input').value.trim();
+    const msg = document.getElementById('promo-msg');
+    if (!code) return;
+    try {
+      const res = await api('/api/shipping/promo', { method: 'POST', body: { code, subtotal } });
+      discount = res.discount;
+      promoCode = res.code;
+      msg.style.color = 'var(--success)';
+      msg.textContent = `Kòd ${res.code} aplike - rabè ${formatPrice(res.discount)}`;
+      recalc();
+    } catch (e) {
+      msg.style.color = 'var(--danger)';
+      msg.textContent = e.message;
+      discount = 0;
+      promoCode = null;
+      recalc();
+    }
+  };
+
+  // Soumèt
+  const form = document.getElementById('checkout-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Ap trete...';
+
+    const fd = new FormData(form);
+    const body = {
+      customer_name: fd.get('customer_name'),
+      phone: fd.get('phone'),
+      email: fd.get('email'),
+      address: fd.get('address'),
+      department: fd.get('department'),
+      city: fd.get('city'),
+      notes: fd.get('notes'),
+      shipping_method: fd.get('shipping_method'),
+      payment_method: fd.get('payment_method'),
+      promo_code: promoCode,
+      items: Store.cart.map(i => ({
+        product_id: i.product_id,
+        quantity: i.quantity,
+        size: i.size,
+        color: i.color
+      }))
+    };
+
+    try {
+      const res = await api('/api/orders', { method: 'POST', body });
+      Store.cart = [];
+      window.Panik.saveCart();
+      sessionStorage.setItem('last_order', JSON.stringify(res));
+      location.href = '/track.html?order=' + res.order_number + '&new=1';
+    } catch (err) {
+      toast(err.message, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Konfime Kòmand';
+    }
+  });
+
+  recalc();
+});
+</script>
+</body>
+</html>
