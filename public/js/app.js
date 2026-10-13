@@ -103,6 +103,12 @@ function renderHeader() {
           <li><a href="/track.html">Swiv Kòmand</a></li>
         </ul>
         <div class="nav-actions">
+          <a href="/login.html" class="icon-btn" id="account-btn" aria-label="Kont Mwen" title="Konekte / Enskri">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </a>
           <button class="icon-btn" id="theme-toggle" aria-label="Chanje tèm"></button>
           <a href="/cart.html" class="icon-btn" aria-label="Panier">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
