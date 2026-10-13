@@ -1,9 +1,8 @@
 {
-  "name": "100PANIK — Rad Futurist",
+  "name": "100PANIK - Rad Futurist",
   "short_name": "100PANIK",
   "description": "Boutik rad premium 100PANIK. Koleksyon inik, livrezon rapid.",
-  "id": "/",
-  "start_url": "/?utm_source=pwa",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
@@ -24,10 +23,5 @@
     { "src": "/images/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
     { "src": "/images/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/images/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ],
-  "shortcuts": [
-    { "name": "Koleksyon", "short_name": "Koleksyon", "url": "/collection.html", "icons": [{ "src": "/images/icons/icon-96.png", "sizes": "96x96" }] },
-    { "name": "Panier",    "short_name": "Panier",    "url": "/cart.html",       "icons": [{ "src": "/images/icons/icon-96.png", "sizes": "96x96" }] },
-    { "name": "Swiv Kòmand", "short_name": "Swivi",   "url": "/track.html",      "icons": [{ "src": "/images/icons/icon-96.png", "sizes": "96x96" }] }
   ]
 }
