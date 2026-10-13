@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="100PANIK">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<title>Kont Mwen - 100PANIK</title>
+<style>
+  .acc-hero {
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,240,255,0.15), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255,0,64,0.08), transparent 50%),
+      var(--bg-2);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 20px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .acc-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at 20% 20%, black, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 20% 20%, black, transparent 70%);
+  }
+  .acc-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00f0ff, #0080ff);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 32px;
+    color: #000;
+    box-shadow: 0 0 30px rgba(0,240,255,0.5);
+    border: 3px solid rgba(0,240,255,0.3);
+  }
+  .acc-tab-nav {
+    display: flex; gap: 6px;
+    overflow-x: auto;
+    padding: 12px 20px;
+    background: rgba(15,15,15,0.5);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 65px; z-index: 90;
+  }
+  .acc-tab-nav::-webkit-scrollbar { display: none; }
+  .acc-tab-btn {
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .acc-tab-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .acc-tab-btn.on {
+    background: #00f0ff; color: #000; border-color: #00f0ff;
+    box-shadow: 0 0 20px rgba(0,240,255,0.4);
+  }
+  .acc-panel { display: none; }
+  .acc-panel.on { display: block; animation: fadeInUp 0.3s ease; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: rgba(20,20,20,0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+  .kpi-card:hover {
+    border-color: rgba(0,240,255,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,240,255,0.12);
+  }
+  .kpi-card::before {
+    content: ''; position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(0,240,255,0.2), transparent 70%);
+  }
+  .kpi-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(0,240,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .kpi-label {
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-2);
+    margin-bottom: 4px; position: relative;
+  }
+  .kpi-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px; font-weight: 700;
+    color: #00f0ff; position: relative;
+  }
+  .order-card {
+    background: rgba(20,20,20,0.5);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .order-card:hover {
+    border-color: rgba(0,240,255,0.4);
+    background: rgba(30,30,30,0.6);
+  }
+  .order-num {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 4px;
+  }
+  .order-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .order-status::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: currentColor;
+  }
+  .order-status.pending   { background: rgba(255,170,0,0.15); color: #ffaa00; }
+  .order-status.confirmed { background: rgba(0,128,255,0.15); color: #0080ff; }
+  .order-status.shipped   { background: rgba(0,240,255,0.15); color: #00f0ff; }
+  .order-status.delivered { background: rgba(0,255,136,0.15); color: #00ff88; }
+  .order-status.cancelled { background: rgba(255,0,64,0.15); color: #ff0040; }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: 0; }
+  .info-row span:first-child { color: var(--text-2); }
+  .info-row span:last-child { font-weight: 500; text-align: right; }
+  @media (max-width: 600px) {
+    .acc-avatar { width: 64px; height: 64px; font-size: 26px; }
+    .kpi-value { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="header-mount"></div>
+
+<!-- HERO -->
+<section class="acc-hero" id="hero">
+  <div class="container" style="max-width:1200px;position:relative;z-index:1;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+    <div class="acc-avatar" id="avatar">?</div>
+    <div style="flex:1;min-width:200px;">
+      <div class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Byenveni</div>
+      <h1 style="font-size:clamp(1.5rem,4vw,2.25rem);margin-bottom:4px;" id="hero-name">...</h1>
+      <p class="text-muted" style="font-size:14px;" id="hero-email">...</p>
+    </div>
+    <button class="btn btn-outline" id="logout-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Dekonekte
+    </button>
+  </div>
+</section>
+
+<!-- TABS -->
+<nav class="acc-tab-nav" id="tabs">
+  <button class="acc-tab-btn on" data-tab="overview">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+    Apèsi
+  </button>
+  <button class="acc-tab-btn" data-tab="orders">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+    Kòmand Mwen
+  </button>
+  <button class="acc-tab-btn" data-tab="profile">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Pwofil
+  </button>
+  <button class="acc-tab-btn" data-tab="security">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Sekirite
+  </button>
+</nav>
+
+<main class="section" style="max-width:1200px;">
+  <!-- APERSU -->
+  <div class="acc-panel on" data-panel="overview">
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/></svg>
+        </div>
+        <div class="kpi-label">Total Kòmand</div>
+        <div class="kpi-value" id="kpi-orders">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="kpi-label">Total Depanse</div>
+        <div class="kpi-value" id="kpi-spent">0 HTG</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="kpi-label">An Kous</div>
+        <div class="kpi-value" id="kpi-active">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="kpi-label">Livre</div>
+        <div class="kpi-value" id="kpi-delivered">0</div>
+      </div>
+    </div>
+
+    <h2 style="font-size:22px;margin-bottom:16px;">Dènye Kòmand</h2>
+    <div id="recent-orders-list"></div>
+  </div>
+
+  <!-- KOMAND -->
+  <div class="acc-panel" data-panel="orders">
+    <h2 style="font-size:22px;margin-bottom:20px;">Tout Kòmand Mwen</h2>
+    <div id="all-orders-list"></div>
+  </div>
+
+  <!-- PWOFIL -->
+  <div class="acc-panel" data-panel="profile">
+    <h2 style="font-size:22px;margin-bottom:20px;">Enfòmasyon Pèsonèl</h2>
+    <div class="card" style="max-width:600px;">
+      <form id="profile-form">
+        <div class="form-group">
+          <label class="form-label">Non konplè</label>
+          <input class="form-input" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Imel</label>
+          <input class="form-input" name="email" disabled style="opacity:0.6;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefòn</label>
+          <input class="form-input" name="phone" placeholder="+509 0000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adrès</label>
+          <input class="form-input" name="address" placeholder="Ri, nimewo, katye">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Depatman</label>
+            <input class="form-input" name="department" placeholder="Ouest">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vil / Komin</label>
+            <input class="form-input" name="city" placeholder="Port-au-Prince">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Anrejistre Chanjman</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEKIRITE -->
+  <div class="acc-panel" data-panel="security">
+    <h2 style="font-size:22px;margin-bottom:20px;">Sekirite Kont</h2>
+    <div class="card" style="max-width:520px;">
+      <form id="pass-form">
+        <div class="form-group">
+          <label class="form-label">Modpas Aktyèl</label>
+          <input type="password" class="form-input" name="current" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modpas Nouvo</label>
+          <input type="password" class="form-input" name="next" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary">Chanje Modpas</button>
+      </form>
+    </div>
+    <div class="card" style="max-width:520px;margin-top:20px;border-color:rgba(255,0,64,0.3);">
+      <h3 style="font-size:16px;margin-bottom:8px;color:#ff0040;">Zòn Danje</h3>
+      <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Dekonekte sou tout aparèy.</p>
+      <button class="btn btn-danger" id="logout-all-btn">Dekonekte Kounye a</button>
+    </div>
+  </div>
+</main>
+
+<div id="footer-mount"></div>
+
+<script src="/js/app.js"></script>
+<script src="/js/customer.js"></script>
+<script src="/js/pwa.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const { formatPrice, escapeHTML, toast } = window.Panik;
+  const CA = window.CustomerAuth;
+
+  // Verifye koneksyon
+  if (!CA.isLoggedIn()) {
+    location.href = '/login.html?redirect=/account.html';
+    return;
+  }
+
+  let me, orders = [];
+
+  // Chaje pwofil
+  async function loadMe() {
+    try {
+      me = await CA.fetch('/api/customer/me');
+      renderHero();
+      renderProfile();
+    } catch (e) {
+      if (String(e.message).includes('konekte') || String(e.message).includes('ekspire')) {
+        CA.logout();
+        location.href = '/login.html?redirect=/account.html';
+      } else {
+        toast(e.message, 'error');
+      }
+    }
+  }
+
+  function renderHero() {
+    const initial = (me.full_name || '?').charAt(0).toUpperCase();
+    document.getElementById('avatar').textContent = initial;
+    document.getElementById('hero-name').textContent = me.full_name;
+    document.getElementById('hero-email').textContent = me.email;
+  }
+
+  function renderProfile() {
+    const f = document.getElementById('profile-form');
+    f.elements.full_name.value = me.full_name || '';
+    f.elements.email.value = me.email || '';
+    f.elements.phone.value = me.phone || '';
+    f.elements.address.value = me.address || '';
+    f.elements.department.value = me.department || '';
+    f.elements.city.value = me.city || '';
+  }
+
+  // Chaje kòmand
+  async function loadOrders() {
+    try {
+      orders = await CA.fetch('/api/customer/orders');
+      renderKPIs();
+      renderRecentOrders();
+      renderAllOrders();
+    } catch (e) {
+      toast(e.message, 'error');
+    }
+  }
+
+  function renderKPIs() {
+    const total = orders.length;
+    const spent = orders.reduce((s, o) => o.status !== 'cancelled' ? s + o.total : s, 0);
+    const active = orders.filter(o => ['pending','confirmed','shipped'].includes(o.status)).length;
+    const delivered = orders.filter(o => o.status === 'delivered').length;
+
+    document.getElementById('kpi-orders').textContent = total;
+    document.getElementById('kpi-spent').textContent = formatPrice(spent);
+    document.getElementById('kpi-active').textContent = active;
+    document.getElementById('kpi-delivered').textContent = delivered;
+  }
+
+  function orderCardHTML(o) {
+    return `
+      <div class="order-card" data-order="${o.id}">
+        <div>
+          <div class="order-num">${escapeHTML(o.order_number)}</div>
+          <div style="font-weight:600;font-size:15px;margin-bottom:4px;">${escapeHTML(o.customer_name)}</div>
+          <div class="text-muted" style="font-size:12px;">${new Date(o.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} · ${o.items ? o.items.length : '?'} atik</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;color:#00f0ff;font-size:16px;margin-bottom:6px;">${formatPrice(o.total)}</div>
+          <span class="order-status ${o.status}">${o.status}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderRecentOrders() {
+    const list = document.getElementById('recent-orders-list');
+    if (orders.length === 0) {
+      list.innerHTML = `<div class="card text-center" style="padding:48px 20px;">
+        <p class="text-muted">Ou poko fè okenn kòmand.</p>
+        <a href="/collection.html" class="btn btn-primary" style="margin-top:16px;">Kòmanse Achte</a>
+      </div>`;
+      return;
+    }
+    list.innerHTML = orders.slice(0, 3).map(orderCardHTML).join('');
+  }
+
+  function renderAllOrders() {
+    const list = document.getElementById('all-orders-list');
+    if (orders.length === 0) {
+      list.innerHTML = `<div class="card text-center" style="padding:48px 20px;">
+        <p class="text-muted">Pa gen kòmand.</p>
+      </div>`;
+      return;
+    }
+    list.innerHTML = orders.map(orderCardHTML).join('');
+  }
+
+  // Tab navigation
+  document.querySelectorAll('.acc-tab-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.acc-tab-btn').forEach(b => b.classList.toggle('on', b === btn));
+      document.querySelectorAll('.acc-panel').forEach(p => {
+        p.classList.toggle('on', p.dataset.panel === btn.dataset.tab);
+      });
+    };
+  });
+
+  // Click sou yon kòmand → ale sou track
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('.order-card');
+    if (card && card.dataset.order) {
+      const o = orders.find(x => x.id == card.dataset.order);
+      if (o) location.href = '/track.html?order=' + encodeURIComponent(o.order_number);
+    }
+  });
+
+  // Pwofil form
+  document.getElementById('profile-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await CA.fetch('/api/customer/me', {
+        method: 'PUT',
+        body: {
+          full_name: fd.get('full_name'),
+          phone: fd.get('phone'),
+          address: fd.get('address'),
+          department: fd.get('department'),
+          city: fd.get('city')
+        }
+      });
+      toast('Pwofil aktyalize', 'success');
+      await loadMe();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  };
+
+  // Chanje modpas
+  document.getElementById('pass-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await CA.fetch('/api/customer/change-password', {
+        method: 'POST',
+        body: { current: fd.get('current'), next: fd.get('next') }
+      });
+      toast('Modpas chanje. Rekonekte.', 'success');
+      setTimeout(() => {
+        CA.logout();
+        location.href = '/login.html';
+      }, 1500);
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  };
+
+  // Dekonekte
+  document.getElementById('logout-btn').onclick = () => {
+    CA.logout();
+    location.href = '/';
+  };
+  document.getElementById('logout-all-btn').onclick = () => {
+    CA.logout();
+    location.href = '/';
+  };
+
+  // Chaje tout bagay
+  await loadMe();
+  await loadOrders();
+});
+</script>
+</body>
+</html>

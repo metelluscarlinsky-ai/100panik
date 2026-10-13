@@ -892,3 +892,36 @@ tr:hover td { background: var(--surface); }
   }
   .admin-sidebar.open { left: 0; }
 }
+
+/* Bouton rapid "Ajoute nan panye" sou kat pwodwi */
+.product-card { cursor: pointer; position: relative; }
+.product-card .quick-add {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00f0ff, #0080ff);
+  color: #000;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,240,255,0.4);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.25s;
+  z-index: 5;
+}
+.product-card:hover .quick-add,
+.product-card:active .quick-add {
+  opacity: 1;
+  transform: translateY(0);
+}
+.product-card .quick-add:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 8px 30px rgba(0,240,255,0.6);
+}
+.product-card .quick-add:active {
+  transform: translateY(0) scale(0.95);
+}
+@media (hover: none) {
+  .product-card .quick-add { opacity: 1; transform: translateY(0); }
+}

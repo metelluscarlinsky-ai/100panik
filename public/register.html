@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<title>Kreye Kont - 100PANIK</title>
+<style>
+  .auth-wrap {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,240,255,0.15), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255,0,64,0.08), transparent 50%),
+      var(--bg);
+    position: relative;
+  }
+  .auth-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 75%);
+  }
+  .auth-card {
+    background: rgba(15,15,15,0.85);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(0,240,255,0.25);
+    border-radius: 24px;
+    padding: 44px 36px;
+    max-width: 480px; width: 100%;
+    position: relative; z-index: 1;
+    box-shadow: 0 24px 80px rgba(0,240,255,0.15);
+  }
+  .brand-mark {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 22px;
+    letter-spacing: 0.15em;
+    background: linear-gradient(135deg, #00f0ff, #0080ff);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .dot-pulse {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #00f0ff; box-shadow: 0 0 14px #00f0ff;
+    animation: pulseDot 2s infinite;
+  }
+  @keyframes pulseDot {
+    0%,100% { opacity:1; transform: scale(1); }
+    50% { opacity:.5; transform: scale(.75); }
+  }
+  .auth-card h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; margin-bottom: 8px;
+  }
+  .auth-card > p { color: var(--text-2); font-size: 13px; margin-bottom: 28px; }
+  .switch-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .switch-link a { color: #00f0ff; font-weight: 600; }
+  .err-box { color: #ff0040; font-size: 12px; margin-bottom: 16px; min-height: 16px; }
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="brand-mark"><span class="dot-pulse"></span>100PANIK</div>
+    <h1>Kreye Kont</h1>
+    <p>Enskri pou w jwenn aksè konplè sou boutik la.</p>
+    <form id="reg-form">
+      <div class="form-group">
+        <label class="form-label">Non konplè *</label>
+        <input type="text" name="full_name" class="form-input" required placeholder="Jan Batis">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Imel *</label>
+        <input type="email" name="email" class="form-input" required placeholder="ou@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefòn</label>
+        <input type="tel" name="phone" class="form-input" placeholder="+509 0000-0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modpas * (6+ karakte)</label>
+        <input type="password" name="password" class="form-input" required minlength="6">
+      </div>
+      <div id="reg-err" class="err-box"></div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg" id="reg-btn">Kreye Kont</button>
+    </form>
+    <div class="switch-link">
+      Ou gen yon kont deja? <a href="/login.html">Konekte</a>
+    </div>
+  </div>
+</div>
+
+<script src="/js/customer.js"></script>
+<script>
+document.getElementById('reg-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const err = document.getElementById('reg-err');
+  const btn = document.getElementById('reg-btn');
+  err.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Ap kreye...';
+  try {
+    const res = await fetch('/api/customer/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        full_name: fd.get('full_name'),
+        email: fd.get('email'),
+        phone: fd.get('phone'),
+        password: fd.get('password')
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erè');
+    window.CustomerAuth.save(data.token, data.customer);
+    location.href = '/account.html';
+  } catch (err2) {
+    err.textContent = err2.message;
+    btn.disabled = false;
+    btn.textContent = 'Kreye Kont';
+  }
+});
+</script>
+</body>
+</html>

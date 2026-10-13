@@ -297,7 +297,36 @@ function parseProduct(p) {
 function safeJSON(s, fb) { try { return JSON.parse(s); } catch { return fb; } }
 function slugify(s) {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');}
+
+// ============ KLIYAN ENSKRI ============
+router.get('/registered-customers', (req, res) => {
+  const rows = db.prepare(`
+    SELECT id, full_name, email, phone, address, department, city,
+           active, created_at
+    FROM customers
+    ORDER BY created_at DESC
+  `).all();
+  res.json(rows);
+});
+
+router.put('/registered-customers/:id', (req, res) => {
+  const b = req.body || {};
+  db.prepare('UPDATE customers SET active = ? WHERE id = ?')
+    .run(b.active ? 1 : 0, req.params.id);
+  res.json({ success: true });
+});
+
+router.delete('/registered-customers/:id', (req, res) => {
+  db.prepare('DELETE FROM customers WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
 
 module.exports = router;
+
+
+
+
+
+
+
