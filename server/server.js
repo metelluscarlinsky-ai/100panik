@@ -83,12 +83,27 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Erè sèvè' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
+const db = require('./models/db');
+
+async function startServer() {
+  try {
+    await db.initDb();
+    await db.seed();
+    console.log('✅ Baz done Supabase pare');
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`
 ╔══════════════════════════════════════════════╗
-║  🖤 100PANIK — Sèvè ap kouri                  ║
+║  100PANIK — Sèvè ap kouri                    ║
 ║  http://localhost:${PORT}                       ║
 ║  Admin: http://localhost:${PORT}/admin-100panik ║
 ╚══════════════════════════════════════════════╝
-  `);
-});
+      `);
+    });
+  } catch (err) {
+    console.error('❌ Erè inisyalizasyon:', err);
+    process.exit(1);
+  }
+}
+
+startServer();

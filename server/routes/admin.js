@@ -1,332 +1,322 @@
-// ============================================
-// 100PANIK - Wout ADMIN (pwoteje ak JWT)
-// Kategori: tout kalite rad, sou-vètman, akseswa, elatriye
-// ============================================
 const express = require('express');
 const db = require('../models/db');
 const { requireAuth } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
 const bcrypt = require('bcryptjs');
-const fs = require('fs');
-const path = require('path');
 
 const router = express.Router();
-router.use(requireAuth); // TOUT wout admin pwoteje
+router.use(requireAuth);
 
-// ============ LIS KATEGORI KONPLÈ ============
 const ALL_CATEGORIES = [
-  // Rad anlè
-  't-shirt', 'chemise', 'blouse', 'polo', 'hoodie', 'sweatshirt',
-  'pull', 'cardigan', 'veste', 'manteau', 'blazer', 'kimono', 'crop-top',
-  'debardeur', 'maillot', 'body',
-  // Rad anba
-  'pantalon', 'jeans', 'jogger', 'short', 'jupe', 'robe', 'salopette',
-  'legging', 'chino', 'cargo',
-  // Sou-vètman
-  'kalson', 'slip', 'boxer', 'chòt', 'soutien-gorge', 'brassiere',
-  'marcel', 'chemise-nwi', 'pyjama', 'chanday-len', 'chaussette',
-  // Rad espesyal
-  'rad-maryaj', 'rad-fèt', 'rad-sport', 'rad-plaj', 'rad-travay',
-  'rad-lise', 'rad-tradisyonèl', 'rad-militaire', 'uniforme',
-  // Akseswa
-  'bonn', 'chapè', 'kas', 'echap', 'sentì', 'sak', 'valiz',
-  'gant', 'foular', 'linèt', 'mont', 'bijou', 'soulye', 'sandal',
-  'bòt', 'tennis',
-  // Timoun
-  'rad-timoun', 'rad-bebe',
-  // Lòt
-  'general', 'nouvo', 'promo', 'exclusive'
+  't-shirt','chemise','chemizit','blouse','polo','hoodie','sweatshirt','pull',
+  'cardigan','veste','manteau','blazer','kimono','crop-top','debardeur',
+  'maillot','body','kosaj','tank-top','sweater',
+  'pantalon','jeans','jogger','short','jupe','robe','salopette','legging',
+  'chino','cargo','kilt','jip','jip-long','jip-kout',
+  'kalson','kilot','slip','chot','soutien-gorge','brassiere','ganntwa',
+  'kosel','tanga','string','culotte','bikini','tankini','monokini',
+  'ba-personalize','ba-soutien-gorge','ba-kosel',
+  'boxer','slip-gason','chemiz-nwi','marcel','kamisòl','chanday-len',
+  'pyjama','pyjama-fanm','pyjama-gason','wob-de-chambre','chaussette',
+  'rad-maryaj','rad-fet','rad-sport','rad-plaj','rad-travay','rad-lise',
+  'rad-tradisyonel','rad-militaire','uniforme','karabela','kostim',
+  'sweat-sport','short-sport','brassiere-sport','legging-sport',
+  'jogging','maillot-de-bain','maillot-foutbol',
+  'bonn','chape','kas','echap','senti','sak','valiz','gant','foular',
+  'linet','mont','bijou','kolye','bwe','zanno','soulye','sandal',
+  'bot','tennis','espadril','mokasen','kle',
+  'rad-timoun','rad-bebe','body-bebe','kimono-bebe',
+  'general','nouvo','promo','exclusive','lot','paket','kado'
 ];
 
-router.get('/categories', (req, res) => {
-  res.json(ALL_CATEGORIES);
-});
+router.get('/categories', (req, res) => res.json(ALL_CATEGORIES));
 
-// ============ STATISTIK / DASHBOARD ============
-router.get('/stats', (req, res) => {
-  const totalProducts = db.prepare('SELECT COUNT(*) c FROM products').get().c;
-  const totalOrders = db.prepare('SELECT COUNT(*) c FROM orders').get().c;
-  const totalCustomers = db.prepare('SELECT COUNT(DISTINCT phone) c FROM orders').get().c;
-  const revenue = db.prepare(`SELECT COALESCE(SUM(total),0) s FROM orders WHERE status != 'cancelled'`).get().s;
-  const pendingOrders = db.prepare(`SELECT COUNT(*) c FROM orders WHERE status = 'pending'`).get().c;
-  const lowStock = db.prepare('SELECT COUNT(*) c FROM products WHERE stock < 5 AND active = 1').get().c;
+// ============ STATS ============
+router.get('/stats', async (req, res) => {
+  try {
+    const totalProducts = (await db.get('SELECT COUNT(*)::int c FROM products')).c;
+    const totalOrders = (await db.get('SELECT COUNT(*)::int c FROM orders')).c;
+    const totalCustomers = (await db.get('SELECT COUNT(DISTINCT phone)::int c FROM orders')).c;
+    const revenue = (await db.get("SELECT COALESCE(SUM(total),0) s FROM orders WHERE status != 'cancelled'")).s;
+    const pendingOrders = (await db.get("SELECT COUNT(*)::int c FROM orders WHERE status = 'pending'")).c;
+    const lowStock = (await db.get('SELECT COUNT(*)::int c FROM products WHERE stock < 5 AND active = 1')).c;
 
-  const topProducts = db.prepare(`
-    SELECT oi.name, SUM(oi.quantity) qty, SUM(oi.price * oi.quantity) rev
-    FROM order_items oi
-    JOIN orders o ON o.id = oi.order_id
-    WHERE o.status != 'cancelled'
-    GROUP BY oi.name ORDER BY qty DESC LIMIT 5
-  `).all();
+    const topProducts = await db.all(`
+      SELECT oi.name, SUM(oi.quantity)::int qty, SUM(oi.price * oi.quantity) rev
+      FROM order_items oi JOIN orders o ON o.id = oi.order_id
+      WHERE o.status != 'cancelled'
+      GROUP BY oi.name ORDER BY qty DESC LIMIT 5
+    `);
+    const recentOrders = await db.all(`
+      SELECT id, order_number, customer_name, total, status, created_at
+      FROM orders ORDER BY created_at DESC LIMIT 10
+    `);
 
-  const recentOrders = db.prepare(`
-    SELECT id, order_number, customer_name, total, status, created_at
-    FROM orders ORDER BY created_at DESC LIMIT 10
-  `).all();
-
-  const salesByDay = db.prepare(`
-    SELECT DATE(created_at) day, SUM(total) total, COUNT(*) orders
-    FROM orders WHERE status != 'cancelled'
-    GROUP BY DATE(created_at) ORDER BY day DESC LIMIT 14
-  `).all();
-
-  res.json({
-    totalProducts, totalOrders, totalCustomers,
-    revenue: Math.round(revenue * 100) / 100,
-    pendingOrders, lowStock, topProducts, recentOrders, salesByDay
-  });
+    res.json({
+      totalProducts, totalOrders, totalCustomers,
+      revenue: Math.round(revenue * 100) / 100,
+      pendingOrders, lowStock, topProducts, recentOrders
+    });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'Erè' }); }
 });
 
 // ============ PWODWI ============
-router.get('/products', (req, res) => {
-  const rows = db.prepare('SELECT * FROM products ORDER BY created_at DESC').all();
-  res.json(rows.map(parseProduct));
+router.get('/products', async (req, res) => {
+  try {
+    const rows = await db.all('SELECT * FROM products ORDER BY created_at DESC');
+    res.json(rows.map(parseProduct));
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.get('/products/:id', (req, res) => {
-  const row = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!row) return res.status(404).json({ error: 'Pa jwenn' });
-  res.json(parseProduct(row));
-});
-
-router.post('/products', (req, res) => {
-  const p = req.body || {};
-  if (!p.name) return res.status(400).json({ error: 'Non obligatwa' });
-  const slug = p.slug || slugify(p.name) + '-' + Date.now().toString(36);
-  const info = db.prepare(`INSERT INTO products
-    (name, slug, description, price, compare_price, category, sizes, colors, images, stock, featured, active)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).run(
-      p.name, slug, p.description || '', Number(p.price) || 0, Number(p.compare_price) || 0,
-      p.category || 'general',
-      JSON.stringify(p.sizes || []),
-      JSON.stringify(p.colors || []),
-      JSON.stringify(p.images || []),
-      Number(p.stock) || 0,
-      p.featured ? 1 : 0,
-      p.active === false ? 0 : 1
+router.post('/products', async (req, res) => {
+  try {
+    const p = req.body || {};
+    if (!p.name) return res.status(400).json({ error: 'Non obligatwa' });
+    const slug = p.slug || slugify(p.name) + '-' + Date.now().toString(36);
+    const info = await db.run(
+      `INSERT INTO products (name, slug, description, price, compare_price, category, sizes, colors, images, stock, featured, active)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id`,
+      [p.name, slug, p.description || '', Number(p.price) || 0, Number(p.compare_price) || 0,
+       p.category || 'general', JSON.stringify(p.sizes || []), JSON.stringify(p.colors || []),
+       JSON.stringify(p.images || []), Number(p.stock) || 0, p.featured ? 1 : 0, p.active === false ? 0 : 1]
     );
-  res.json({ id: info.lastInsertRowid, slug });
+    res.json({ id: info.lastInsertRowid, slug });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'Erè' }); }
 });
 
-router.put('/products/:id', (req, res) => {
-  const p = req.body || {};
-  const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Pa jwenn' });
-
-  db.prepare(`UPDATE products SET
-    name = ?, description = ?, price = ?, compare_price = ?, category = ?,
-    sizes = ?, colors = ?, images = ?, stock = ?, featured = ?, active = ?
-    WHERE id = ?`).run(
-      p.name ?? existing.name,
-      p.description ?? existing.description,
-      Number(p.price) ?? existing.price,
-      Number(p.compare_price) ?? existing.compare_price,
-      p.category ?? existing.category,
-      JSON.stringify(p.sizes || JSON.parse(existing.sizes || '[]')),
-      JSON.stringify(p.colors || JSON.parse(existing.colors || '[]')),
-      JSON.stringify(p.images || JSON.parse(existing.images || '[]')),
-      Number(p.stock) ?? existing.stock,
-      p.featured != null ? (p.featured ? 1 : 0) : existing.featured,
-      p.active != null ? (p.active ? 1 : 0) : existing.active,
-      req.params.id
+router.put('/products/:id', async (req, res) => {
+  try {
+    const p = req.body || {};
+    const ex = await db.get('SELECT * FROM products WHERE id = $1', [req.params.id]);
+    if (!ex) return res.status(404).json({ error: 'Pa jwenn' });
+    await db.run(
+      `UPDATE products SET name=$1, description=$2, price=$3, compare_price=$4, category=$5,
+        sizes=$6, colors=$7, images=$8, stock=$9, featured=$10, active=$11 WHERE id=$12`,
+      [p.name ?? ex.name, p.description ?? ex.description, Number(p.price) ?? ex.price,
+       Number(p.compare_price) ?? ex.compare_price, p.category ?? ex.category,
+       JSON.stringify(p.sizes || JSON.parse(ex.sizes || '[]')),
+       JSON.stringify(p.colors || JSON.parse(ex.colors || '[]')),
+       JSON.stringify(p.images || JSON.parse(ex.images || '[]')),
+       Number(p.stock) ?? ex.stock, p.featured != null ? (p.featured ? 1 : 0) : ex.featured,
+       p.active != null ? (p.active ? 1 : 0) : ex.active, req.params.id]
     );
-  res.json({ success: true });
+    res.json({ success: true });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'Erè' }); }
 });
 
-router.delete('/products/:id', (req, res) => {
-  db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/products/:id', async (req, res) => {
+  try {
+    await db.run('DELETE FROM products WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// Upload foto
 router.post('/upload', upload.array('images', 10), (req, res) => {
-  const files = (req.files || []).map(f => `/uploads/${f.filename}`);
+  const files = (req.files || []).map(f => '/uploads/' + f.filename);
   res.json({ files });
 });
 
-// ============ KÒMAND ============
-router.get('/orders', (req, res) => {
-  const { status } = req.query;
-  let sql = 'SELECT * FROM orders';
-  const params = [];
-  if (status) { sql += ' WHERE status = ?'; params.push(status); }
-  sql += ' ORDER BY created_at DESC';
-  res.json(db.prepare(sql).all(...params));
+// ============ KOMAND ============
+router.get('/orders', async (req, res) => {
+  try {
+    const { status } = req.query;
+    let sql = 'SELECT * FROM orders';
+    const params = [];
+    if (status) { sql += ' WHERE status = $1'; params.push(status); }
+    sql += ' ORDER BY created_at DESC';
+    res.json(await db.all(sql, params));
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.get('/orders/:id', (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
-  if (!order) return res.status(404).json({ error: 'Pa jwenn' });
-  const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
-  res.json({ ...order, items });
+router.get('/orders/:id', async (req, res) => {
+  try {
+    const o = await db.get('SELECT * FROM orders WHERE id = $1', [req.params.id]);
+    if (!o) return res.status(404).json({ error: 'Pa jwenn' });
+    const items = await db.all('SELECT * FROM order_items WHERE order_id = $1', [o.id]);
+    res.json({ ...o, items });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.put('/orders/:id/status', (req, res) => {
-  const { status } = req.body || {};
-  const valid = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
-  if (!valid.includes(status)) return res.status(400).json({ error: 'Estati envalid' });
-  db.prepare('UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-    .run(status, req.params.id);
-  res.json({ success: true });
+router.put('/orders/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body || {};
+    const valid = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+    if (!valid.includes(status)) return res.status(400).json({ error: 'Estati envalid' });
+    await db.run('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [status, req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.delete('/orders/:id', (req, res) => {
-  db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/orders/:id', async (req, res) => {
+  try {
+    await db.run('DELETE FROM orders WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
 // ============ KLIYAN ============
-router.get('/customers', (req, res) => {
-  const rows = db.prepare(`
-    SELECT phone, customer_name, email, COUNT(*) orders_count,
-           SUM(total) total_spent, MAX(created_at) last_order
-    FROM orders GROUP BY phone ORDER BY last_order DESC
-  `).all();
-  res.json(rows);
+router.get('/customers', async (req, res) => {
+  try {
+    const rows = await db.all(`
+      SELECT phone, customer_name, email, COUNT(*)::int orders_count,
+             SUM(total) total_spent, MAX(created_at) last_order
+      FROM orders GROUP BY phone, customer_name, email ORDER BY last_order DESC
+    `);
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.get('/customers/:phone/orders', (req, res) => {
-  const rows = db.prepare('SELECT * FROM orders WHERE phone = ? ORDER BY created_at DESC')
-    .all(req.params.phone);
-  res.json(rows);
+router.get('/registered-customers', async (req, res) => {
+  try {
+    const rows = await db.all(`
+      SELECT id, full_name, email, phone, address, department, city, active, created_at
+      FROM customers ORDER BY created_at DESC
+    `);
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
+});
+
+router.put('/registered-customers/:id', async (req, res) => {
+  try {
+    const { active } = req.body || {};
+    await db.run('UPDATE customers SET active = $1 WHERE id = $2', [active ? 1 : 0, req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
+});
+
+router.delete('/registered-customers/:id', async (req, res) => {
+  try {
+    await db.run('DELETE FROM customers WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
 // ============ LIVREZON ============
-router.get('/shipping', (req, res) => {
-  res.json(db.prepare('SELECT * FROM shipping_zones ORDER BY id').all());
+router.get('/shipping', async (req, res) => {
+  try {
+    res.json(await db.all('SELECT * FROM shipping_zones ORDER BY id'));
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.post('/shipping', (req, res) => {
-  const { name, price, express_price, estimated_days } = req.body || {};
-  if (!name) return res.status(400).json({ error: 'Non obligatwa' });
-  const info = db.prepare(`INSERT INTO shipping_zones (name, price, express_price, estimated_days)
-    VALUES (?,?,?,?)`).run(name, Number(price) || 0, Number(express_price) || 0, estimated_days || '3-5');
-  res.json({ id: info.lastInsertRowid });
+router.post('/shipping', async (req, res) => {
+  try {
+    const { name, price, express_price, estimated_days } = req.body || {};
+    if (!name) return res.status(400).json({ error: 'Non obligatwa' });
+    const info = await db.run(
+      'INSERT INTO shipping_zones (name, price, express_price, estimated_days) VALUES ($1,$2,$3,$4) RETURNING id',
+      [name, Number(price) || 0, Number(express_price) || 0, estimated_days || '3-5']
+    );
+    res.json({ id: info.lastInsertRowid });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.put('/shipping/:id', (req, res) => {
-  const { name, price, express_price, estimated_days, active } = req.body || {};
-  db.prepare(`UPDATE shipping_zones SET name=?, price=?, express_price=?, estimated_days=?, active=? WHERE id=?`)
-    .run(name, Number(price) || 0, Number(express_price) || 0, estimated_days || '3-5',
-         active === false ? 0 : 1, req.params.id);
-  res.json({ success: true });
+router.put('/shipping/:id', async (req, res) => {
+  try {
+    const { name, price, express_price, estimated_days, active } = req.body || {};
+    await db.run(
+      'UPDATE shipping_zones SET name=$1, price=$2, express_price=$3, estimated_days=$4, active=$5 WHERE id=$6',
+      [name, Number(price) || 0, Number(express_price) || 0, estimated_days || '3-5',
+       active === false ? 0 : 1, req.params.id]
+    );
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.delete('/shipping/:id', (req, res) => {
-  db.prepare('DELETE FROM shipping_zones WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/shipping/:id', async (req, res) => {
+  try {
+    await db.run('DELETE FROM shipping_zones WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
 // ============ PWOMO ============
-router.get('/promos', (req, res) => {
-  res.json(db.prepare('SELECT * FROM promo_codes ORDER BY id DESC').all());
-});
-
-router.post('/promos', (req, res) => {
-  const { code, type, value, min_total, max_uses, expires_at } = req.body || {};
-  if (!code || value == null) return res.status(400).json({ error: 'Kòd ak valè obligatwa' });
+router.get('/promos', async (req, res) => {
   try {
-    const info = db.prepare(`INSERT INTO promo_codes
-      (code, type, value, min_total, max_uses, expires_at)
-      VALUES (?,?,?,?,?,?)`).run(
-        code.toUpperCase(), type || 'percent', Number(value),
-        Number(min_total) || 0, Number(max_uses) || 0, expires_at || null
-      );
+    res.json(await db.all('SELECT * FROM promo_codes ORDER BY id DESC'));
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
+});
+
+router.post('/promos', async (req, res) => {
+  try {
+    const { code, type, value, min_total, max_uses, expires_at } = req.body || {};
+    if (!code || value == null) return res.status(400).json({ error: 'Kòd ak valè obligatwa' });
+    const info = await db.run(
+      `INSERT INTO promo_codes (code, type, value, min_total, max_uses, expires_at)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
+      [String(code).toUpperCase(), type || 'percent', Number(value),
+       Number(min_total) || 0, Number(max_uses) || 0, expires_at || null]
+    );
     res.json({ id: info.lastInsertRowid });
-  } catch (e) {
-    res.status(400).json({ error: 'Kòd deja egziste' });
-  }
+  } catch (e) { res.status(400).json({ error: 'Kòd deja egziste' }); }
 });
 
-router.put('/promos/:id', (req, res) => {
-  const { code, type, value, min_total, max_uses, active, expires_at } = req.body || {};
-  db.prepare(`UPDATE promo_codes SET code=?, type=?, value=?, min_total=?, max_uses=?, active=?, expires_at=? WHERE id=?`)
-    .run(code.toUpperCase(), type || 'percent', Number(value),
-         Number(min_total) || 0, Number(max_uses) || 0,
-         active === false ? 0 : 1, expires_at || null, req.params.id);
-  res.json({ success: true });
+router.put('/promos/:id', async (req, res) => {
+  try {
+    const { code, type, value, min_total, max_uses, active, expires_at } = req.body || {};
+    await db.run(
+      `UPDATE promo_codes SET code=$1, type=$2, value=$3, min_total=$4, max_uses=$5, active=$6, expires_at=$7 WHERE id=$8`,
+      [String(code).toUpperCase(), type || 'percent', Number(value), Number(min_total) || 0,
+       Number(max_uses) || 0, active === false ? 0 : 1, expires_at || null, req.params.id]
+    );
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.delete('/promos/:id', (req, res) => {
-  db.prepare('DELETE FROM promo_codes WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/promos/:id', async (req, res) => {
+  try {
+    await db.run('DELETE FROM promo_codes WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// ============ KONFIGIRASYON SIT ============
-router.get('/settings', (req, res) => {
-  const rows = db.prepare('SELECT * FROM settings').all();
-  const obj = {};
-  rows.forEach(r => obj[r.key] = r.value);
-  res.json(obj);
+// ============ SETTINGS ============
+router.get('/settings', async (req, res) => {
+  try {
+    const rows = await db.all('SELECT * FROM settings');
+    const obj = {};
+    rows.forEach(r => obj[r.key] = r.value);
+    res.json(obj);
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.put('/settings', (req, res) => {
-  const updates = req.body || {};
-  const stmt = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');
-  const tx = db.transaction((entries) => {
-    for (const [k, v] of entries) stmt.run(k, String(v));
-  });
-  tx(Object.entries(updates));
-  res.json({ success: true });
+router.put('/settings', async (req, res) => {
+  try {
+    const updates = req.body || {};
+    for (const k of Object.keys(updates)) {
+      await db.run(
+        `INSERT INTO settings (key, value) VALUES ($1, $2)
+         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+        [k, String(updates[k])]
+      );
+    }
+    res.json({ success: true });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'Erè' }); }
 });
 
-// ============ CHANJE MODPAS ADMIN ============
-router.post('/change-password', (req, res) => {
-  const { current, next } = req.body || {};
-  if (!current || !next || next.length < 6) {
-    return res.status(400).json({ error: 'Modpas nouvo dwe gen 6 karaktè minimòm' });
-  }
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
-  if (!bcrypt.compareSync(current, user.password)) {
-    return res.status(401).json({ error: 'Modpas aktyèl envalid' });
-  }
-  const hash = bcrypt.hashSync(next, 10);
-  db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hash, req.user.id);
-  res.json({ success: true });
+router.post('/change-password', async (req, res) => {
+  try {
+    const { current, next } = req.body || {};
+    if (!current || !next || next.length < 6) {
+      return res.status(400).json({ error: 'Modpas nouvo dwe gen 6 karakte minimum' });
+    }
+    const user = await db.get('SELECT * FROM users WHERE id = $1', [req.user.id]);
+    if (!bcrypt.compareSync(current, user.password)) {
+      return res.status(401).json({ error: 'Modpas aktyel envalid' });
+    }
+    const hash = bcrypt.hashSync(next, 10);
+    await db.run('UPDATE users SET password = $1 WHERE id = $2', [hash, req.user.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
 // ============ UTILS ============
 function parseProduct(p) {
-  return {
-    ...p,
-    sizes: safeJSON(p.sizes, []),
-    colors: safeJSON(p.colors, []),
-    images: safeJSON(p.images, [])
-  };
+  return { ...p, sizes: safeJSON(p.sizes, []), colors: safeJSON(p.colors, []), images: safeJSON(p.images, []) };
 }
 function safeJSON(s, fb) { try { return JSON.parse(s); } catch { return fb; } }
 function slugify(s) {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');}
-
-// ============ KLIYAN ENSKRI ============
-router.get('/registered-customers', (req, res) => {
-  const rows = db.prepare(`
-    SELECT id, full_name, email, phone, address, department, city,
-           active, created_at
-    FROM customers
-    ORDER BY created_at DESC
-  `).all();
-  res.json(rows);
-});
-
-router.put('/registered-customers/:id', (req, res) => {
-  const b = req.body || {};
-  db.prepare('UPDATE customers SET active = ? WHERE id = ?')
-    .run(b.active ? 1 : 0, req.params.id);
-  res.json({ success: true });
-});
-
-router.delete('/registered-customers/:id', (req, res) => {
-  db.prepare('DELETE FROM customers WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
-});
+  return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 module.exports = router;
-
-
-
-
-
-
-
