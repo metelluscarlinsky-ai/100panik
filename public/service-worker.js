@@ -1,6 +1,6 @@
 // 100PANIK - Service Worker
 // Cache First (assets) + Network First (API)
-var VERSION = 'panik-v1.0.0';
+var VERSION = 'panik-v1791991632';
 var STATIC_CACHE = VERSION + '-static';
 var DYNAMIC_CACHE = VERSION + '-dynamic';
 var IMAGE_CACHE = VERSION + '-images';
