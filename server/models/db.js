@@ -127,6 +127,18 @@ async function initDb() {
       value TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS ads (
+      id SERIAL PRIMARY KEY,
+      title TEXT DEFAULT '',
+      type TEXT DEFAULT 'image',
+      media_url TEXT NOT NULL,
+      thumb_url TEXT,
+      link_url TEXT,
+      position TEXT DEFAULT 'home_footer',
+      active INTEGER DEFAULT 1,
+      sort_order INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
     CREATE TABLE IF NOT EXISTS customers (
       id SERIAL PRIMARY KEY,
       full_name TEXT NOT NULL,

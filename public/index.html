@@ -118,6 +118,16 @@
   </section>
 </main>
 
+  <section class="section" id="ads-home-footer">
+    <div class="section-title">
+      <div>
+        <h2>Piblisite</h2>
+        <p class="sub">Dekouvri pi plis</p>
+      </div>
+    </div>
+    <div class="ads-grid" id="ads-grid"></div>
+  </section>
+
 <div id="footer-mount"></div>
 
 <script src="/js/customer.js"></script>
@@ -125,6 +135,35 @@
 <script src="/js/cart.js"></script>
 <script src="/js/pwa.js" defer></script>
 <script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // --- Piblisite ---
+  try {
+    const adsRes = await fetch('/api/ads?position=home_footer');
+    const ads = await adsRes.json();
+    const adsGrid = document.getElementById('ads-grid');
+    if (adsGrid && ads.length > 0) {
+      adsGrid.innerHTML = ads.map(function(ad) {
+        var media = '';
+        var inner = '';
+        if (ad.type === 'video') {
+          if (ad.media_url.indexOf('youtube.com') !== -1 || ad.media_url.indexOf('youtu.be') !== -1) {
+            var ytId = ad.media_url.split(/[\/\?=]/).filter(function(p) { return p.length === 11; })[0];
+            media = '<iframe src="https://www.youtube.com/embed/' + ytId + '" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>';
+          } else {
+            media = '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;"></video>';
+          }
+        } else {
+          media = '<img src="' + ad.media_url + '" alt="' + (ad.title || 'Piblisite') + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">';
+        }
+        var wrap = ad.link_url ? '<a href="' + ad.link_url + '" target="_blank" rel="noopener" style="display:block;width:100%;height:100%;">' : '<div style="width:100%;height:100%;">';
+        var wrapEnd = ad.link_url ? '</a>' : '</div>';
+        return '<div class="ad-card" style="aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg-2);position:relative;">' + wrap + media + wrapEnd + '</div>';
+      }).join('');
+    } else if (adsGrid) {
+      adsGrid.closest('.section').style.display = 'none';
+    }
+  } catch (e) {}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const { api, productCardHTML } = window.Panik;
 

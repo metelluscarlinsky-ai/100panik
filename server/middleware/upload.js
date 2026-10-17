@@ -1,32 +1,50 @@
-// ============================================
-// 100PANIK - Upload foto ak Multer
-// ============================================
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const { createClient } = require('@supabase/supabase-js');
 
-const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${ext}`;
-    cb(null, name);
-  }
-});
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('SUPABASE_URL oswa SUPABASE_SERVICE_KEY manke nan .env');
+}
 
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const supabase = createClient(SUPABASE_URL || '', SUPABASE_KEY || '');
+const BUCKET = 'product-images';
+
+const storage = multer.memoryStorage();
+
+const ALLOWED = [
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+  'video/mp4', 'video/webm', 'video/quicktime', 'video/ogg'
+];
+
 const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (!ALLOWED.includes(file.mimetype)) {
-      return cb(new Error('Sèlman imaj JPG/PNG/WEBP/GIF aksepte'));
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: function(req, file, cb) {
+    if (ALLOWED.indexOf(file.mimetype) === -1) {
+      return cb(new Error('Selman imaj (JPG/PNG/WEBP/GIF) oswa videyo (MP4/WEBM/MOV) aksepte'));
     }
     cb(null, true);
   }
 });
 
-module.exports = { upload, UPLOAD_DIR };
+async function uploadToSupabase(file) {
+  const ext = path.extname(file.originalname).toLowerCase() || '.bin';
+  const filename = Date.now() + '-' + Math.random().toString(36).slice(2, 9) + ext;
+
+  const result = await supabase.storage
+    .from(BUCKET)
+    .upload(filename, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false
+    });
+
+  if (result.error) throw new Error('Supabase upload: ' + result.error.message);
+
+  const urlResult = supabase.storage.from(BUCKET).getPublicUrl(filename);
+  return urlResult.data.publicUrl;
+}
+
+module.exports = { upload, supabase, uploadToSupabase, BUCKET };
