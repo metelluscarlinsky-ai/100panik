@@ -5,11 +5,15 @@ const { createClient } = require('@supabase/supabase-js');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+console.log('=== Upload config ===');
+console.log('SUPABASE_URL:', SUPABASE_URL || 'MANKE');
+console.log('SUPABASE_SERVICE_KEY:', SUPABASE_KEY ? 'PREZAN (' + SUPABASE_KEY.length + ' karaktè)' : 'MANKE');
+
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('SUPABASE_URL oswa SUPABASE_SERVICE_KEY manke nan .env');
+  console.error('❌ SUPABASE_URL oswa SUPABASE_SERVICE_KEY manke');
 }
 
-const supabase = createClient(SUPABASE_URL || '', SUPABASE_KEY || '');
+const supabase = createClient(SUPABASE_URL || 'https://placeholder.supabase.co', SUPABASE_KEY || 'placeholder');
 const BUCKET = 'product-images';
 
 const storage = multer.memoryStorage();
@@ -24,15 +28,19 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: function(req, file, cb) {
     if (ALLOWED.indexOf(file.mimetype) === -1) {
-      return cb(new Error('Selman imaj (JPG/PNG/WEBP/GIF) oswa videyo (MP4/WEBM/MOV) aksepte'));
+      return cb(new Error('Selman imaj oswa video aksepte'));
     }
     cb(null, true);
   }
 });
 
 async function uploadToSupabase(file) {
-  const ext = path.extname(file.originalname).toLowerCase() || '.bin';
+  const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
   const filename = Date.now() + '-' + Math.random().toString(36).slice(2, 9) + ext;
+
+  console.log('=== Upload ap kòmanse ===');
+  console.log('Fichye:', file.originalname, '(' + file.size + ' bytes, ' + file.mimetype + ')');
+  console.log('Destinasyon:', BUCKET + '/' + filename);
 
   const result = await supabase.storage
     .from(BUCKET)
@@ -41,9 +49,16 @@ async function uploadToSupabase(file) {
       upsert: false
     });
 
-  if (result.error) throw new Error('Supabase upload: ' + result.error.message);
+  if (result.error) {
+    console.error('❌ Supabase upload erè:', result.error);
+    throw new Error('Supabase upload: ' + result.error.message);
+  }
+
+  console.log('✅ Upload siksè:', result.data);
 
   const urlResult = supabase.storage.from(BUCKET).getPublicUrl(filename);
+  console.log('URL piblik:', urlResult.data.publicUrl);
+
   return urlResult.data.publicUrl;
 }
 
