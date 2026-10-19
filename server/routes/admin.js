@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../models/db');
 const { requireAuth } = require('../middleware/auth');
-const { upload } = require('../middleware/upload');
+const { upload, uploadToSupabase } = require('../middleware/upload');
 const bcrypt = require('bcryptjs');
 
 const router = express.Router();
@@ -111,9 +111,26 @@ router.delete('/products/:id', async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-router.post('/upload', upload.array('images', 10), (req, res) => {
-  const files = (req.files || []).map(f => '/uploads/' + f.filename);
-  res.json({ files });
+router.post('/upload', upload.array('images', 10), async (req, res) => {
+  try {
+    const files = req.files || [];
+    if (files.length === 0) return res.json({ files: [] });
+    
+    console.log('Ap upload', files.length, 'fichye sou Supabase...');
+    const urls = [];
+    
+    for (let i = 0; i < files.length; i++) {
+      const url = await uploadToSupabase(files[i]);
+      urls.push(url);
+    }
+    
+    console.log('Upload siksè. URLs:', urls);
+    res.json({ files: urls });
+  } catch (e) {
+    console.error('Erè upload:', e);
+    res.status(500).json({ error: e.message || 'Erè pandan upload la' });
+  }
+});
 });
 
 // ============ KOMAND ============
