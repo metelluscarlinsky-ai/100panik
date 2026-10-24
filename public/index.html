@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/style.css?v=1792443004">
+<link rel="stylesheet" href="/css/style.css?v=1792879934">
 <title>100PANIK — Rad Futurist Premium</title>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/icon-180.png?v=1791991632">
   <link rel="apple-touch-icon" sizes="152x152" href="/images/icons/icon-152.png?v=1791991632">
@@ -148,10 +148,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const adsRes = await fetch('/api/ads?position=home_footer');
     const ads = await adsRes.json();
     const adsGrid = document.getElementById('ads-grid');
+    
     if (adsGrid && ads.length > 0) {
       adsGrid.innerHTML = ads.map(function(ad) {
         var media = '';
-        var inner = '';
         if (ad.type === 'video') {
           if (ad.media_url.indexOf('youtube.com') !== -1 || ad.media_url.indexOf('youtu.be') !== -1) {
             var ytId = ad.media_url.split(/[\/\?=]/).filter(function(p) { return p.length === 11; })[0];
@@ -160,16 +160,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             media = '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;"></video>';
           }
         } else {
-          media = '<img src="' + ad.media_url + '" alt="' + (ad.title || 'Piblisite') + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">';
+          // Aperçu foto a byen klè
+          media = '<img src="' + ad.media_url + '" alt="' + (ad.title || 'Piblisite') + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">';
         }
+        
         var wrap = ad.link_url ? '<a href="' + ad.link_url + '" target="_blank" rel="noopener" style="display:block;width:100%;height:100%;">' : '<div style="width:100%;height:100%;">';
         var wrapEnd = ad.link_url ? '</a>' : '</div>';
+        
         return '<div class="ad-card" style="aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg-2);position:relative;">' + wrap + media + wrapEnd + '</div>';
       }).join('');
     } else if (adsGrid) {
       adsGrid.closest('.section').style.display = 'none';
     }
-  } catch (e) {}
+  } catch (e) { console.error('Erè pou chaje ads:', e); }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const { api, productCardHTML } = window.Panik;
