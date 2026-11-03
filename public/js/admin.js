@@ -65,6 +65,7 @@ function loadPageData(page) {
   if (page === 'orders') loadOrders();
   if (page === 'customers') loadCustomers();
   if (page === 'ads') loadAds();
+  if (page === 'settings') loadSettings();
 }
 
 async function initApp() {
@@ -219,6 +220,49 @@ async function saveAd(e) {
     document.getElementById('modal-ad').classList.remove('open');
     showToast('Piblisite sove');
     loadAds();
+  } catch (err) { alert(err.message); }
+}
+
+async function loadSettings() {
+  try {
+    const s = await apiFetch('/admin/settings');
+    document.getElementById('set-brand').value = s.brand_name || '100PANIK';
+    document.getElementById('set-color').value = s.primary_color || '#00f0ff';
+    document.getElementById('set-email').value = s.contact_email || '';
+    document.getElementById('set-phone').value = s.contact_phone || '';
+    document.getElementById('set-instagram').value = s.instagram || '';
+    document.getElementById('set-facebook').value = s.facebook || '';
+    document.getElementById('set-tiktok').value = s.tiktok || '';
+  } catch (err) { console.error(err); }
+}
+
+async function saveSettings(e) {
+  e.preventDefault();
+  const body = {
+    brand_name: document.getElementById('set-brand').value,
+    primary_color: document.getElementById('set-color').value,
+    contact_email: document.getElementById('set-email').value,
+    contact_phone: document.getElementById('set-phone').value,
+    instagram: document.getElementById('set-instagram').value,
+    facebook: document.getElementById('set-facebook').value,
+    tiktok: document.getElementById('set-tiktok').value
+  };
+  try {
+    await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
+    showToast('Konfigirasyon sove');
+  } catch (err) { alert(err.message); }
+}
+
+async function changePassword(e) {
+  e.preventDefault();
+  const body = {
+    current: document.getElementById('pass-current').value,
+    next: document.getElementById('pass-new').value
+  };
+  try {
+    await apiFetch('/admin/change-password', { method: 'POST', body: JSON.stringify(body) });
+    showToast('Modpas chanje');
+    document.getElementById('pass-form').reset();
   } catch (err) { alert(err.message); }
 }
 
