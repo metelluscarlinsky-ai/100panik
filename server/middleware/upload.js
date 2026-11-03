@@ -14,7 +14,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 }
 
 const supabase = createClient(SUPABASE_URL || 'https://placeholder.supabase.co', SUPABASE_KEY || 'placeholder');
-const BUCKET = 'product-images';
+const BUCKET = 'products-images';
 
 const storage = multer.memoryStorage();
 
