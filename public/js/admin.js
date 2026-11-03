@@ -26,6 +26,7 @@ async function apiFetch(endpoint, opts) {
   return data;
 }
 
+// --- KONEKSYON ---
 var loginForm = document.getElementById('login-form');
 if (loginForm) {
   loginForm.addEventListener('submit', async function(e) {
@@ -34,10 +35,7 @@ if (loginForm) {
       const res = await fetch(API + '/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: document.getElementById('login-email').value,
-          password: document.getElementById('login-pass').value
-        })
+        body: JSON.stringify({ username: document.getElementById('login-email').value, password: document.getElementById('login-pass').value })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -48,6 +46,7 @@ if (loginForm) {
   });
 }
 
+// --- NAVIGASYON ---
 document.querySelectorAll('.nav-item').forEach(function(item) {
   item.addEventListener('click', function() {
     document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
@@ -75,6 +74,7 @@ async function initApp() {
   loadStats();
 }
 
+// --- UPLOAD FICHYE ---
 async function uploadFile(input, targetId) {
   if (!input.files || !input.files[0]) return;
   const fd = new FormData();
@@ -93,6 +93,7 @@ async function uploadFile(input, targetId) {
   } catch (err) { alert('Erè upload: ' + err.message); }
 }
 
+// --- DASHBOARD ---
 async function loadStats() {
   try {
     const s = await apiFetch('/admin/stats');
@@ -104,17 +105,13 @@ async function loadStats() {
   } catch (err) { console.error(err); }
 }
 
+// --- PWODWI ---
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
     document.getElementById('products-body').innerHTML = prods.map(function(p) {
       const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
-      return '<tr>' +
-        '<td><img src="' + imgUrl + '" class="table-img" onerror="this.src=\'/images/placeholder.jpg\'"></td>' +
-        '<td>' + p.name + '</td>' +
-        '<td>' + p.price + ' HTG</td>' +
-        '<td><button class="btn btn-outline" onclick="editProduct(' + p.id + ')">Modifye</button></td>' +
-      '</tr>';
+      return '<tr><td><img src="' + imgUrl + '" class="table-img"></td><td>' + p.name + '</td><td>' + p.price + ' HTG</td><td><button class="btn btn-outline" onclick="editProduct(' + p.id + ')">Modifye</button></td></tr>';
     }).join('');
     window.allProducts = prods;
   } catch (err) { console.error(err); }
@@ -145,15 +142,9 @@ async function saveProduct(e) {
   const body = {
     name: document.getElementById('prod-name').value,
     price: Number(document.getElementById('prod-price').value),
-    compare_price: 0,
-    category: document.getElementById('prod-cat').value || 'general',
+    compare_price: 0, category: document.getElementById('prod-cat').value || 'general',
     description: document.getElementById('prod-desc').value,
-    images: imgVal ? [imgVal] : [],
-    sizes: [],
-    colors: [],
-    stock: 99,
-    featured: 0,
-    active: 1
+    images: imgVal ? [imgVal] : [], sizes: [], colors: [], stock: 99, featured: 0, active: 1
   };
   try {
     if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
@@ -164,6 +155,91 @@ async function saveProduct(e) {
   } catch (err) { alert('Erè: ' + err.message); }
 }
 
+// --- PIBLISITE ---
+async function loadAds() {
+  try {
+    const ads = await apiFetch('/admin/ads');
+    document.getElementById('ads-body').innerHTML = ads.map(function(a) {
+      var media = a.type === 'image' ? '<img src="' + a.media_url + '" class="table-img">' : 'Video';
+      return '<tr><td>' + media + '</td><td>' + (a.title || '-') + '</td><td><button class="btn btn-outline" onclick="deleteAd(' + a.id + ')">Efase</button></td></tr>';
+    }).join('');
+    window.allAds = ads;
+  } catch (err) { console.error(err); }
+}
+
+// Nou konekte bouton an dirèkteman la
+var btnAddAd = document.querySelector('button[onclick="openAdModal()"]');
+if (btnAddAd) {
+  btnAddAd.onclick = function() {
+    document.getElementById('form-ad').reset();
+    document.getElementById('ad-media-url').value = '';
+    document.getElementById('modal-ad').classList.add('open');
+  };
+}
+
+async function saveAd(e) {
+  e.preventDefault();
+  const body = { 
+    title: document.getElementById('ad-title').value, 
+    type: document.getElementById('ad-type').value, 
+    media_url: document.getElementById('ad-media-url').value, 
+    active: 1 
+  };
+  try {
+    await apiFetch('/admin/ads', { method: 'POST', body: JSON.stringify(body) });
+    document.getElementById('modal-ad').classList.remove('open');
+    showToast('Piblisite sove ak siksè');
+    loadAds();
+  } catch (err) { alert('Erè: ' + err.message); }
+}
+
+async function deleteAd(id) {
+  if (!confirm('Efase piblisite sa a?')) return;
+  try {
+    await apiFetch('/admin/ads/' + id, { method: 'DELETE' });
+    showToast('Piblisite efase');
+    loadAds();
+  } catch (err) { alert(err.message); }
+}
+
+// --- KONFIGIRASYON ---
+async function loadSettings() {
+  try {
+    const s = await apiFetch('/admin/settings');
+    document.getElementById('set-brand').value = s.brand_name || '';
+    document.getElementById('set-color').value = s.primary_color || '';
+    document.getElementById('set-email').value = s.contact_email || '';
+    document.getElementById('set-phone').value = s.contact_phone || '';
+    document.getElementById('set-instagram').value = s.instagram || '';
+    document.getElementById('set-facebook').value = s.facebook || '';
+    document.getElementById('set-tiktok').value = s.tiktok || '';
+  } catch (err) { console.error(err); }
+}
+
+async function saveSettings(e) {
+  e.preventDefault();
+  const body = {
+    brand_name: document.getElementById('set-brand').value, primary_color: document.getElementById('set-color').value,
+    contact_email: document.getElementById('set-email').value, contact_phone: document.getElementById('set-phone').value,
+    instagram: document.getElementById('set-instagram').value, facebook: document.getElementById('set-facebook').value, tiktok: document.getElementById('set-tiktok').value
+  };
+  try {
+    await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
+    showToast('Konfigirasyon sove');
+  } catch (err) { alert(err.message); }
+}
+
+async function changePassword(e) {
+  e.preventDefault();
+  const body = { current: document.getElementById('pass-current').value, next: document.getElementById('pass-new').value };
+  try {
+    await apiFetch('/admin/change-password', { method: 'POST', body: JSON.stringify(body) });
+    showToast('Modpas chanje');
+    document.getElementById('pass-form').reset();
+  } catch (err) { alert(err.message); }
+}
+
+// --- KOMAND & KLIYAN ---
 async function loadOrders() {
   try {
     const ords = await apiFetch('/admin/orders');
@@ -180,90 +256,6 @@ async function loadCustomers() {
       return '<tr><td>' + c.full_name + '</td><td>' + c.email + '</td><td>' + (c.phone || '-') + '</td><td>' + new Date(c.created_at).toLocaleDateString() + '</td></tr>';
     }).join('');
   } catch (err) { console.error(err); }
-}
-
-async function loadAds() {
-  try {
-    const ads = await apiFetch('/admin/ads');
-    document.getElementById('ads-body').innerHTML = ads.map(function(a) {
-      var media = a.type === 'image' ? '<img src="' + a.media_url + '" class="table-img">' : 'Video';
-      return '<tr><td>' + media + '</td><td>' + (a.title || '-') + '</td><td><button class="btn btn-outline" onclick="editAd(' + a.id + ')">Modifye</button></td></tr>';
-    }).join('');
-    window.allAds = ads;
-  } catch (err) { console.error(err); }
-}
-
-function openAdModal() {
-  document.getElementById('form-ad').reset();
-  document.getElementById('ad-media-url').value = '';
-  document.getElementById('modal-ad').classList.add('open');
-}
-
-function editAd(id) {
-  const a = window.allAds.find(function(x) { return x.id === id; });
-  document.getElementById('ad-title').value = a.title;
-  document.getElementById('ad-type').value = a.type;
-  document.getElementById('ad-media-url').value = a.media_url;
-  document.getElementById('modal-ad').classList.add('open');
-}
-
-async function saveAd(e) {
-  e.preventDefault();
-  const body = {
-    title: document.getElementById('ad-title').value,
-    type: document.getElementById('ad-type').value,
-    media_url: document.getElementById('ad-media-url').value,
-    active: 1
-  };
-  try {
-    await apiFetch('/admin/ads', { method: 'POST', body: JSON.stringify(body) });
-    document.getElementById('modal-ad').classList.remove('open');
-    showToast('Piblisite sove');
-    loadAds();
-  } catch (err) { alert(err.message); }
-}
-
-async function loadSettings() {
-  try {
-    const s = await apiFetch('/admin/settings');
-    document.getElementById('set-brand').value = s.brand_name || '100PANIK';
-    document.getElementById('set-color').value = s.primary_color || '#00f0ff';
-    document.getElementById('set-email').value = s.contact_email || '';
-    document.getElementById('set-phone').value = s.contact_phone || '';
-    document.getElementById('set-instagram').value = s.instagram || '';
-    document.getElementById('set-facebook').value = s.facebook || '';
-    document.getElementById('set-tiktok').value = s.tiktok || '';
-  } catch (err) { console.error(err); }
-}
-
-async function saveSettings(e) {
-  e.preventDefault();
-  const body = {
-    brand_name: document.getElementById('set-brand').value,
-    primary_color: document.getElementById('set-color').value,
-    contact_email: document.getElementById('set-email').value,
-    contact_phone: document.getElementById('set-phone').value,
-    instagram: document.getElementById('set-instagram').value,
-    facebook: document.getElementById('set-facebook').value,
-    tiktok: document.getElementById('set-tiktok').value
-  };
-  try {
-    await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
-    showToast('Konfigirasyon sove');
-  } catch (err) { alert(err.message); }
-}
-
-async function changePassword(e) {
-  e.preventDefault();
-  const body = {
-    current: document.getElementById('pass-current').value,
-    next: document.getElementById('pass-new').value
-  };
-  try {
-    await apiFetch('/admin/change-password', { method: 'POST', body: JSON.stringify(body) });
-    showToast('Modpas chanje');
-    document.getElementById('pass-form').reset();
-  } catch (err) { alert(err.message); }
 }
 
 if (token) initApp(); else document.getElementById('login-screen').style.display = 'flex';
