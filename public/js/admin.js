@@ -17,10 +17,8 @@ function logout() {
 async function apiFetch(endpoint, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
-  
   const res = await fetch(API + endpoint, { ...opts, headers: { ...headers, ...opts.headers } });
   if (res.status === 401) return logout();
-  
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Erè');
   return data;
@@ -42,9 +40,7 @@ document.getElementById('login-form')?.addEventListener('submit', async (e) => {
     token = data.token;
     localStorage.setItem('panik_admin_token', token);
     initApp();
-  } catch (err) {
-    alert(err.message);
-  }
+  } catch (err) { alert(err.message); }
 });
 
 document.querySelectorAll('.nav-item').forEach(item => {
@@ -113,7 +109,6 @@ async function loadProducts() {
         <td><img src="${imgUrl}" class="table-img" onerror="this.src='/images/placeholder.jpg'"></td>
         <td>${p.name}</td>
         <td>${p.price} HTG</td>
-        <td><span style="color:${p.active ? '#00ff88' : '#ff0040'}">${p.active ? 'Aktif' : 'Inaktif'}</span></td>
         <td><button class="btn btn-outline" onclick="editProduct(${p.id})">Modifye</button></td>
       </tr>
     `}).join('');
@@ -142,33 +137,30 @@ function editProduct(id) {
 async function saveProduct(e) {
   e.preventDefault();
   const id = document.getElementById('prod-id').value;
+  const imgVal = document.getElementById('prod-image-url').value;
   const body = {
     name: document.getElementById('prod-name').value,
-    price: document.getElementById('prod-price').value,
-    category: document.getElementById('prod-cat').value,
+    price: Number(document.getElementById('prod-price').value),
+    category: document.getElementById('prod-cat').value || 'general',
     description: document.getElementById('prod-desc').value,
-    images: [document.getElementById('prod-image-url').value]
+    images: imgVal ? [imgVal] : [],
+    stock: 99,
+    active: 1
   };
   try {
     if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
     else await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
     document.getElementById('modal-product').classList.remove('open');
-    showToast('Sove ak siksè');
+    showToast('Pwodwi sove');
     loadProducts();
-  } catch (err) { alert(err.message); }
+  } catch (err) { alert('Erè: ' + err.message); }
 }
 
 async function loadOrders() {
   try {
     const ords = await apiFetch('/admin/orders');
     document.getElementById('orders-body').innerHTML = ords.map(o => `
-      <tr>
-        <td>${o.order_number}</td>
-        <td>${o.customer_name}</td>
-        <td>${o.total} HTG</td>
-        <td>${o.status}</td>
-        <td><button class="btn btn-outline">Wè</button></td>
-      </tr>
+      <tr><td>${o.order_number}</td><td>${o.customer_name}</td><td>${o.total} HTG</td><td>Wè</td></tr>
     `).join('');
   } catch (err) { console.error(err); }
 }
@@ -177,12 +169,7 @@ async function loadCustomers() {
   try {
     const custs = await apiFetch('/admin/registered-customers');
     document.getElementById('customers-body').innerHTML = custs.map(c => `
-      <tr>
-        <td>${c.full_name}</td>
-        <td>${c.email}</td>
-        <td>${c.phone || '-'}</td>
-        <td>${new Date(c.created_at).toLocaleDateString()}</td>
-      </tr>
+      <tr><td>${c.full_name}</td><td>${c.email}</td><td>${c.phone || '-'}</td><td>${new Date(c.created_at).toLocaleDateString()}</td></tr>
     `).join('');
   } catch (err) { console.error(err); }
 }
@@ -194,7 +181,6 @@ async function loadAds() {
       <tr>
         <td>${a.type === 'image' ? `<img src="${a.media_url}" class="table-img">` : 'Video'}</td>
         <td>${a.title || '-'}</td>
-        <td><span style="color:${a.active ? '#00ff88' : '#ff0040'}">${a.active ? 'Aktif' : 'Inaktif'}</span></td>
         <td><button class="btn btn-outline" onclick="editAd(${a.id})">Modifye</button></td>
       </tr>
     `).join('');
