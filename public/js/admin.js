@@ -9,11 +9,6 @@ function showToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-function toggleSidebar() {
-  document.getElementById('app-sidebar').classList.toggle('open');
-  document.getElementById('sidebar-overlay').classList.toggle('open');
-}
-
 function logout() {
   localStorage.removeItem('panik_admin_token');
   location.reload();
@@ -61,7 +56,6 @@ document.querySelectorAll('.nav-item').forEach(function(item) {
     document.getElementById('page-' + item.dataset.page).classList.remove('hidden');
     document.getElementById('current-page-title').textContent = item.textContent.trim();
     loadPageData(item.dataset.page);
-    if(window.innerWidth <= 768) toggleSidebar();
   });
 });
 
@@ -147,7 +141,6 @@ async function saveProduct(e) {
   e.preventDefault();
   const id = document.getElementById('prod-id').value;
   const imgVal = document.getElementById('prod-image-url').value;
-  
   const body = {
     name: document.getElementById('prod-name').value,
     price: Number(document.getElementById('prod-price').value),
@@ -161,12 +154,11 @@ async function saveProduct(e) {
     featured: 0,
     active: 1
   };
-  
   try {
     if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
     else await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
     document.getElementById('modal-product').classList.remove('open');
-    showToast('Pwodwi sove ak siksè');
+    showToast('Pwodwi sove');
     loadProducts();
   } catch (err) { alert('Erè: ' + err.message); }
 }
