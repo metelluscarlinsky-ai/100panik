@@ -14,7 +14,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/customer', require('./routes/customer-auth'));
 
 // Rate limit jeneral
 app.use('/api/', rateLimit({
@@ -40,6 +39,7 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/shipping', require('./routes/shipping'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/ads', require('./routes/ads'));
+app.use('/api/customer', require('./routes/customer-auth'));
 
 // ---------- UPLOADS ----------
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
@@ -50,7 +50,6 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
 app.use(express.static(path.join(__dirname, '..', 'public'), {
   extensions: ['html'],
   setHeaders: (res, filePath) => {
-    // Service worker pa dwe cache
     if (filePath.endsWith('service-worker.js')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Service-Worker-Allowed', '/');
@@ -58,18 +57,13 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
   }
 }));
 
-// ---------- FALLBACK ----------
-
-// Bloke endèks admin nan Google
-app.get('/admin-100panik*', (req, res, next) => {
-  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
-  next();
-});
-
-
+// ---------- WOUT ADMIN (KORIJE) ----------
 app.get('/admin-100panik', (req, res) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
   res.sendFile(path.join(__dirname, '..', 'public', 'admin-100panik.html'));
 });
+
+// ---------- FALLBACK ----------
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) return next();
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
@@ -84,27 +78,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Erè sèvè' });
 });
 
-const db = require('./models/db');
-
-async function startServer() {
-  try {
-    await db.initDb();
-    await db.seed();
-    console.log('✅ Baz done Supabase pare');
-
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`
 ╔══════════════════════════════════════════════╗
 ║  100PANIK — Sèvè ap kouri                    ║
 ║  http://localhost:${PORT}                       ║
 ║  Admin: http://localhost:${PORT}/admin-100panik ║
 ╚══════════════════════════════════════════════╝
-      `);
-    });
-  } catch (err) {
-    console.error('❌ Erè inisyalizasyon:', err);
-    process.exit(1);
-  }
-}
-
-startServer();
+  `);
+});
