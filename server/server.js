@@ -60,7 +60,7 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
 // ---------- WOUT ADMIN (KORIJE) ----------
 app.get('/admin-100panik', (req, res) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
-  res.sendFile(path.join(__dirname, '..', 'public', 'admin-100panik.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin-100panik-v2.html'));
 });
 
 // ---------- FALLBACK ----------

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - 100PANIK</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0a0a; --bg-card: #141414; --border: #222; --text: #fff; --text-muted: #888; --cyan: #00f0ff; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+  
+  #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+  .login-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 400px; }
+  .login-box h1 { margin-bottom: 20px; color: var(--cyan); font-size: 24px; text-align: center; }
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
+  .form-group input, .form-group select { width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
+  .form-group input:focus { border-color: var(--cyan); }
+  .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 100%; transition: 0.2s;}
+  .btn-primary { background: var(--cyan); color: #000; }
+  .btn-danger { background: rgba(255,0,64,0.1); color: #ff0040; border: 1px solid rgba(255,0,64,0.3); }
+  .hidden { display: none !important; }
+
+  .sidebar { width: 240px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px; flex-shrink: 0; }
+  .logo { font-size: 20px; font-weight: 800; color: var(--cyan); margin-bottom: 30px; }
+  .nav-item { padding: 12px; color: var(--text-muted); border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 14px; font-weight: 500; }
+  .nav-item:hover, .nav-item.active { background: rgba(0, 240, 255, 0.1); color: var(--cyan); }
+  
+  .main-content { flex: 1; padding: 30px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px; }
+  .page-title { font-size: 24px; font-weight: 700; }
+  
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; background: #222; }
+  .card h3 { font-size: 16px; }
+  .card p { color: var(--text-muted); font-size: 13px; }
+  .card .actions { display: flex; gap: 10px; margin-top: auto; }
+  .card .actions .btn { padding: 8px; font-size: 13px; }
+
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  .modal.open { display: flex; }
+  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 25px; }
+  .modal-content h2 { margin-bottom: 20px; color: var(--cyan); }
+  
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; display: flex; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
+    .logo { display: none; }
+    .nav-item { white-space: nowrap; margin-bottom: 0; }
+    .main-content { padding: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <h1>100PANIK Admin</h1>
+    <form id="login-form">
+      <div class="form-group"><label>Imel</label><input type="email" id="login-email" required></div>
+      <div class="form-group"><label>Modpas</label><input type="password" id="login-pass" required></div>
+      <button type="submit" class="btn btn-primary">Konekte</button>
+    </form>
+  </div>
+</div>
+
+<div id="app-main" class="hidden" style="display:flex; width:100%;">
+  <div class="sidebar">
+    <div class="logo">100PANIK</div>
+    <div class="nav-item active" data-page="dashboard">Dashboard</div>
+    <div class="nav-item" data-page="products">Pwodwi</div>
+    <div class="nav-item" data-page="ads">Piblisite</div>
+    <div class="nav-item" data-page="settings">Konfigirasyon</div>
+  </div>
+  <div class="main-content">
+    <div class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <button class="btn btn-danger" style="width:auto;" onclick="logout()">Dekonekte</button>
+    </div>
+
+    <div id="page-dashboard" class="page-content">
+      <div id="stats" class="grid"></div>
+    </div>
+
+    <div id="page-products" class="page-content hidden">
+      <button class="btn btn-primary" style="width:auto; margin-bottom:20px;" onclick="openModal('modal-prod')">+ Ajoute Pwodwi</button>
+      <div id="prod-list" class="grid"></div>
+    </div>
+
+    <div id="page-ads" class="page-content hidden">
+      <button class="btn btn-primary" style="width:auto; margin-bottom:20px;" onclick="openModal('modal-ad')">+ Ajoute Piblisite</button>
+      <div id="ad-list" class="grid"></div>
+    </div>
+
+    <div id="page-settings" class="page-content hidden">
+      <div class="card" style="max-width:500px;">
+        <h3>Konfigirasyon Sit</h3>
+        <form id="settings-form">
+          <div class="form-group"><label>Non Mak</label><input type="text" id="set-brand"></div>
+          <div class="form-group"><label>Imel Kontak</label><input type="email" id="set-email"></div>
+          <button type="submit" class="btn btn-primary">Sove</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-prod">
+  <div class="modal-content">
+    <h2>Pwodwi</h2>
+    <form id="form-prod">
+      <input type="hidden" id="p-id">
+      <div class="form-group"><label>Non</label><input type="text" id="p-name" required></div>
+      <div class="form-group"><label>Pri (HTG)</label><input type="number" id="p-price" required></div>
+      <div class="form-group"><label>Stock</label><input type="number" id="p-stock" value="10" required></div>
+      <div class="form-group"><label>Kategori</label><input type="text" id="p-cat" placeholder="Ex: hoodie"></div>
+      <div class="form-group"><label>Foto</label><input type="file" id="p-file" accept="image/*"></div>
+      <input type="hidden" id="p-img-url">
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button type="button" class="btn btn-danger" onclick="closeModal('modal-prod')">Anile</button>
+        <button type="submit" class="btn btn-primary">Anrejistre</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal-ad">
+  <div class="modal-content">
+    <h2>Piblisite</h2>
+    <form id="form-ad">
+      <div class="form-group"><label>Tit (Opsyonel)</label><input type="text" id="a-title"></div>
+      <div class="form-group"><label>Foto/Video</label><input type="file" id="a-file" accept="image/*,video/mp4"></div>
+      <input type="hidden" id="a-img-url">
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button type="button" class="btn btn-danger" onclick="closeModal('modal-ad')">Anile</button>
+        <button type="submit" class="btn btn-primary">Anrejistre</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
