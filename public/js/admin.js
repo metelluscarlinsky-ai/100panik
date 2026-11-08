@@ -124,13 +124,11 @@ async function uploadFile(input, targetId) {
   } catch (err) { alert('Erè upload: ' + err.message); }
 }
 
-// ============ PWODWI ============
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
     window.allProducts = prods;
     const container = document.getElementById('products-list');
-    
     if (!container) return;
     
     if (prods.length === 0) {
@@ -152,7 +150,7 @@ async function loadProducts() {
         '</div>' +
       '</div>';
     }).join('');
-  } catch (err) { console.error('Erè chajman pwodwi:', err); }
+  } catch (err) { console.error(err); }
 }
 
 window.editProduct = function(id) {
@@ -204,7 +202,6 @@ async function saveProduct(e) {
   } catch (err) { alert('Erè: ' + err.message); }
 }
 
-// ============ PIBLISITE ============
 async function loadAds() {
   try {
     const ads = await apiFetch('/admin/ads');
@@ -239,7 +236,6 @@ async function saveAd(e) {
   } catch (err) { alert(err.message); }
 }
 
-// ============ DASHBOARD ============
 async function loadStats() {
   try {
     const s = await apiFetch('/admin/stats');
@@ -251,7 +247,6 @@ async function loadStats() {
   } catch (err) { console.error(err); }
 }
 
-// ============ KONFIGIRASYON ============
 async function loadSettings() {
   try {
     const s = await apiFetch('/admin/settings');

@@ -38,42 +38,35 @@
   .stat-title { color: var(--text-muted); font-size: 13px; margin-bottom: 8px; }
   .stat-value { font-size: 24px; font-weight: 700; color: var(--cyan); }
 
-  /* KAT PWODWI YO */
   .product-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
     gap: 20px;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
   .product-card img {
-    width: 90px;
-    height: 90px;
-    border-radius: 10px;
-    object-fit: cover;
-    background: #222;
-    flex-shrink: 0;
+    width: 80px; height: 80px; border-radius: 10px; object-fit: cover; background: #222; flex-shrink: 0;
   }
   .product-card .p-info { flex: 1; }
-  .product-card .p-info h3 { font-size: 18px; margin-bottom: 8px; color: #fff; }
-  .product-card .p-info .p-details { font-size: 14px; color: var(--text-muted); margin-bottom: 15px; }
-  .product-card .p-actions { display: flex; flex-direction: column; gap: 10px; }
-  .product-card .p-actions .btn { padding: 10px 20px; font-size: 14px; }
+  .product-card .p-info h3 { font-size: 16px; margin-bottom: 5px; color: #fff; }
+  .product-card .p-info .p-details { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .product-card .p-actions { display: flex; flex-direction: column; gap: 8px; }
+  .product-card .p-actions .btn { padding: 8px 15px; font-size: 12px; }
 
-  /* MODAL */
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
   .modal.open { display: flex; }
-  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 650px; padding: 30px; max-height: 90vh; overflow-y: auto; }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-  .modal-header h2 { font-size: 22px; color: var(--cyan); }
+  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 600px; padding: 25px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+  .modal-header h2 { font-size: 20px; color: var(--cyan); }
   .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  
   .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-  .chip { padding: 8px 16px; border-radius: 100px; background: #0a0a0a; border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: 0.2s; user-select: none; }
+  .chip { padding: 6px 14px; border-radius: 100px; background: #0a0a0a; border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: 0.2s; user-select: none; }
   .chip:hover { border-color: var(--cyan); }
   .chip.active { background: var(--cyan); color: #000; border-color: var(--cyan); font-weight: 600; }
 
@@ -90,7 +83,6 @@
     .topbar { flex-direction: column; align-items: flex-start; }
     .form-row { grid-template-columns: 1fr; gap: 0; }
     
-    /* Sou telefòn, kat yo vin pi piti */
     .product-card { flex-direction: column; text-align: center; }
     .product-card .p-actions { flex-direction: row; width: 100%; }
     .product-card .p-actions .btn { flex: 1; }
@@ -134,9 +126,7 @@
 
   <div id="page-products" class="page-content hidden">
     <div style="margin-bottom:20px;"><button id="btn-add-prod" class="btn btn-primary">+ Ajoute Pwodwi</button></div>
-    <div id="products-list">
-      <!-- Kat pwodwi yo ap parèt isit la -->
-    </div>
+    <div id="products-list"></div>
   </div>
 
   <div id="page-orders" class="page-content hidden">
@@ -153,7 +143,7 @@
   </div>
 
   <div id="page-settings" class="page-content hidden">
-    <div class="settings-card" style="background:var(--bg-card); padding:25px; border-radius:12px; border:1px solid var(--border); max-width:700px;">
+    <div style="background:var(--bg-card); padding:25px; border-radius:12px; border:1px solid var(--border); max-width:700px;">
       <h3 style="margin-bottom:20px; color:var(--cyan);">Konfigirasyon</h3>
       <form id="settings-form" onsubmit="saveSettings(event)">
         <div class="form-row">
@@ -168,7 +158,6 @@
   </div>
 </div>
 
-<!-- MODAL PWODWI -->
 <div class="modal" id="modal-product">
   <div class="modal-content">
     <div class="modal-header"><h2>Pwodwi</h2><button class="close-btn" onclick="document.getElementById('modal-product').classList.remove('open')">x</button></div>
@@ -194,7 +183,6 @@
   </div>
 </div>
 
-<!-- MODAL PIBLISITE -->
 <div class="modal" id="modal-ad">
   <div class="modal-content">
     <div class="modal-header"><h2>Piblisite</h2><button class="close-btn" onclick="document.getElementById('modal-ad').classList.remove('open')">x</button></div>
