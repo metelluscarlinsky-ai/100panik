@@ -141,6 +141,9 @@ async function uploadFile(input, targetId) {
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
+    window.allProducts = prods;
+
+    // Pou Desktop (Tablo)
     document.getElementById('products-body').innerHTML = prods.map(function(p) {
       const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
       return '<tr>' +
@@ -154,7 +157,25 @@ async function loadProducts() {
         '</td>' +
       '</tr>';
     }).join('');
-    window.allProducts = prods;
+
+    // Pou Telefon (Kat)
+    const mobileContainer = document.getElementById('products-body-mobile');
+    if (mobileContainer) {
+      mobileContainer.innerHTML = prods.map(function(p) {
+        const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
+        return '<div class="product-card-mobile">' +
+          '<img src="' + imgUrl + '">' +
+          '<div class="info">' +
+            '<h4>' + p.name + '</h4>' +
+            '<p>' + p.price + ' HTG | Stock: ' + (p.stock !== undefined ? p.stock : '-') + '</p>' +
+            '<div class="actions">' +
+              '<button class="btn btn-outline" onclick="window.editProduct(' + p.id + ')">Modifye</button>' +
+              '<button class="btn btn-danger" onclick="window.deleteProduct(' + p.id + ')">Efase</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
   } catch (err) { console.error(err); }
 }
 
