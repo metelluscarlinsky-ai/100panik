@@ -28,7 +28,7 @@ async function apiFetch(endpoint, opts) {
   return data;
 }
 
-// --- KONEKSYON ---
+// KONEKSYON
 var loginForm = document.getElementById('login-form');
 if (loginForm) {
   loginForm.addEventListener('submit', async function(e) {
@@ -48,7 +48,7 @@ if (loginForm) {
   });
 }
 
-// --- NAVIGASYON ---
+// NAVIGASYON
 document.querySelectorAll('.nav-item').forEach(function(item) {
   item.addEventListener('click', function() {
     document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
@@ -63,8 +63,6 @@ document.querySelectorAll('.nav-item').forEach(function(item) {
 function loadPageData(page) {
   if (page === 'dashboard') loadStats();
   if (page === 'products') loadProducts();
-  if (page === 'orders') loadOrders();
-  if (page === 'customers') loadCustomers();
   if (page === 'ads') loadAds();
   if (page === 'settings') loadSettings();
 }
@@ -74,6 +72,7 @@ async function initApp() {
   document.getElementById('app-sidebar').style.display = 'block';
   document.getElementById('app-main').style.display = 'block';
   loadStats();
+  loadProducts(); // Chaje pwodwi yo touswit
 
   document.getElementById('btn-add-prod').addEventListener('click', function() {
     document.getElementById('form-product').reset();
@@ -95,30 +94,21 @@ async function initApp() {
   document.querySelectorAll('#sizes-container .chip').forEach(chip => {
     chip.onclick = () => {
       const val = chip.dataset.val;
-      if (currentSizes.includes(val)) {
-        currentSizes = currentSizes.filter(v => v !== val);
-        chip.classList.remove('active');
-      } else {
-        currentSizes.push(val);
-        chip.classList.add('active');
-      }
+      if (currentSizes.includes(val)) { currentSizes = currentSizes.filter(v => v !== val); chip.classList.remove('active'); } 
+      else { currentSizes.push(val); chip.classList.add('active'); }
     };
   });
 
   document.querySelectorAll('#colors-container .chip').forEach(chip => {
     chip.onclick = () => {
       const val = chip.dataset.val;
-      if (currentColors.includes(val)) {
-        currentColors = currentColors.filter(v => v !== val);
-        chip.classList.remove('active');
-      } else {
-        currentColors.push(val);
-        chip.classList.add('active');
-      }
+      if (currentColors.includes(val)) { currentColors = currentColors.filter(v => v !== val); chip.classList.remove('active'); } 
+      else { currentColors.push(val); chip.classList.add('active'); }
     };
   });
 }
 
+// UPLOAD
 async function uploadFile(input, targetId) {
   if (!input.files || !input.files[0]) return;
   const fd = new FormData();
@@ -137,49 +127,35 @@ async function uploadFile(input, targetId) {
   } catch (err) { alert('Erè upload: ' + err.message); }
 }
 
-// --- PWODWI ---
+// PWODWI
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
     window.allProducts = prods;
-
-    // Pou Desktop (Tablo)
-    document.getElementById('products-body').innerHTML = prods.map(function(p) {
-      const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
-      return '<tr>' +
-        '<td><img src="' + imgUrl + '" class="table-img"></td>' +
-        '<td>' + p.name + '</td>' +
-        '<td>' + p.price + ' HTG</td>' +
-        '<td>' + (p.stock !== undefined ? p.stock : '-') + '</td>' +
-        '<td>' +
-          '<button class="btn btn-outline" onclick="window.editProduct(' + p.id + ')" style="margin-right:5px;">Modifye</button>' +
-          '<button class="btn btn-danger" onclick="window.deleteProduct(' + p.id + ')">Efase</button>' +
-        '</td>' +
-      '</tr>';
-    }).join('');
-
-    // Pou Telefon (Kat)
-    const mobileContainer = document.getElementById('products-body-mobile');
-    if (mobileContainer) {
-      mobileContainer.innerHTML = prods.map(function(p) {
-        const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
-        return '<div class="product-card-mobile">' +
-          '<img src="' + imgUrl + '">' +
-          '<div class="info">' +
-            '<h4>' + p.name + '</h4>' +
-            '<p>' + p.price + ' HTG | Stock: ' + (p.stock !== undefined ? p.stock : '-') + '</p>' +
-            '<div class="actions">' +
-              '<button class="btn btn-outline" onclick="window.editProduct(' + p.id + ')">Modifye</button>' +
-              '<button class="btn btn-danger" onclick="window.deleteProduct(' + p.id + ')">Efase</button>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
+    const container = document.getElementById('products-list');
+    
+    if (prods.length === 0) {
+      container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Pa gen pwodwi.</p>';
+      return;
     }
+
+    container.innerHTML = prods.map(function(p) {
+      const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
+      return '<div class="product-card">' +
+        '<img src="' + imgUrl + '">' +
+        '<div class="p-info">' +
+          '<h3>' + p.name + '</h3>' +
+          '<div class="p-details">' + p.price + ' HTG | Stock: ' + (p.stock !== undefined ? p.stock : '-') + '</div>' +
+        '</div>' +
+        '<div class="p-actions">' +
+          '<button class="btn btn-outline" onclick="window.editProduct(' + p.id + ')">Modifye</button>' +
+          '<button class="btn btn-danger" onclick="window.deleteProduct(' + p.id + ')">Efase</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
   } catch (err) { console.error(err); }
 }
 
-// ATANSYON: Nou mete fonksyon yo sou window pou onclick yo ka jwenn yo
 window.editProduct = function(id) {
   const p = window.allProducts.find(function(x) { return x.id === id; });
   document.getElementById('prod-id').value = p.id;
@@ -191,20 +167,16 @@ window.editProduct = function(id) {
   document.getElementById('prod-image-url').value = (p.images && p.images.length) ? p.images[0] : '';
 
   currentSizes = p.sizes || [];
-  document.querySelectorAll('#sizes-container .chip').forEach(c => {
-    c.classList.toggle('active', currentSizes.includes(c.dataset.val));
-  });
+  document.querySelectorAll('#sizes-container .chip').forEach(c => { c.classList.toggle('active', currentSizes.includes(c.dataset.val)); });
 
   currentColors = p.colors || [];
-  document.querySelectorAll('#colors-container .chip').forEach(c => {
-    c.classList.toggle('active', currentColors.includes(c.dataset.val));
-  });
+  document.querySelectorAll('#colors-container .chip').forEach(c => { c.classList.toggle('active', currentColors.includes(c.dataset.val)); });
 
   document.getElementById('modal-product').classList.add('open');
 };
 
 window.deleteProduct = async function(id) {
-  if (!confirm('Èske w sèten ou vle efase pwodwi sa a nèt?')) return;
+  if (!confirm('Èske w sèten ou vle efase pwodwi sa a?')) return;
   try {
     await apiFetch('/admin/products/' + id, { method: 'DELETE' });
     showToast('Pwodwi efase');
@@ -216,40 +188,32 @@ async function saveProduct(e) {
   e.preventDefault();
   const id = document.getElementById('prod-id').value;
   const imgVal = document.getElementById('prod-image-url').value;
-  
   const body = {
     name: document.getElementById('prod-name').value,
     price: Number(document.getElementById('prod-price').value),
-    compare_price: 0,
-    category: document.getElementById('prod-cat').value || 'general',
+    compare_price: 0, category: document.getElementById('prod-cat').value || 'general',
     description: document.getElementById('prod-desc').value,
-    images: imgVal ? [imgVal] : [],
-    sizes: currentSizes,
-    colors: currentColors,
-    stock: Number(document.getElementById('prod-stock').value),
-    featured: 0,
-    active: 1
+    images: imgVal ? [imgVal] : [], sizes: currentSizes, colors: currentColors,
+    stock: Number(document.getElementById('prod-stock').value), featured: 0, active: 1
   };
-  
   try {
-    if (id) {
-      await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
-    } else {
-      await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
-    }
+    if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
+    else await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
     document.getElementById('modal-product').classList.remove('open');
     showToast('Pwodwi sove ak siksè');
     loadProducts();
   } catch (err) { alert('Erè: ' + err.message); }
 }
 
-// --- PIBLISITE ---
+// PIBLISITE
 async function loadAds() {
   try {
     const ads = await apiFetch('/admin/ads');
-    document.getElementById('ads-body').innerHTML = ads.map(function(a) {
-      var media = a.type === 'image' ? '<img src="' + a.media_url + '" class="table-img">' : 'Video';
-      return '<tr><td>' + media + '</td><td>' + (a.title || '-') + '</td><td><button class="btn btn-danger" onclick="window.deleteAd(' + a.id + ')">Efase</button></td></tr>';
+    document.getElementById('ads-list').innerHTML = ads.map(function(a) {
+      return '<div class="product-card">' +
+        '<div class="p-info"><h3>' + (a.title || 'Piblisite') + '</h3></div>' +
+        '<div class="p-actions"><button class="btn btn-danger" onclick="window.deleteAd(' + a.id + ')">Efase</button></div>' +
+      '</div>';
     }).join('');
   } catch (err) { console.error(err); }
 }
@@ -265,7 +229,7 @@ window.deleteAd = async function(id) {
 
 async function saveAd(e) {
   e.preventDefault();
-  const body = { title: document.getElementById('ad-title').value, type: document.getElementById('ad-type').value, media_url: document.getElementById('ad-media-url').value, active: 1 };
+  const body = { title: document.getElementById('ad-title').value, type: 'image', media_url: document.getElementById('ad-media-url').value, active: 1 };
   try {
     await apiFetch('/admin/ads', { method: 'POST', body: JSON.stringify(body) });
     document.getElementById('modal-ad').classList.remove('open');
@@ -274,7 +238,7 @@ async function saveAd(e) {
   } catch (err) { alert(err.message); }
 }
 
-// --- DASHBOARD ---
+// DASHBOARD
 async function loadStats() {
   try {
     const s = await apiFetch('/admin/stats');
@@ -286,7 +250,7 @@ async function loadStats() {
   } catch (err) { console.error(err); }
 }
 
-// --- KONFIGIRASYON ---
+// KONFIGIRASYON
 async function loadSettings() {
   try {
     const s = await apiFetch('/admin/settings');
@@ -304,21 +268,6 @@ async function saveSettings(e) {
     await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
     showToast('Konfigirasyon sove');
   } catch (err) { alert(err.message); }
-}
-
-// --- KOMAND & KLIYAN ---
-async function loadOrders() {
-  try {
-    const ords = await apiFetch('/admin/orders');
-    document.getElementById('orders-body').innerHTML = ords.map(function(o) { return '<tr><td>' + o.order_number + '</td><td>' + o.customer_name + '</td><td>' + o.total + ' HTG</td><td>Wè</td></tr>'; }).join('');
-  } catch (err) { console.error(err); }
-}
-
-async function loadCustomers() {
-  try {
-    const custs = await apiFetch('/admin/registered-customers');
-    document.getElementById('customers-body').innerHTML = custs.map(function(c) { return '<tr><td>' + c.full_name + '</td><td>' + c.email + '</td><td>' + (c.phone || '-') + '</td><td>' + new Date(c.created_at).toLocaleDateString() + '</td></tr>'; }).join('');
-  } catch (err) { console.error(err); }
 }
 
 if (token) initApp(); else document.getElementById('login-screen').style.display = 'flex';
