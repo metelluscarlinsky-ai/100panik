@@ -2,54 +2,95 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Admin - 100PANIK</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #0a0a0a; --bg-card: #141414; --border: #222; --text: #fff; --text-muted: #888; --cyan: #00f0ff; }
+  :root { --bg: #09090b; --bg-card: #18181b; --border: #27272a; --text: #fafafa; --text-muted: #a1a1aa; --cyan: #06b6d4; --danger: #ef4444; }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-  body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+  body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; flex-direction: column; }
   
+  /* KONEKSYON */
   #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
-  .login-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 400px; }
-  .login-box h1 { margin-bottom: 20px; color: var(--cyan); font-size: 24px; text-align: center; }
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
-  .form-group input, .form-group select { width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
-  .form-group input:focus { border-color: var(--cyan); }
-  .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 100%; transition: 0.2s;}
-  .btn-primary { background: var(--cyan); color: #000; }
-  .btn-danger { background: rgba(255,0,64,0.1); color: #ff0040; border: 1px solid rgba(255,0,64,0.3); }
+  .login-box { background: var(--bg-card); padding: 40px 30px; border-radius: 24px; border: 1px solid var(--border); width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .login-box h1 { margin-bottom: 30px; color: var(--text); font-size: 28px; text-align: center; font-weight: 700; letter-spacing: -1px; }
+  .login-box h1 span { color: var(--cyan); }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text); outline: none; font-size: 15px; transition: 0.2s; }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2); }
+  .btn { padding: 14px 20px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; font-size: 15px; }
+  .btn-primary { background: var(--cyan); color: #000; width: 100%; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
   .hidden { display: none !important; }
 
-  .sidebar { width: 240px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px; flex-shrink: 0; }
-  .logo { font-size: 20px; font-weight: 800; color: var(--cyan); margin-bottom: 30px; }
-  .nav-item { padding: 12px; color: var(--text-muted); border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 14px; font-weight: 500; }
-  .nav-item:hover, .nav-item.active { background: rgba(0, 240, 255, 0.1); color: var(--cyan); }
+  /* APLIKASYON */
+  #app-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
   
-  .main-content { flex: 1; padding: 30px; }
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px; }
-  .page-title { font-size: 24px; font-weight: 700; }
+  /* TOPBAR */
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .topbar .logo { font-size: 20px; font-weight: 800; color: var(--text); }
+  .topbar .logo span { color: var(--cyan); }
+  .topbar .actions { display: flex; gap: 10px; align-items: center; }
   
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-  .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; background: #222; }
-  .card h3 { font-size: 16px; }
-  .card p { color: var(--text-muted); font-size: 13px; }
-  .card .actions { display: flex; gap: 10px; margin-top: auto; }
-  .card .actions .btn { padding: 8px; font-size: 13px; }
+  /* NAVIGASYON (CHIPS) */
+  .nav-tabs { display: flex; overflow-x: auto; gap: 10px; padding: 15px 20px; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-chip { padding: 10px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px; white-space: nowrap; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+  .nav-chip:hover { border-color: var(--text-muted); }
+  .nav-chip.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
+  
+  /* KONTNI */
+  .content-area { padding: 20px; flex: 1; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .stat-title { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 24px; font-weight: 700; color: var(--text); }
+  
+  /* PRODUITS / ADS GRID */
+  .products-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+  .product-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; gap: 15px; align-items: center; }
+  .product-card img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: var(--bg); flex-shrink: 0; border: 1px solid var(--border); }
+  .product-info { flex: 1; }
+  .product-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+  .product-info p { font-size: 14px; color: var(--text-muted); }
+  .product-actions { display: flex; flex-direction: column; gap: 8px; }
+  .product-actions button { padding: 8px 16px; font-size: 13px; }
 
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  /* MODAL */
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
   .modal.open { display: flex; }
-  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 25px; }
-  .modal-content h2 { margin-bottom: 20px; color: var(--cyan); }
+  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 500px; padding: 25px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .modal-header h2 { font-size: 20px; color: var(--text); font-weight: 700; }
+  .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; transition: 0.2s; }
+  .close-btn:hover { color: var(--text); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
   
-  @media (max-width: 768px) {
-    body { flex-direction: column; }
-    .sidebar { width: 100%; display: flex; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
-    .logo { display: none; }
-    .nav-item { white-space: nowrap; margin-bottom: 0; }
-    .main-content { padding: 15px; }
+  /* TOAST */
+  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--cyan); color: var(--text); padding: 15px 25px; border-radius: 12px; z-index: 9999; font-size: 14px; font-weight: 500; transform: translateY(100px); opacity: 0; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* MOBILE ADJUSTMENTS */
+  @media (min-width: 768px) {
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    .product-actions { flex-direction: row; }
+    .nav-tabs { justify-content: center; }
+    .sidebar { display: block; }
+    .nav-tabs { display: none; }
+    .app-layout { display: flex; }
+    .sidebar { width: 250px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px; min-height: calc(100vh - 65px); }
+    .sidebar .nav-chip { display: block; width: 100%; text-align: left; margin-bottom: 8px; border-radius: 8px; padding: 12px 16px; border: none; background: transparent; }
+    .sidebar .nav-chip:hover { background: var(--bg); }
+    .sidebar .nav-chip.active { background: rgba(6, 182, 212, 0.1); color: var(--cyan); }
+    .content-area { flex: 1; }
   }
 </style>
 </head>
@@ -57,90 +98,132 @@
 
 <div id="login-screen">
   <div class="login-box">
-    <h1>100PANIK Admin</h1>
+    <h1><span>100</span>PANIK Admin</h1>
     <form id="login-form">
-      <div class="form-group"><label>Imel</label><input type="email" id="login-email" required></div>
-      <div class="form-group"><label>Modpas</label><input type="password" id="login-pass" required></div>
+      <div class="form-group">
+        <label>Imel</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="form-group">
+        <label>Modpas</label>
+        <input type="password" id="login-pass" required>
+      </div>
       <button type="submit" class="btn btn-primary">Konekte</button>
     </form>
   </div>
 </div>
 
-<div id="app-main" class="hidden" style="display:flex; width:100%;">
-  <div class="sidebar">
-    <div class="logo">100PANIK</div>
-    <div class="nav-item active" data-page="dashboard">Dashboard</div>
-    <div class="nav-item" data-page="products">Pwodwi</div>
-    <div class="nav-item" data-page="ads">Piblisite</div>
-    <div class="nav-item" data-page="settings">Konfigirasyon</div>
+<div id="app-wrapper" class="hidden">
+  <div class="topbar">
+    <div class="logo"><span>100</span>PANIK</div>
+    <div class="actions">
+      <button class="btn btn-danger" style="padding: 8px 15px; font-size: 13px;" onclick="logout()">Dekonekte</button>
+    </div>
   </div>
-  <div class="main-content">
-    <div class="topbar">
-      <h1 id="page-title">Dashboard</h1>
-      <button class="btn btn-danger" style="width:auto;" onclick="logout()">Dekonekte</button>
+
+  <!-- MOBILE NAV -->
+  <div class="nav-tabs" id="mobile-nav">
+    <div class="nav-chip active" data-page="dashboard">Dashboard</div>
+    <div class="nav-chip" data-page="products">Pwodwi</div>
+    <div class="nav-chip" data-page="ads">Piblisite</div>
+    <div class="nav-chip" data-page="settings">Konfigirasyon</div>
+  </div>
+
+  <div class="app-layout">
+    <!-- DESKTOP SIDEBAR -->
+    <div class="sidebar hidden" id="desktop-sidebar">
+      <div class="nav-chip active" data-page="dashboard">Dashboard</div>
+      <div class="nav-chip" data-page="products">Pwodwi</div>
+      <div class="nav-chip" data-page="ads">Piblisite</div>
+      <div class="nav-chip" data-page="settings">Konfigirasyon</div>
     </div>
 
-    <div id="page-dashboard" class="page-content">
-      <div id="stats" class="grid"></div>
-    </div>
-
-    <div id="page-products" class="page-content hidden">
-      <button class="btn btn-primary" style="width:auto; margin-bottom:20px;" onclick="openModal('modal-prod')">+ Ajoute Pwodwi</button>
-      <div id="prod-list" class="grid"></div>
-    </div>
-
-    <div id="page-ads" class="page-content hidden">
-      <button class="btn btn-primary" style="width:auto; margin-bottom:20px;" onclick="openModal('modal-ad')">+ Ajoute Piblisite</button>
-      <div id="ad-list" class="grid"></div>
-    </div>
-
-    <div id="page-settings" class="page-content hidden">
-      <div class="card" style="max-width:500px;">
-        <h3>Konfigirasyon Sit</h3>
-        <form id="settings-form">
-          <div class="form-group"><label>Non Mak</label><input type="text" id="set-brand"></div>
-          <div class="form-group"><label>Imel Kontak</label><input type="email" id="set-email"></div>
-          <button type="submit" class="btn btn-primary">Sove</button>
-        </form>
+    <div class="content-area">
+      
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page-content">
+        <div class="page-header"><h1>Dashboard</h1></div>
+        <div class="stats-grid" id="stats-container"></div>
       </div>
+
+      <!-- PWODWI -->
+      <div id="page-products" class="page-content hidden">
+        <div class="page-header">
+          <h1>Pwodwi</h1>
+          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-prod')">+ Ajoute</button>
+        </div>
+        <div class="products-grid" id="products-list"></div>
+      </div>
+
+      <!-- PIBLISITE -->
+      <div id="page-ads" class="page-content hidden">
+        <div class="page-header">
+          <h1>Piblisite</h1>
+          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-ad')">+ Ajoute</button>
+        </div>
+        <div class="products-grid" id="ads-list"></div>
+      </div>
+
+      <!-- KONFIGIRASYON -->
+      <div id="page-settings" class="page-content hidden">
+        <div class="page-header"><h1>Konfigirasyon</h1></div>
+        <div class="stat-card" style="max-width: 600px;">
+          <form id="settings-form">
+            <div class="form-group">
+              <label>Non Mak</label>
+              <input type="text" id="set-brand" placeholder="100PANIK">
+            </div>
+            <div class="form-group">
+              <label>Imel Kontak</label>
+              <input type="email" id="set-email" placeholder="kontak@100panik.com">
+            </div>
+            <button type="submit" class="btn btn-primary">Sove</button>
+          </form>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
+<!-- MODALS -->
 <div class="modal" id="modal-prod">
   <div class="modal-content">
-    <h2>Pwodwi</h2>
+    <div class="modal-header">
+      <h2>Pwodwi</h2>
+      <button class="close-btn" onclick="closeModal('modal-prod')">&times;</button>
+    </div>
     <form id="form-prod">
       <input type="hidden" id="p-id">
-      <div class="form-group"><label>Non</label><input type="text" id="p-name" required></div>
-      <div class="form-group"><label>Pri (HTG)</label><input type="number" id="p-price" required></div>
-      <div class="form-group"><label>Stock</label><input type="number" id="p-stock" value="10" required></div>
-      <div class="form-group"><label>Kategori</label><input type="text" id="p-cat" placeholder="Ex: hoodie"></div>
-      <div class="form-group"><label>Foto</label><input type="file" id="p-file" accept="image/*"></div>
-      <input type="hidden" id="p-img-url">
-      <div style="display:flex; gap:10px; margin-top:15px;">
-        <button type="button" class="btn btn-danger" onclick="closeModal('modal-prod')">Anile</button>
-        <button type="submit" class="btn btn-primary">Anrejistre</button>
+      <div class="form-group"><label>Non Pwodwi</label><input type="text" id="p-name" required></div>
+      <div class="form-row">
+        <div class="form-group"><label>Pri (HTG)</label><input type="number" id="p-price" required></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="p-stock" value="10" required></div>
       </div>
+      <div class="form-group"><label>Kategori</label><input type="text" id="p-cat" placeholder="Ex: hoodie, t-shirt"></div>
+      <div class="form-group"><label>Foto</label><input type="file" id="p-file" accept="image/*" onchange="uploadImg(this, 'p-img-url')"></div>
+      <input type="hidden" id="p-img-url">
+      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Anrejistre</button>
     </form>
   </div>
 </div>
 
 <div class="modal" id="modal-ad">
   <div class="modal-content">
-    <h2>Piblisite</h2>
+    <div class="modal-header">
+      <h2>Piblisite</h2>
+      <button class="close-btn" onclick="closeModal('modal-ad')">&times;</button>
+    </div>
     <form id="form-ad">
       <div class="form-group"><label>Tit (Opsyonel)</label><input type="text" id="a-title"></div>
-      <div class="form-group"><label>Foto/Video</label><input type="file" id="a-file" accept="image/*,video/mp4"></div>
+      <div class="form-group"><label>Fichye</label><input type="file" id="a-file" accept="image/*" onchange="uploadImg(this, 'a-img-url')"></div>
       <input type="hidden" id="a-img-url">
-      <div style="display:flex; gap:10px; margin-top:15px;">
-        <button type="button" class="btn btn-danger" onclick="closeModal('modal-ad')">Anile</button>
-        <button type="submit" class="btn btn-primary">Anrejistre</button>
-      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Anrejistre</button>
     </form>
   </div>
 </div>
 
-<script src="/js/admin.js"></script>
+<div id="toast" class="toast"></div>
+<script src="/js/admin.js?v=1794181504"></script>
 </body>
 </html>
