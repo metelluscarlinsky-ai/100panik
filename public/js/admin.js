@@ -28,7 +28,6 @@ async function apiFetch(endpoint, opts) {
   return data;
 }
 
-// KONEKSYON
 var loginForm = document.getElementById('login-form');
 if (loginForm) {
   loginForm.addEventListener('submit', async function(e) {
@@ -48,7 +47,6 @@ if (loginForm) {
   });
 }
 
-// NAVIGASYON
 document.querySelectorAll('.nav-item').forEach(function(item) {
   item.addEventListener('click', function() {
     document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
@@ -72,7 +70,7 @@ async function initApp() {
   document.getElementById('app-sidebar').style.display = 'block';
   document.getElementById('app-main').style.display = 'block';
   loadStats();
-  loadProducts(); // Chaje pwodwi yo touswit
+  loadProducts();
 
   document.getElementById('btn-add-prod').addEventListener('click', function() {
     document.getElementById('form-product').reset();
@@ -108,7 +106,6 @@ async function initApp() {
   });
 }
 
-// UPLOAD
 async function uploadFile(input, targetId) {
   if (!input.files || !input.files[0]) return;
   const fd = new FormData();
@@ -127,15 +124,17 @@ async function uploadFile(input, targetId) {
   } catch (err) { alert('Erè upload: ' + err.message); }
 }
 
-// PWODWI
+// ============ PWODWI ============
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
     window.allProducts = prods;
     const container = document.getElementById('products-list');
     
+    if (!container) return;
+    
     if (prods.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Pa gen pwodwi.</p>';
+      container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">Pa gen pwodwi.</p>';
       return;
     }
 
@@ -153,7 +152,7 @@ async function loadProducts() {
         '</div>' +
       '</div>';
     }).join('');
-  } catch (err) { console.error(err); }
+  } catch (err) { console.error('Erè chajman pwodwi:', err); }
 }
 
 window.editProduct = function(id) {
@@ -162,8 +161,8 @@ window.editProduct = function(id) {
   document.getElementById('prod-name').value = p.name;
   document.getElementById('prod-price').value = p.price;
   document.getElementById('prod-stock').value = p.stock;
-  document.getElementById('prod-cat').value = p.category;
-  document.getElementById('prod-desc').value = p.description;
+  document.getElementById('prod-cat').value = p.category || '';
+  document.getElementById('prod-desc').value = p.description || '';
   document.getElementById('prod-image-url').value = (p.images && p.images.length) ? p.images[0] : '';
 
   currentSizes = p.sizes || [];
@@ -205,11 +204,13 @@ async function saveProduct(e) {
   } catch (err) { alert('Erè: ' + err.message); }
 }
 
-// PIBLISITE
+// ============ PIBLISITE ============
 async function loadAds() {
   try {
     const ads = await apiFetch('/admin/ads');
-    document.getElementById('ads-list').innerHTML = ads.map(function(a) {
+    const container = document.getElementById('ads-list');
+    if(!container) return;
+    container.innerHTML = ads.map(function(a) {
       return '<div class="product-card">' +
         '<div class="p-info"><h3>' + (a.title || 'Piblisite') + '</h3></div>' +
         '<div class="p-actions"><button class="btn btn-danger" onclick="window.deleteAd(' + a.id + ')">Efase</button></div>' +
@@ -238,7 +239,7 @@ async function saveAd(e) {
   } catch (err) { alert(err.message); }
 }
 
-// DASHBOARD
+// ============ DASHBOARD ============
 async function loadStats() {
   try {
     const s = await apiFetch('/admin/stats');
@@ -250,7 +251,7 @@ async function loadStats() {
   } catch (err) { console.error(err); }
 }
 
-// KONFIGIRASYON
+// ============ KONFIGIRASYON ============
 async function loadSettings() {
   try {
     const s = await apiFetch('/admin/settings');
