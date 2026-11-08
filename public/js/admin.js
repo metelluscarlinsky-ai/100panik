@@ -1,5 +1,7 @@
 var API = '/api';
 var token = localStorage.getItem('panik_admin_token');
+var currentSizes = [];
+var currentColors = [];
 
 function showToast(msg) {
   var t = document.getElementById('toast');
@@ -61,6 +63,33 @@ function initApp() {
   if(window.innerWidth >= 768) document.getElementById('desktop-sidebar').classList.remove('hidden');
   loadStats();
   loadProds();
+
+  // Konekte chips yo
+  document.querySelectorAll('#sizes-container .chip').forEach(function(chip) {
+    chip.onclick = function() {
+      var val = chip.dataset.val;
+      if (currentSizes.indexOf(val) > -1) {
+        currentSizes = currentSizes.filter(function(v) { return v !== val; });
+        chip.classList.remove('active');
+      } else {
+        currentSizes.push(val);
+        chip.classList.add('active');
+      }
+    };
+  });
+
+  document.querySelectorAll('#colors-container .chip').forEach(function(chip) {
+    chip.onclick = function() {
+      var val = chip.dataset.val;
+      if (currentColors.indexOf(val) > -1) {
+        currentColors = currentColors.filter(function(v) { return v !== val; });
+        chip.classList.remove('active');
+      } else {
+        currentColors.push(val);
+        chip.classList.add('active');
+      }
+    };
+  });
 }
 
 // API HELPER
@@ -140,8 +169,11 @@ document.getElementById('form-prod').addEventListener('submit', function(e) {
     price: Number(document.getElementById('p-price').value),
     stock: Number(document.getElementById('p-stock').value),
     category: document.getElementById('p-cat').value || 'general',
+    description: document.getElementById('p-desc').value,
     images: document.getElementById('p-img-url').value ? [document.getElementById('p-img-url').value] : [],
-    compare_price: 0, sizes: [], colors: [], featured: 0, active: 1
+    sizes: currentSizes,
+    colors: currentColors,
+    compare_price: 0, featured: 0, active: 1
   };
   
   var url = id ? '/admin/products/' + id : '/admin/products';
@@ -161,7 +193,23 @@ function editProd(id) {
   document.getElementById('p-price').value = p.price;
   document.getElementById('p-stock').value = p.stock;
   document.getElementById('p-cat').value = p.category || '';
+  document.getElementById('p-desc').value = p.description || '';
   document.getElementById('p-img-url').value = (p.images && p.images.length) ? p.images[0] : '';
+  
+  // Chaje gwosè yo
+  currentSizes = p.sizes || [];
+  document.querySelectorAll('#sizes-container .chip').forEach(function(c) {
+    if (currentSizes.indexOf(c.dataset.val) > -1) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+
+  // Chaje koulè yo
+  currentColors = p.colors || [];
+  document.querySelectorAll('#colors-container .chip').forEach(function(c) {
+    if (currentColors.indexOf(c.dataset.val) > -1) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+
   openModal('modal-prod');
 }
 
@@ -234,4 +282,5 @@ document.getElementById('settings-form').addEventListener('submit', function(e) 
   apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Konfigirasyon sove!'); });
 });
 
+// KÒMANSE
 if (token) { initApp(); }
