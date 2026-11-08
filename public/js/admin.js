@@ -1,269 +1,222 @@
-const API = '/api';
-let token = localStorage.getItem('panik_admin_token');
-let currentSizes = [];
-let currentColors = [];
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if(!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3000);
-}
+var API = '/api';
+var token = localStorage.getItem('panik_admin_token');
 
 function logout() {
   localStorage.removeItem('panik_admin_token');
-  location.reload();
+  window.location.reload();
 }
 
-async function apiFetch(endpoint, opts) {
-  opts = opts || {};
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = 'Bearer ' + token;
-  const merged = Object.assign({}, opts, { headers: Object.assign(headers, opts.headers || {}) });
-  const res = await fetch(API + endpoint, merged);
-  if (res.status === 401) return logout();
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Erè');
-  return data;
-}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-var loginForm = document.getElementById('login-form');
-if (loginForm) {
-  loginForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    try {
-      const res = await fetch(API + '/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: document.getElementById('login-email').value, password: document.getElementById('login-pass').value })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      token = data.token;
-      localStorage.setItem('panik_admin_token', token);
-      initApp();
-    } catch (err) { alert(err.message); }
-  });
-}
+// KONEKSYON
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  fetch(API + '/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      username: document.getElementById('login-email').value, 
+      password: document.getElementById('login-pass').value 
+    })
+  })
+  .then(function(res) { return res.json().then(function(data) { if (!res.ok) throw new Error(data.error); return data; }); })
+  .then(function(data) {
+    token = data.token;
+    localStorage.setItem('panik_admin_token', token);
+    initApp();
+  })
+  .catch(function(err) { alert(err.message); });
+});
 
+// NAVIGASYON
 document.querySelectorAll('.nav-item').forEach(function(item) {
-  item.addEventListener('click', function() {
+  item.onclick = function() {
     document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
     item.classList.add('active');
     document.querySelectorAll('.page-content').forEach(function(p) { p.classList.add('hidden'); });
     document.getElementById('page-' + item.dataset.page).classList.remove('hidden');
-    document.getElementById('current-page-title').textContent = item.textContent.trim();
-    loadPageData(item.dataset.page);
-  });
+    document.getElementById('page-title').textContent = item.textContent;
+    
+    if (item.dataset.page === 'products') loadProds();
+    if (item.dataset.page === 'ads') loadAds();
+    if (item.dataset.page === 'dashboard') loadStats();
+    if (item.dataset.page === 'settings') loadSettings();
+  };
 });
 
-function loadPageData(page) {
-  if (page === 'dashboard') loadStats();
-  if (page === 'products') loadProducts();
-  if (page === 'ads') loadAds();
-  if (page === 'settings') loadSettings();
-}
-
-async function initApp() {
+function initApp() {
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-sidebar').style.display = 'block';
-  document.getElementById('app-main').style.display = 'block';
+  document.getElementById('app-main').classList.remove('hidden');
   loadStats();
-  loadProducts();
+}
 
-  document.getElementById('btn-add-prod').addEventListener('click', function() {
-    document.getElementById('form-product').reset();
-    document.getElementById('prod-id').value = '';
-    document.getElementById('prod-image-url').value = '';
-    currentSizes = [];
-    currentColors = [];
-    document.querySelectorAll('#sizes-container .chip').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('#colors-container .chip').forEach(c => c.classList.remove('active'));
-    document.getElementById('modal-product').classList.add('open');
-  });
-
-  document.getElementById('btn-add-ad').addEventListener('click', function() {
-    document.getElementById('form-ad').reset();
-    document.getElementById('ad-media-url').value = '';
-    document.getElementById('modal-ad').classList.add('open');
-  });
-
-  document.querySelectorAll('#sizes-container .chip').forEach(chip => {
-    chip.onclick = () => {
-      const val = chip.dataset.val;
-      if (currentSizes.includes(val)) { currentSizes = currentSizes.filter(v => v !== val); chip.classList.remove('active'); } 
-      else { currentSizes.push(val); chip.classList.add('active'); }
-    };
-  });
-
-  document.querySelectorAll('#colors-container .chip').forEach(chip => {
-    chip.onclick = () => {
-      const val = chip.dataset.val;
-      if (currentColors.includes(val)) { currentColors = currentColors.filter(v => v !== val); chip.classList.remove('active'); } 
-      else { currentColors.push(val); chip.classList.add('active'); }
-    };
+// API HELPER
+function apiCall(path, method, body) {
+  return fetch(API + path, {
+    method: method || 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: body ? JSON.stringify(body) : null
+  })
+  .then(function(res) { 
+    if (res.status === 401) logout();
+    return res.json().then(function(data) { if (!res.ok) throw new Error(data.error); return data; }); 
   });
 }
 
-async function uploadFile(input, targetId) {
-  if (!input.files || !input.files[0]) return;
-  const fd = new FormData();
-  fd.append('images', input.files[0]);
-  showToast('Ap telechaje...');
-  try {
-    const res = await fetch(API + '/admin/upload', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token },
-      body: fd
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+// UPLOAD IMAGE
+function uploadImage(file, targetId) {
+  var fd = new FormData();
+  fd.append('images', file);
+  alert('Ap telechaje imaj la... tanpri tann.');
+  fetch(API + '/admin/upload', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
+    body: fd
+  })
+  .then(function(res) { return res.json().then(function(data) { if (!res.ok) throw new Error(data.error); return data; }); })
+  .then(function(data) {
     document.getElementById(targetId).value = data.files[0];
-    showToast('Telechajman fèt!');
-  } catch (err) { alert('Erè upload: ' + err.message); }
+    alert('Imaj la sove byen!');
+  })
+  .catch(function(err) { alert('Erè Upload: ' + err.message); });
 }
 
-async function loadProducts() {
-  try {
-    const prods = await apiFetch('/admin/products');
-    window.allProducts = prods;
-    const container = document.getElementById('products-list');
-    if (!container) return;
+// DASHBOARD
+function loadStats() {
+  apiCall('/admin/stats').then(function(s) {
+    document.getElementById('stats').innerHTML = 
+      '<div class="card"><h3>Revni</h3><p style="font-size:24px; color:var(--cyan);">' + s.revenue + ' HTG</p></div>' +
+      '<div class="card"><h3>Kòmand</h3><p style="font-size:24px; color:var(--cyan);">' + s.totalOrders + '</p></div>' +
+      '<div class="card"><h3>Pwodwi</h3><p style="font-size:24px; color:var(--cyan);">' + s.totalProducts + '</p></div>' +
+      '<div class="card"><h3>Kliyan</h3><p style="font-size:24px; color:var(--cyan);">' + s.totalCustomers + '</p></div>';
+  }).catch(function(err) { console.log(err); });
+}
+
+// PWODWI
+function loadProds() {
+  apiCall('/admin/products').then(function(prods) {
+    window.prodsList = prods;
+    if (!prods.length) { document.getElementById('prod-list').innerHTML = '<p>Pa gen pwodwi.</p>'; return; }
     
-    if (prods.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">Pa gen pwodwi.</p>';
-      return;
-    }
-
-    container.innerHTML = prods.map(function(p) {
-      const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
-      return '<div class="product-card">' +
-        '<img src="' + imgUrl + '">' +
-        '<div class="p-info">' +
+    var html = '';
+    prods.forEach(function(p) {
+      var img = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
+      html += 
+        '<div class="card">' +
+          '<img src="' + img + '">' +
           '<h3>' + p.name + '</h3>' +
-          '<div class="p-details">' + p.price + ' HTG | Stock: ' + (p.stock !== undefined ? p.stock : '-') + '</div>' +
-        '</div>' +
-        '<div class="p-actions">' +
-          '<button class="btn btn-outline" onclick="window.editProduct(' + p.id + ')">Modifye</button>' +
-          '<button class="btn btn-danger" onclick="window.deleteProduct(' + p.id + ')">Efase</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  } catch (err) { console.error(err); }
+          '<p>Pri: ' + p.price + ' HTG | Stock: ' + (p.stock || 0) + '</p>' +
+          '<div class="actions">' +
+            '<button class="btn btn-primary" onclick="editProd(' + p.id + ')">Modifye</button>' +
+            '<button class="btn btn-danger" onclick="deleteProd(' + p.id + ')">Efase</button>' +
+          '</div>' +
+        '</div>';
+    });
+    document.getElementById('prod-list').innerHTML = html;
+  });
 }
 
-window.editProduct = function(id) {
-  const p = window.allProducts.find(function(x) { return x.id === id; });
-  document.getElementById('prod-id').value = p.id;
-  document.getElementById('prod-name').value = p.name;
-  document.getElementById('prod-price').value = p.price;
-  document.getElementById('prod-stock').value = p.stock;
-  document.getElementById('prod-cat').value = p.category || '';
-  document.getElementById('prod-desc').value = p.description || '';
-  document.getElementById('prod-image-url').value = (p.images && p.images.length) ? p.images[0] : '';
-
-  currentSizes = p.sizes || [];
-  document.querySelectorAll('#sizes-container .chip').forEach(c => { c.classList.toggle('active', currentSizes.includes(c.dataset.val)); });
-
-  currentColors = p.colors || [];
-  document.querySelectorAll('#colors-container .chip').forEach(c => { c.classList.toggle('active', currentColors.includes(c.dataset.val)); });
-
-  document.getElementById('modal-product').classList.add('open');
-};
-
-window.deleteProduct = async function(id) {
-  if (!confirm('Èske w sèten ou vle efase pwodwi sa a?')) return;
-  try {
-    await apiFetch('/admin/products/' + id, { method: 'DELETE' });
-    showToast('Pwodwi efase');
-    loadProducts();
-  } catch (err) { alert('Erè: ' + err.message); }
-};
-
-async function saveProduct(e) {
+document.getElementById('form-prod').addEventListener('submit', function(e) {
   e.preventDefault();
-  const id = document.getElementById('prod-id').value;
-  const imgVal = document.getElementById('prod-image-url').value;
-  const body = {
-    name: document.getElementById('prod-name').value,
-    price: Number(document.getElementById('prod-price').value),
-    compare_price: 0, category: document.getElementById('prod-cat').value || 'general',
-    description: document.getElementById('prod-desc').value,
-    images: imgVal ? [imgVal] : [], sizes: currentSizes, colors: currentColors,
-    stock: Number(document.getElementById('prod-stock').value), featured: 0, active: 1
+  var id = document.getElementById('p-id').value;
+  var body = {
+    name: document.getElementById('p-name').value,
+    price: Number(document.getElementById('p-price').value),
+    stock: Number(document.getElementById('p-stock').value),
+    category: document.getElementById('p-cat').value || 'general',
+    images: document.getElementById('p-img-url').value ? [document.getElementById('p-img-url').value] : [],
+    compare_price: 0, sizes: [], colors: [], featured: 0, active: 1
   };
-  try {
-    if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
-    else await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
-    document.getElementById('modal-product').classList.remove('open');
-    showToast('Pwodwi sove ak siksè');
-    loadProducts();
-  } catch (err) { alert('Erè: ' + err.message); }
+  
+  var url = id ? '/admin/products/' + id : '/admin/products';
+  var method = id ? 'PUT' : 'POST';
+  
+  apiCall(url, method, body).then(function() {
+    closeModal('modal-prod');
+    loadProds();
+  }).catch(function(err) { alert(err.message); });
+});
+
+document.getElementById('p-file').addEventListener('change', function() {
+  if (this.files[0]) uploadImage(this.files[0], 'p-img-url');
+});
+
+function editProd(id) {
+  var p = window.prodsList.find(function(x) { return x.id === id; });
+  document.getElementById('p-id').value = p.id;
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-price').value = p.price;
+  document.getElementById('p-stock').value = p.stock;
+  document.getElementById('p-cat').value = p.category || '';
+  document.getElementById('p-img-url').value = (p.images && p.images.length) ? p.images[0] : '';
+  openModal('modal-prod');
 }
 
-async function loadAds() {
-  try {
-    const ads = await apiFetch('/admin/ads');
-    const container = document.getElementById('ads-list');
-    if(!container) return;
-    container.innerHTML = ads.map(function(a) {
-      return '<div class="product-card">' +
-        '<div class="p-info"><h3>' + (a.title || 'Piblisite') + '</h3></div>' +
-        '<div class="p-actions"><button class="btn btn-danger" onclick="window.deleteAd(' + a.id + ')">Efase</button></div>' +
-      '</div>';
-    }).join('');
-  } catch (err) { console.error(err); }
+function deleteProd(id) {
+  if (confirm('Efase pwodwi sa a nèt?')) {
+    apiCall('/admin/products/' + id, 'DELETE').then(function() { loadProds(); });
+  }
 }
 
-window.deleteAd = async function(id) {
-  if (!confirm('Efase piblisite sa a?')) return;
-  try {
-    await apiFetch('/admin/ads/' + id, { method: 'DELETE' });
-    showToast('Piblisite efase');
-    loadAds();
-  } catch (err) { alert(err.message); }
-};
+// PIBLISITE
+function loadAds() {
+  apiCall('/admin/ads').then(function(ads) {
+    if (!ads.length) { document.getElementById('ad-list').innerHTML = '<p>Pa gen piblisite.</p>'; return; }
+    var html = '';
+    ads.forEach(function(a) {
+      html += 
+        '<div class="card">' +
+          '<img src="' + a.media_url + '">' +
+          '<h3>' + (a.title || 'Piblisite') + '</h3>' +
+          '<div class="actions">' +
+            '<button class="btn btn-danger" onclick="deleteAd(' + a.id + ')">Efase</button>' +
+          '</div>' +
+        '</div>';
+    });
+    document.getElementById('ad-list').innerHTML = html;
+  });
+}
 
-async function saveAd(e) {
+document.getElementById('form-ad').addEventListener('submit', function(e) {
   e.preventDefault();
-  const body = { title: document.getElementById('ad-title').value, type: 'image', media_url: document.getElementById('ad-media-url').value, active: 1 };
-  try {
-    await apiFetch('/admin/ads', { method: 'POST', body: JSON.stringify(body) });
-    document.getElementById('modal-ad').classList.remove('open');
-    showToast('Piblisite sove');
+  var body = {
+    title: document.getElementById('a-title').value,
+    type: 'image',
+    media_url: document.getElementById('a-img-url').value,
+    active: 1
+  };
+  apiCall('/admin/ads', 'POST', body).then(function() {
+    closeModal('modal-ad');
     loadAds();
-  } catch (err) { alert(err.message); }
+  }).catch(function(err) { alert(err.message); });
+});
+
+document.getElementById('a-file').addEventListener('change', function() {
+  if (this.files[0]) uploadImage(this.files[0], 'a-img-url');
+});
+
+function deleteAd(id) {
+  if (confirm('Efase piblisite sa a?')) {
+    apiCall('/admin/ads/' + id, 'DELETE').then(function() { loadAds(); });
+  }
 }
 
-async function loadStats() {
-  try {
-    const s = await apiFetch('/admin/stats');
-    document.getElementById('stats-container').innerHTML =
-      '<div class="stat-card"><div class="stat-title">Revni</div><div class="stat-value">' + s.revenue + ' HTG</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kòmand</div><div class="stat-value">' + s.totalOrders + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Pwodwi</div><div class="stat-value">' + s.totalProducts + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kliyan</div><div class="stat-value">' + s.totalCustomers + '</div></div>';
-  } catch (err) { console.error(err); }
-}
-
-async function loadSettings() {
-  try {
-    const s = await apiFetch('/admin/settings');
+// KONFIGIRASYON
+function loadSettings() {
+  apiCall('/admin/settings').then(function(s) {
     document.getElementById('set-brand').value = s.brand_name || '';
-    document.getElementById('set-color').value = s.primary_color || '';
     document.getElementById('set-email').value = s.contact_email || '';
-    document.getElementById('set-phone').value = s.contact_phone || '';
-  } catch (err) { console.error(err); }
+  });
 }
 
-async function saveSettings(e) {
+document.getElementById('settings-form').addEventListener('submit', function(e) {
   e.preventDefault();
-  const body = { brand_name: document.getElementById('set-brand').value, primary_color: document.getElementById('set-color').value, contact_email: document.getElementById('set-email').value, contact_phone: document.getElementById('set-phone').value };
-  try {
-    await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
-    showToast('Konfigirasyon sove');
-  } catch (err) { alert(err.message); }
-}
+  var body = {
+    brand_name: document.getElementById('set-brand').value,
+    contact_email: document.getElementById('set-email').value
+  };
+  apiCall('/admin/settings', 'PUT', body).then(function() { alert('Sove ak siksè!'); });
+});
 
-if (token) initApp(); else document.getElementById('login-screen').style.display = 'flex';
+if (token) { initApp(); }
