@@ -17,7 +17,8 @@
   .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
   .form-group input, .form-group select { width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
   .form-group input:focus { border-color: var(--cyan); }
-  .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+  .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: 0.2s;}
+  .btn:hover { opacity: 0.8; }
   .btn-primary { background: linear-gradient(135deg, var(--cyan), var(--cyan-dark)); color: #000; }
   .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); width: auto; }
   .btn-danger { background: rgba(255,0,64,0.1); color: #ff0040; border: 1px solid rgba(255,0,64,0.3); width: auto; padding: 8px 12px; font-size: 12px; }
@@ -43,17 +44,23 @@
   th { font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
   .table-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
   
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  /* MODAL */
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
   .modal.open { display: flex; }
-  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 25px; max-height: 90vh; overflow-y: auto; }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 650px; padding: 30px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+  .modal-header h2 { font-size: 22px; color: var(--cyan); }
   .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  
+  /* GWOSÈ AK KOULÈ CHIPS */
+  .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+  .chip { padding: 8px 16px; border-radius: 100px; background: #0a0a0a; border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: 0.2s; user-select: none; }
+  .chip:hover { border-color: var(--cyan); }
+  .chip.active { background: var(--cyan); color: #000; border-color: var(--cyan); font-weight: 600; }
+
   .toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; background: #111; border: 1px solid var(--cyan); color: #fff; z-index: 9999; font-size: 14px; transform: translateY(-100px); opacity: 0; transition: 0.3s; }
   .toast.show { transform: translateY(0); opacity: 1; }
-
-  .settings-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; max-width: 700px; }
-  .settings-card h3 { margin-bottom: 20px; color: var(--cyan); font-size: 18px; }
 
   @media (max-width: 768px) {
     body { flex-direction: column; }
@@ -73,14 +80,8 @@
   <div class="login-box">
     <h1>100PANIK Admin</h1>
     <form id="login-form">
-      <div class="form-group">
-        <label>Imel</label>
-        <input type="email" id="login-email" name="username" required>
-      </div>
-      <div class="form-group">
-        <label>Modpas</label>
-        <input type="password" id="login-pass" name="password" required>
-      </div>
+      <div class="form-group"><label>Imel</label><input type="email" id="login-email" name="username" required></div>
+      <div class="form-group"><label>Modpas</label><input type="password" id="login-pass" name="password" required></div>
       <button type="submit" class="btn btn-primary">Konekte</button>
     </form>
   </div>
@@ -109,46 +110,34 @@
   </div>
 
   <div id="page-products" class="page-content hidden">
-    <div style="margin-bottom:20px;"><button class="btn btn-primary" onclick="openProductModal()">+ Ajoute Pwodwi</button></div>
+    <div style="margin-bottom:20px;"><button id="btn-add-prod" class="btn btn-primary">+ Ajoute Pwodwi</button></div>
     <div class="table-container">
-      <table>
-        <thead><tr><th>Imaj</th><th>Non</th><th>Pri</th><th>Aksyon</th></tr></thead>
-        <tbody id="products-body"></tbody>
-      </table>
+      <table><thead><tr><th>Imaj</th><th>Non</th><th>Pri</th><th>Stock</th><th>Aksyon</th></tr></thead><tbody id="products-body"></tbody></table>
     </div>
   </div>
 
   <div id="page-orders" class="page-content hidden">
     <div class="table-container">
-      <table>
-        <thead><tr><th>Nimewo</th><th>Kliyan</th><th>Total</th><th>Aksyon</th></tr></thead>
-        <tbody id="orders-body"></tbody>
-      </table>
+      <table><thead><tr><th>Nimewo</th><th>Kliyan</th><th>Total</th><th>Aksyon</th></tr></thead><tbody id="orders-body"></tbody></table>
     </div>
   </div>
 
   <div id="page-customers" class="page-content hidden">
     <div class="table-container">
-      <table>
-        <thead><tr><th>Non</th><th>Imel</th><th>Telefòn</th><th>Dat</th></tr></thead>
-        <tbody id="customers-body"></tbody>
-      </table>
+      <table><thead><tr><th>Non</th><th>Imel</th><th>Telefòn</th><th>Dat</th></tr></thead><tbody id="customers-body"></tbody></table>
     </div>
   </div>
 
   <div id="page-ads" class="page-content hidden">
-    <div style="margin-bottom:20px;"><button class="btn btn-primary" onclick="openAdModal()">+ Ajoute Piblisite</button></div>
+    <div style="margin-bottom:20px;"><button id="btn-add-ad" class="btn btn-primary">+ Ajoute Piblisite</button></div>
     <div class="table-container">
-      <table>
-        <thead><tr><th>Media</th><th>Tit</th><th>Aksyon</th></tr></thead>
-        <tbody id="ads-body"></tbody>
-      </table>
+      <table><thead><tr><th>Media</th><th>Tit</th><th>Aksyon</th></tr></thead><tbody id="ads-body"></tbody></table>
     </div>
   </div>
 
   <div id="page-settings" class="page-content hidden">
-    <div class="settings-card">
-      <h3>Enfòmasyon Mak & Koulè</h3>
+    <div class="settings-card" style="background:var(--bg-card); padding:25px; border-radius:12px; border:1px solid var(--border); max-width:700px;">
+      <h3 style="margin-bottom:20px; color:var(--cyan);">Enfòmasyon Mak & Koulè</h3>
       <form id="settings-form" onsubmit="saveSettings(event)">
         <div class="form-row">
           <div class="form-group"><label>Non Mak</label><input type="text" id="set-brand"></div>
@@ -156,59 +145,79 @@
         </div>
         <div class="form-group"><label>Imel Kontak</label><input type="email" id="set-email"></div>
         <div class="form-group"><label>Telefòn</label><input type="text" id="set-phone"></div>
-        <div class="form-group"><label>Enstagram (Lyen)</label><input type="text" id="set-instagram"></div>
-        <div class="form-group"><label>Facebook (Lyen)</label><input type="text" id="set-facebook"></div>
-        <div class="form-group"><label>TikTok (Lyen)</label><input type="text" id="set-tiktok"></div>
         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Sove Konfigirasyon</button>
-      </form>
-    </div>
-
-    <div class="settings-card">
-      <h3>Chanje Modpas Admin</h3>
-      <form id="pass-form" onsubmit="changePassword(event)">
-        <div class="form-group"><label>Modpas Aktyèl</label><input type="password" id="pass-current" required></div>
-        <div class="form-group"><label>Nouvo Modpas</label><input type="password" id="pass-new" required minlength="6"></div>
-        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Chanje Modpas</button>
       </form>
     </div>
   </div>
 </div>
 
+<!-- MODAL PWODWI (FÒM BÈL) -->
 <div class="modal" id="modal-product">
   <div class="modal-content">
-    <div class="modal-header">
-      <h2>Pwodwi</h2>
-      <button class="close-btn" onclick="document.getElementById('modal-product').classList.remove('open')">x</button>
-    </div>
+    <div class="modal-header"><h2>Ajoute / Modifye Pwodwi</h2><button class="close-btn" onclick="document.getElementById('modal-product').classList.remove('open')">x</button></div>
     <form id="form-product" onsubmit="saveProduct(event)">
       <input type="hidden" id="prod-id">
-      <div class="form-group"><label>Non</label><input type="text" id="prod-name" required></div>
+      
+      <div class="form-group"><label>Non Pwodwi</label><input type="text" id="prod-name" required placeholder="Ex: Hoodie Cyber"></div>
+      
       <div class="form-row">
         <div class="form-group"><label>Pri (HTG)</label><input type="number" id="prod-price" required></div>
-        <div class="form-group"><label>Kategori</label><input type="text" id="prod-cat" placeholder="eg: hoodie"></div>
+        <div class="form-group"><label>Stock (Kantite ki genyen)</label><input type="number" id="prod-stock" required value="10"></div>
       </div>
-      <div class="form-group"><label>Deskripsyon</label><input type="text" id="prod-desc"></div>
+
+      <div class="form-group"><label>Kategori</label><input type="text" id="prod-cat" placeholder="Ex: hoodie, t-shirt"></div>
+      
+      <div class="form-group"><label>Deskripsyon</label><textarea id="prod-desc" rows="3" style="width:100%; padding:12px; background:#0a0a0a; border:1px solid var(--border); border-radius:8px; color:#fff; outline:none;"></textarea></div>
+      
       <div class="form-group"><label>Foto</label><input type="file" id="prod-file" accept="image/*" onchange="uploadFile(this, 'prod-image-url')"></div>
       <input type="hidden" id="prod-image-url">
-      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Anrejistre</button>
+
+      <!-- GWOSÈ -->
+      <div class="form-group">
+        <label>Gwosè ki Disponib</label>
+        <div class="chips-container" id="sizes-container">
+          <div class="chip" data-val="S">S</div>
+          <div class="chip" data-val="M">M</div>
+          <div class="chip" data-val="L">L</div>
+          <div class="chip" data-val="XL">XL</div>
+          <div class="chip" data-val="XXL">XXL</div>
+          <div class="chip" data-val="36">36</div>
+          <div class="chip" data-val="38">38</div>
+          <div class="chip" data-val="40">40</div>
+          <div class="chip" data-val="42">42</div>
+          <div class="chip" data-val="44">44</div>
+        </div>
+      </div>
+
+      <!-- KOULÈ -->
+      <div class="form-group">
+        <label>Koulè ki Disponib</label>
+        <div class="chips-container" id="colors-container">
+          <div class="chip" data-val="Nwa">Nwa</div>
+          <div class="chip" data-val="Blan">Blan</div>
+          <div class="chip" data-val="Wouj">Wouj</div>
+          <div class="chip" data-val="Ble">Ble</div>
+          <div class="chip" data-val="Vèt">Vèt</div>
+          <div class="chip" data-val="Jòn">Jòn</div>
+          <div class="chip" data-val="Gri">Gri</div>
+          <div class="chip" data-val="Woz">Woz</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top:15px; height:50px; font-size:16px;">Anrejistre Pwodwi a</button>
     </form>
   </div>
 </div>
 
+<!-- MODAL PIBLISITE -->
 <div class="modal" id="modal-ad">
   <div class="modal-content">
-    <div class="modal-header">
-      <h2>Piblisite</h2>
-      <button class="close-btn" onclick="document.getElementById('modal-ad').classList.remove('open')">x</button>
-    </div>
+    <div class="modal-header"><h2>Ajoute Piblisite</h2><button class="close-btn" onclick="document.getElementById('modal-ad').classList.remove('open')">x</button></div>
     <form id="form-ad" onsubmit="saveAd(event)">
-      <div class="form-group"><label>Tit</label><input type="text" id="ad-title"></div>
+      <div class="form-group"><label>Tit (Opsyonèl)</label><input type="text" id="ad-title"></div>
       <div class="form-group">
         <label>Tip Media</label>
-        <select id="ad-type">
-          <option value="image">Imaj</option>
-          <option value="video">Video (MP4)</option>
-        </select>
+        <select id="ad-type"><option value="image">Imaj</option><option value="video">Video (MP4)</option></select>
       </div>
       <div class="form-group"><label>Fichye</label><input type="file" id="ad-file" accept="image/*,video/mp4" onchange="uploadFile(this, 'ad-media-url')"></div>
       <input type="hidden" id="ad-media-url">

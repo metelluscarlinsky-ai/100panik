@@ -1,5 +1,7 @@
 const API = '/api';
 let token = localStorage.getItem('panik_admin_token');
+let currentSizes = [];
+let currentColors = [];
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -26,7 +28,6 @@ async function apiFetch(endpoint, opts) {
   return data;
 }
 
-// --- KONEKSYON ---
 var loginForm = document.getElementById('login-form');
 if (loginForm) {
   loginForm.addEventListener('submit', async function(e) {
@@ -46,7 +47,6 @@ if (loginForm) {
   });
 }
 
-// --- NAVIGASYON ---
 document.querySelectorAll('.nav-item').forEach(function(item) {
   item.addEventListener('click', function() {
     document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
@@ -72,9 +72,52 @@ async function initApp() {
   document.getElementById('app-sidebar').style.display = 'block';
   document.getElementById('app-main').style.display = 'block';
   loadStats();
+
+  document.getElementById('btn-add-prod').addEventListener('click', function() {
+    document.getElementById('form-product').reset();
+    document.getElementById('prod-id').value = '';
+    document.getElementById('prod-image-url').value = '';
+    currentSizes = [];
+    currentColors = [];
+    document.querySelectorAll('#sizes-container .chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('#colors-container .chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('modal-product').classList.add('open');
+  });
+
+  document.getElementById('btn-add-ad').addEventListener('click', function() {
+    document.getElementById('form-ad').reset();
+    document.getElementById('ad-media-url').value = '';
+    document.getElementById('modal-ad').classList.add('open');
+  });
+
+  // Klike sou chips yo
+  document.querySelectorAll('#sizes-container .chip').forEach(chip => {
+    chip.onclick = () => {
+      const val = chip.dataset.val;
+      if (currentSizes.includes(val)) {
+        currentSizes = currentSizes.filter(v => v !== val);
+        chip.classList.remove('active');
+      } else {
+        currentSizes.push(val);
+        chip.classList.add('active');
+      }
+    };
+  });
+
+  document.querySelectorAll('#colors-container .chip').forEach(chip => {
+    chip.onclick = () => {
+      const val = chip.dataset.val;
+      if (currentColors.includes(val)) {
+        currentColors = currentColors.filter(v => v !== val);
+        chip.classList.remove('active');
+      } else {
+        currentColors.push(val);
+        chip.classList.add('active');
+      }
+    };
+  });
 }
 
-// --- UPLOAD FICHYE ---
 async function uploadFile(input, targetId) {
   if (!input.files || !input.files[0]) return;
   const fd = new FormData();
@@ -93,35 +136,25 @@ async function uploadFile(input, targetId) {
   } catch (err) { alert('Erè upload: ' + err.message); }
 }
 
-// --- DASHBOARD ---
-async function loadStats() {
-  try {
-    const s = await apiFetch('/admin/stats');
-    document.getElementById('stats-container').innerHTML =
-      '<div class="stat-card"><div class="stat-title">Revni</div><div class="stat-value">' + s.revenue + ' HTG</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kòmand</div><div class="stat-value">' + s.totalOrders + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Pwodwi</div><div class="stat-value">' + s.totalProducts + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kliyan</div><div class="stat-value">' + s.totalCustomers + '</div></div>';
-  } catch (err) { console.error(err); }
-}
-
 // --- PWODWI ---
 async function loadProducts() {
   try {
     const prods = await apiFetch('/admin/products');
     document.getElementById('products-body').innerHTML = prods.map(function(p) {
       const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : '/images/placeholder.jpg';
-      return '<tr><td><img src="' + imgUrl + '" class="table-img"></td><td>' + p.name + '</td><td>' + p.price + ' HTG</td><td><button class="btn btn-outline" onclick="editProduct(' + p.id + ')">Modifye</button></td></tr>';
+      return '<tr>' +
+        '<td><img src="' + imgUrl + '" class="table-img"></td>' +
+        '<td>' + p.name + '</td>' +
+        '<td>' + p.price + ' HTG</td>' +
+        '<td>' + (p.stock !== undefined ? p.stock : '-') + '</td>' +
+        '<td>' +
+          '<button class="btn btn-outline" onclick="editProduct(' + p.id + ')" style="margin-right:5px;">Modifye</button>' +
+          '<button class="btn btn-danger" onclick="deleteProduct(' + p.id + ')">Efase</button>' +
+        '</td>' +
+      '</tr>';
     }).join('');
     window.allProducts = prods;
   } catch (err) { console.error(err); }
-}
-
-function openProductModal() {
-  document.getElementById('form-product').reset();
-  document.getElementById('prod-id').value = '';
-  document.getElementById('prod-image-url').value = '';
-  document.getElementById('modal-product').classList.add('open');
 }
 
 function editProduct(id) {
@@ -129,9 +162,23 @@ function editProduct(id) {
   document.getElementById('prod-id').value = p.id;
   document.getElementById('prod-name').value = p.name;
   document.getElementById('prod-price').value = p.price;
+  document.getElementById('prod-stock').value = p.stock;
   document.getElementById('prod-cat').value = p.category;
   document.getElementById('prod-desc').value = p.description;
   document.getElementById('prod-image-url').value = (p.images && p.images.length) ? p.images[0] : '';
+
+  // Chaje gwosè
+  currentSizes = p.sizes || [];
+  document.querySelectorAll('#sizes-container .chip').forEach(c => {
+    c.classList.toggle('active', currentSizes.includes(c.dataset.val));
+  });
+
+  // Chaje koulè
+  currentColors = p.colors || [];
+  document.querySelectorAll('#colors-container .chip').forEach(c => {
+    c.classList.toggle('active', currentColors.includes(c.dataset.val));
+  });
+
   document.getElementById('modal-product').classList.add('open');
 }
 
@@ -139,23 +186,43 @@ async function saveProduct(e) {
   e.preventDefault();
   const id = document.getElementById('prod-id').value;
   const imgVal = document.getElementById('prod-image-url').value;
+  
   const body = {
     name: document.getElementById('prod-name').value,
     price: Number(document.getElementById('prod-price').value),
-    compare_price: 0, category: document.getElementById('prod-cat').value || 'general',
+    compare_price: 0,
+    category: document.getElementById('prod-cat').value || 'general',
     description: document.getElementById('prod-desc').value,
-    images: imgVal ? [imgVal] : [], sizes: [], colors: [], stock: 99, featured: 0, active: 1
+    images: imgVal ? [imgVal] : [],
+    sizes: currentSizes,
+    colors: currentColors,
+    stock: Number(document.getElementById('prod-stock').value),
+    featured: 0,
+    active: 1
   };
+  
   try {
-    if (id) await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
-    else await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
+    if (id) {
+      await apiFetch('/admin/products/' + id, { method: 'PUT', body: JSON.stringify(body) });
+    } else {
+      await apiFetch('/admin/products', { method: 'POST', body: JSON.stringify(body) });
+    }
     document.getElementById('modal-product').classList.remove('open');
-    showToast('Pwodwi sove');
+    showToast('Pwodwi sove ak siksè');
     loadProducts();
   } catch (err) { alert('Erè: ' + err.message); }
 }
 
-// --- PIBLISITE ---
+async function deleteProduct(id) {
+  if (!confirm('Èske w sèten ou vle efase pwodwi sa a nèt?')) return;
+  try {
+    await apiFetch('/admin/products/' + id, { method: 'DELETE' });
+    showToast('Pwodwi efase');
+    loadProducts();
+  } catch (err) { alert('Erè: ' + err.message); }
+}
+
+// --- RÈS FONKSYON YO ---
 async function loadAds() {
   try {
     const ads = await apiFetch('/admin/ads');
@@ -163,34 +230,18 @@ async function loadAds() {
       var media = a.type === 'image' ? '<img src="' + a.media_url + '" class="table-img">' : 'Video';
       return '<tr><td>' + media + '</td><td>' + (a.title || '-') + '</td><td><button class="btn btn-outline" onclick="deleteAd(' + a.id + ')">Efase</button></td></tr>';
     }).join('');
-    window.allAds = ads;
   } catch (err) { console.error(err); }
-}
-
-// Nou konekte bouton an dirèkteman la
-var btnAddAd = document.querySelector('button[onclick="openAdModal()"]');
-if (btnAddAd) {
-  btnAddAd.onclick = function() {
-    document.getElementById('form-ad').reset();
-    document.getElementById('ad-media-url').value = '';
-    document.getElementById('modal-ad').classList.add('open');
-  };
 }
 
 async function saveAd(e) {
   e.preventDefault();
-  const body = { 
-    title: document.getElementById('ad-title').value, 
-    type: document.getElementById('ad-type').value, 
-    media_url: document.getElementById('ad-media-url').value, 
-    active: 1 
-  };
+  const body = { title: document.getElementById('ad-title').value, type: document.getElementById('ad-type').value, media_url: document.getElementById('ad-media-url').value, active: 1 };
   try {
     await apiFetch('/admin/ads', { method: 'POST', body: JSON.stringify(body) });
     document.getElementById('modal-ad').classList.remove('open');
-    showToast('Piblisite sove ak siksè');
+    showToast('Piblisite sove');
     loadAds();
-  } catch (err) { alert('Erè: ' + err.message); }
+  } catch (err) { alert(err.message); }
 }
 
 async function deleteAd(id) {
@@ -202,7 +253,17 @@ async function deleteAd(id) {
   } catch (err) { alert(err.message); }
 }
 
-// --- KONFIGIRASYON ---
+async function loadStats() {
+  try {
+    const s = await apiFetch('/admin/stats');
+    document.getElementById('stats-container').innerHTML =
+      '<div class="stat-card"><div class="stat-title">Revni</div><div class="stat-value">' + s.revenue + ' HTG</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Kòmand</div><div class="stat-value">' + s.totalOrders + '</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Pwodwi</div><div class="stat-value">' + s.totalProducts + '</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Kliyan</div><div class="stat-value">' + s.totalCustomers + '</div></div>';
+  } catch (err) { console.error(err); }
+}
+
 async function loadSettings() {
   try {
     const s = await apiFetch('/admin/settings');
@@ -210,51 +271,29 @@ async function loadSettings() {
     document.getElementById('set-color').value = s.primary_color || '';
     document.getElementById('set-email').value = s.contact_email || '';
     document.getElementById('set-phone').value = s.contact_phone || '';
-    document.getElementById('set-instagram').value = s.instagram || '';
-    document.getElementById('set-facebook').value = s.facebook || '';
-    document.getElementById('set-tiktok').value = s.tiktok || '';
   } catch (err) { console.error(err); }
 }
 
 async function saveSettings(e) {
   e.preventDefault();
-  const body = {
-    brand_name: document.getElementById('set-brand').value, primary_color: document.getElementById('set-color').value,
-    contact_email: document.getElementById('set-email').value, contact_phone: document.getElementById('set-phone').value,
-    instagram: document.getElementById('set-instagram').value, facebook: document.getElementById('set-facebook').value, tiktok: document.getElementById('set-tiktok').value
-  };
+  const body = { brand_name: document.getElementById('set-brand').value, primary_color: document.getElementById('set-color').value, contact_email: document.getElementById('set-email').value, contact_phone: document.getElementById('set-phone').value };
   try {
     await apiFetch('/admin/settings', { method: 'PUT', body: JSON.stringify(body) });
     showToast('Konfigirasyon sove');
   } catch (err) { alert(err.message); }
 }
 
-async function changePassword(e) {
-  e.preventDefault();
-  const body = { current: document.getElementById('pass-current').value, next: document.getElementById('pass-new').value };
-  try {
-    await apiFetch('/admin/change-password', { method: 'POST', body: JSON.stringify(body) });
-    showToast('Modpas chanje');
-    document.getElementById('pass-form').reset();
-  } catch (err) { alert(err.message); }
-}
-
-// --- KOMAND & KLIYAN ---
 async function loadOrders() {
   try {
     const ords = await apiFetch('/admin/orders');
-    document.getElementById('orders-body').innerHTML = ords.map(function(o) {
-      return '<tr><td>' + o.order_number + '</td><td>' + o.customer_name + '</td><td>' + o.total + ' HTG</td><td>Wè</td></tr>';
-    }).join('');
+    document.getElementById('orders-body').innerHTML = ords.map(function(o) { return '<tr><td>' + o.order_number + '</td><td>' + o.customer_name + '</td><td>' + o.total + ' HTG</td><td>Wè</td></tr>'; }).join('');
   } catch (err) { console.error(err); }
 }
 
 async function loadCustomers() {
   try {
     const custs = await apiFetch('/admin/registered-customers');
-    document.getElementById('customers-body').innerHTML = custs.map(function(c) {
-      return '<tr><td>' + c.full_name + '</td><td>' + c.email + '</td><td>' + (c.phone || '-') + '</td><td>' + new Date(c.created_at).toLocaleDateString() + '</td></tr>';
-    }).join('');
+    document.getElementById('customers-body').innerHTML = custs.map(function(c) { return '<tr><td>' + c.full_name + '</td><td>' + c.email + '</td><td>' + (c.phone || '-') + '</td><td>' + new Date(c.created_at).toLocaleDateString() + '</td></tr>'; }).join('');
   } catch (err) { console.error(err); }
 }
 
