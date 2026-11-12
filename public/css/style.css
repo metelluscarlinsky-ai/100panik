@@ -1056,3 +1056,26 @@ body .hero, body section.hero {
   background-attachment: fixed !important;
   background-color: #0a0a0a !important;
 }
+
+/* ========== FIX FLOU SOU IPHONE ========== */
+/* Nou retire 'background-attachment: fixed' paske li fè bug sou iOS */
+body .hero, body section.hero {
+  background-attachment: scroll !important; 
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  -webkit-background-size: cover !important; /* Pou ansyen iPhone */
+}
+
+/* Si se yon imaj ki nan yon tag <img> oswa <video> */
+.hero img, .hero video, .hero-bg img, .hero-bg video {
+  object-fit: cover !important;
+  object-position: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Pou l pa parèt twò fonse oswa twò klè sou iPhone */
+body .hero {
+  background-color: #0a0a0a !important;
+}
