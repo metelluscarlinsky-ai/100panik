@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <title>100PANIK — Rad Futurist Premium</title>
@@ -16,7 +13,6 @@
 <div id="header-mount"></div>
 
 <main>
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
@@ -37,7 +33,6 @@
     </div>
   </section>
 
-  <!-- NOUVO RIVE (PWODWI) -->
   <section class="section">
     <div class="section-title">
       <div>
@@ -49,12 +44,9 @@
     <div class="products-grid" id="featured-products">
       <div class="skeleton" style="aspect-ratio:3/4;"></div>
       <div class="skeleton" style="aspect-ratio:3/4;"></div>
-      <div class="skeleton" style="aspect-ratio:3/4;"></div>
-      <div class="skeleton" style="aspect-ratio:3/4;"></div>
     </div>
   </section>
 
-  <!-- PIBLISITE (PUB) -->
   <section class="section" id="ads-section" style="display:none;">
     <div class="section-title">
       <div>
@@ -65,7 +57,6 @@
     </div>
     <div class="ads-grid" id="ads-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;"></div>
   </section>
-
 </main>
 
 <div id="footer-mount"></div>
@@ -80,71 +71,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 1. CHAJE PWODWI YO
   try {
-    const products = await api('/api/products?featured=1');
+    const products = await api('/api/products');
     const grid = document.getElementById('featured-products');
-    
-    if (products.length === 0) {
-      // Si pa gen featured, chaje nenpòt pwodwi
-      const all = await api('/api/products');
-      grid.innerHTML = all.slice(0, 8).map(productCardHTML).join('');
+    if (products.length > 0) {
+      // Montre 4 premye pwodwi yo
+      grid.innerHTML = products.slice(0, 4).map(productCardHTML).join('');
     } else {
-      grid.innerHTML = products.slice(0, 8).map(productCardHTML).join('');
+      grid.innerHTML = '<p class="text-muted">Pa gen pwodwi.</p>';
     }
   } catch (e) {
-    console.error('Erè chajman pwodwi:', e);
+    console.error('Erè pwodwi:', e);
     document.getElementById('featured-products').innerHTML = '<p class="text-muted">Erè chajman.</p>';
   }
 
   // 2. CHAJE PIBLISITE YO
   try {
-    const res = await fetch('/api/ads?position=home_footer');
+    const res = await fetch('/api/ads');
     const ads = await res.json();
     const adsSection = document.getElementById('ads-section');
     const adsGrid = document.getElementById('ads-grid');
 
     if (ads.length > 0) {
-      adsSection.style.display = 'block'; // Montre seksyon an
+      adsSection.style.display = 'block';
       adsGrid.innerHTML = ads.map(ad => {
-        let media = '';
-        if (ad.type === 'video') {
-          media = '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>';
-        } else {
-          media = '<img src="' + ad.media_url + '" alt="' + (ad.title || 'Piblisite') + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">';
-        }
+        let media = ad.type === 'video' 
+          ? '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>'
+          : '<img src="' + ad.media_url + '" style="width:100%;height:100%;object-fit:cover;display:block;">';
         
-        let wrapStart = ad.link_url ? '<a href="' + ad.link_url + '" target="_blank" style="display:block;width:100%;height:100%;">' : '<div style="width:100%;height:100%;">';
-        let wrapEnd = ad.link_url ? '</a>' : '</div>';
-
-        return '<div style="aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid #333;box-shadow:0 10px 30px rgba(0,0,0,0.5);">' + wrapStart + media + wrapEnd + '</div>';
+        return '<div style="aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid #333;box-shadow:0 10px 30px rgba(0,0,0,0.5);">' + media + '</div>';
       }).join('');
-    } else {
-      adsSection.style.display = 'none'; // Kache si pa gen pub
     }
   } catch (e) {
-    console.error('Erè chajman piblisite:', e);
-  }
-
-  // 3. CHAJE KATEGORI YO
-  const categories = [
-    { slug: 't-shirt', label: 'T-Shirts' },
-    { slug: 'hoodie', label: 'Hoodies' },
-    { slug: 'chemise', label: 'Chemises' },
-    { slug: 'pantalon', label: 'Pantalon' },
-    { slug: 'jeans', label: 'Jeans' },
-    { slug: 'robe', label: 'Robes' },
-    { slug: 'kalson', label: 'Sou-Vetman' },
-    { slug: 'soulye', label: 'Soulye' }
-  ];
-  const catGrid = document.getElementById('category-grid');
-  if (catGrid) {
-    catGrid.innerHTML = categories.map(c => `
-      <a href="/collection.html?category=${c.slug}" class="product-card" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;">
-        <div>
-          <div style="font-family:var(--font-display);font-weight:700;font-size:16px;margin-bottom:6px;">${c.label}</div>
-          <div class="text-muted" style="font-size:12px;">Wè plis</div>
-        </div>
-      </a>
-    `).join('');
+    console.error('Erè ads:', e);
   }
 });
 </script>
