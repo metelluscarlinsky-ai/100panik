@@ -5,14 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <title>100PANIK — Rad Futurist Premium</title>
 </head>
 <body>
-<div id="header-mount"></div>
+
+<!-- HEADER DIRÈK (POU L PA JANM DISPARÈT) -->
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo" aria-label="100PANIK - Akèy">
+      <span class="logo-dot"></span>
+      <span class="logo-text">100PANIK</span>
+      <span class="logo-badge">HT</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/collection.html">Koleksyon</a></li>
+      <li><a href="/collection.html?category=hoodie">Hoodies</a></li>
+      <li><a href="/collection.html?category=t-shirt">T-shirts</a></li>
+      <li><a href="/track.html">Swiv Kòmand</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="/account.html" class="icon-btn" id="account-btn" aria-label="Kont Mwen">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+      <button class="icon-btn" id="theme-toggle" aria-label="Chanje tèm"></button>
+      <a href="/cart.html" class="icon-btn" aria-label="Panier">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span class="cart-count" style="display:none;">0</span>
+      </a>
+    </div>
+  </nav>
+</header>
 
 <main>
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
@@ -33,6 +66,7 @@
     </div>
   </section>
 
+  <!-- NOUVO RIVE (PWODWI) -->
   <section class="section">
     <div class="section-title">
       <div>
@@ -47,6 +81,7 @@
     </div>
   </section>
 
+  <!-- PIBLISITE (PUB) -->
   <section class="section" id="ads-section" style="display:none;">
     <div class="section-title">
       <div>
@@ -67,17 +102,31 @@
 <script src="/js/pwa.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  const { api, productCardHTML } = window.Panik;
-
+  
   // 1. CHAJE PWODWI YO
   try {
-    const products = await api('/api/products');
+    const resP = await fetch('/api/products');
+    const products = await resP.json();
     const grid = document.getElementById('featured-products');
+    
     if (products.length > 0) {
-      // Montre 4 premye pwodwi yo
-      grid.innerHTML = products.slice(0, 4).map(productCardHTML).join('');
-    } else {
-      grid.innerHTML = '<p class="text-muted">Pa gen pwodwi.</p>';
+      // Sèvi ak fonksyon ki nan app.js lan si li la, sinon fè l manyèlman
+      if (window.Panik && window.Panik.productCardHTML) {
+        grid.innerHTML = products.slice(0, 4).map(window.Panik.productCardHTML).join('');
+      } else {
+        // Fallback si app.js pa chaje
+        grid.innerHTML = products.slice(0, 4).map(p => `
+          <a href="/product.html?slug=${p.slug}" class="product-card">
+            <div class="product-image">
+              <img src="${p.images[0] || '/images/placeholder.jpg'}" alt="${p.name}">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">${p.name}</h3>
+              <div class="product-price"><span class="price-current">${p.price} HTG</span></div>
+            </div>
+          </a>
+        `).join('');
+      }
     }
   } catch (e) {
     console.error('Erè pwodwi:', e);
@@ -86,8 +135,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 2. CHAJE PIBLISITE YO
   try {
-    const res = await fetch('/api/ads');
-    const ads = await res.json();
+    const resA = await fetch('/api/ads');
+    const ads = await resA.json();
     const adsSection = document.getElementById('ads-section');
     const adsGrid = document.getElementById('ads-grid');
 
