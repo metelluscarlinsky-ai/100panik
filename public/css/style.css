@@ -1079,3 +1079,13 @@ body .hero, body section.hero {
 body .hero {
   background-color: #0a0a0a !important;
 }
+
+/* FÒSE BACKGROUND IMAGE */
+body .hero, body section.hero {
+  background-image: linear-gradient(135deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.4) 100%), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+}
+.hero-bg { display: none !important; }
