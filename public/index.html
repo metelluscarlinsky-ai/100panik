@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <title>100PANIK — Rad Futurist Premium</title>
+<style>
+  /* Fiks pou background lan */
+  body .hero { background-image: linear-gradient(135deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.4) 100%), url('/images/hero-bg.jpg') !important; background-size: cover !important; background-position: center top !important; background-repeat: no-repeat !important; }
+  .hero-bg { display: none !important; }
+</style>
 </head>
 <body>
 
@@ -71,7 +76,7 @@
       <a href="/collection.html" class="btn btn-outline btn-sm">Wè Tout</a>
     </div>
     <div class="products-grid" id="featured-products">
-      <p class="text-muted" style="grid-column: 1/-1; text-align: center;">Ap chaje pwodwi...</p>
+      <p class="text-muted" style="grid-column: 1/-1; text-align: center; padding: 20px;">Ap chaje pwodwi...</p>
     </div>
   </section>
 
@@ -95,8 +100,7 @@
 <script src="/js/pwa.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  
-  // 1. CHAJE PWODWI YO AK YON FOTO RANPLASAN SI PA GEN FOTO
+  // 1. PWODWI YO
   try {
     const resP = await fetch('/api/products');
     const products = await resP.json();
@@ -107,9 +111,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Nou kreye kat la manyèlman pou l pa depann de app.js ki ka gen erè
     grid.innerHTML = products.slice(0, 4).map(p => {
-      // Si pwodwi a pa gen foto, nou sèvi ak yon foto gri
+      // Sekirite: si pa gen foto, montre yon foto gri
       const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/400x600/141414/666666?text=Pa+Gen+Foto'\;
       
       return `
@@ -126,12 +129,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         </a>
       `;
     }).join('');
-  } catch (e) {
-    console.error('Erè pwodwi:', e);
-    document.getElementById('featured-products').innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center;">Erè chajman pwodwi.</p>';
-  }
+  } catch (e) { console.error('Erè pwodwi:', e); }
 
-  // 2. CHAJE PIBLISITE YO
+  // 2. PIBLISITE YO
   try {
     const resA = await fetch('/api/ads');
     const ads = await resA.json();
@@ -144,13 +144,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         let media = ad.type === 'video' 
           ? '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>'
           : '<img src="' + ad.media_url + '" style="width:100%;height:100%;object-fit:cover;display:block;">';
-        
-        return '<div style="aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid #333;box-shadow:0 10px 30px rgba(0,0,0,0.5);">' + media + '</div>';
+        return '<a href="/ads.html" style="display:block; aspect-ratio:16/9; border-radius:16px; overflow:hidden; border:1px solid #333;">' + media + '</a>';
       }).join('');
     }
-  } catch (e) {
-    console.error('Erè ads:', e);
-  }
+  } catch (e) { console.error('Erè ads:', e); }
 });
 </script>
 </body>

@@ -11,34 +11,28 @@ router.get('/', async (req, res) => {
       [position]
     );
     res.json(rows);
-  } catch (e) {
-    res.status(500).json({ error: 'Erè' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// Jwenn yon sèl piblisite ak detay li
+// Jwenn yon sèl piblisite
 router.get('/:id', async (req, res) => {
   try {
     const ad = await db.get('SELECT * FROM ads WHERE id = $1 AND active = 1', [req.params.id]);
     if (!ad) return res.status(404).json({ error: 'Pa jwenn' });
     res.json(ad);
-  } catch (e) {
-    res.status(500).json({ error: 'Erè' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// Ajoute yon Like
+// Like
 router.post('/:id/like', async (req, res) => {
   try {
     await db.run('UPDATE ads SET likes = COALESCE(likes, 0) + 1 WHERE id = $1', [req.params.id]);
     const ad = await db.get('SELECT likes FROM ads WHERE id = $1', [req.params.id]);
     res.json({ success: true, likes: ad.likes });
-  } catch (e) {
-    res.status(500).json({ error: 'Erè' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// Jwenn komantè yo
+// Jwenn komantè
 router.get('/:id/comments', async (req, res) => {
   try {
     const rows = await db.all(
@@ -46,12 +40,10 @@ router.get('/:id/comments', async (req, res) => {
       [req.params.id]
     );
     res.json(rows);
-  } catch (e) {
-    res.status(500).json({ error: 'Erè' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// Ajoute yon komantè
+// Ajoute komantè
 router.post('/:id/comments', async (req, res) => {
   try {
     const { user_name, comment } = req.body;
@@ -62,9 +54,7 @@ router.post('/:id/comments', async (req, res) => {
       [req.params.id, user_name, comment]
     );
     res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ error: 'Erè' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
 module.exports = router;

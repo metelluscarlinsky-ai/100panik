@@ -14,7 +14,6 @@
   .ad-info { padding: 15px; }
   .ad-info h3 { font-size: 16px; margin-bottom: 5px; color: #fff; }
   
-  /* MODAL LIGHTBOX */
   .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; overflow-y: auto; }
   .ad-modal.open { display: block; }
   .modal-close { position: fixed; top: 20px; right: 20px; color: #fff; font-size: 30px; cursor: pointer; z-index: 10000; background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; text-align: center; line-height: 40px; }
@@ -25,7 +24,6 @@
   .btn-like { background: #222; color: #fff; border: 1px solid #444; padding: 10px 20px; border-radius: 100px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.2s; }
   .btn-like.liked { background: rgba(0,240,255,0.2); color: #00f0ff; border-color: #00f0ff; }
   
-  /* KOMANTÈ */
   .comments-section { background: #141414; border-radius: 12px; padding: 20px; border: 1px solid #222; }
   .comments-section h3 { color: #fff; margin-bottom: 15px; font-size: 18px; }
   .comment-item { border-bottom: 1px solid #222; padding: 12px 0; }
@@ -53,7 +51,6 @@
   <div class="ads-container" id="ads-grid"></div>
 </main>
 
-<!-- MODAL POU WÈ AN GRO -->
 <div class="ad-modal" id="ad-modal">
   <div class="modal-close" onclick="closeModal()">&times;</div>
   <div class="modal-content-wrapper">
@@ -68,7 +65,6 @@
     <div class="comments-section">
       <h3>Komantè</h3>
       <div id="comments-list"></div>
-      
       <div class="comment-form">
         <input type="text" id="comment-name" class="comment-input" placeholder="Non w..." style="max-width: 150px;">
         <input type="text" id="comment-text" class="comment-input" placeholder="Ekri yon komantè...">
@@ -84,10 +80,7 @@
 <script src="/js/app.js"></script>
 <script>
   let currentAdId = null;
-  let currentLikes = 0;
-  let currentAd = null;
 
-  // 1. Chaje piblisite yo
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const res = await fetch('/api/ads');
@@ -100,12 +93,10 @@
       }
 
       grid.innerHTML = ads.map(ad => {
-        let media = '';
-        if (ad.type === 'video') {
-          media = '<video src="' + ad.media_url + '" class="ad-media" muted></video>';
-        } else {
-          media = '<img src="' + ad.media_url + '" class="ad-media">';
-        }
+        let media = ad.type === 'video' 
+          ? '<video src="' + ad.media_url + '" class="ad-media" muted></video>'
+          : '<img src="' + ad.media_url + '" class="ad-media">';
+        
         return '<div class="ad-card" onclick="openAdModal(' + ad.id + ')">' +
           media +
           '<div class="ad-info">' +
@@ -117,7 +108,6 @@
     } catch (e) { console.error(e); }
   });
 
-  // 2. Louvri Modal la
   async function openAdModal(id) {
     currentAdId = id;
     const res = await fetch('/api/ads/' + id);
@@ -131,23 +121,20 @@
     }
     
     document.getElementById('like-count').textContent = ad.likes || 0;
-    currentLikes = ad.likes || 0;
     document.getElementById('like-btn').classList.remove('liked');
 
     loadComments(id);
     document.getElementById('ad-modal').classList.add('open');
-    document.body.style.overflow = 'hidden'; // Bloke scroll
+    document.body.style.overflow = 'hidden';
   }
 
-  // 3. Fèmen Modal la
   function closeModal() {
     document.getElementById('ad-modal').classList.remove('open');
     document.body.style.overflow = 'auto';
     const video = document.querySelector('#modal-media-container video');
-    if (video) video.pause(); // Kanpe videyo a
+    if (video) video.pause();
   }
 
-  // 4. Like
   async function likeAd() {
     if (!currentAdId) return;
     try {
@@ -160,7 +147,6 @@
     } catch (e) { console.error(e); }
   }
 
-  // 5. Chaje komantè
   async function loadComments(adId) {
     const res = await fetch('/api/ads/' + adId + '/comments');
     const comments = await res.json();
@@ -182,7 +168,6 @@
     `).join('');
   }
 
-  // 6. Voye komantè
   async function postComment() {
     const nameInput = document.getElementById('comment-name');
     const textInput = document.getElementById('comment-text');
@@ -190,12 +175,10 @@
     let name = nameInput.value.trim();
     const text = textInput.value.trim();
 
-    // Si kliyan konekte, pran non l otomatikman
     if (!name && window.CustomerAuth && window.CustomerAuth.isLoggedIn()) {
       name = window.CustomerAuth.getCustomer().full_name;
     }
     if (!name) name = 'Kliyan 100PANIK';
-    
     if (!text) return alert('Tanpri ekri yon komantè');
 
     try {
