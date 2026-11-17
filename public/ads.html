@@ -22,7 +22,7 @@
   .modal-media { width: 100%; border-radius: 12px; background: #000; margin-bottom: 20px; }
   .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .btn-like { background: #222; color: #fff; border: 1px solid #444; padding: 10px 20px; border-radius: 100px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.2s; }
-  .btn-like.liked { background: rgba(0,240,255,0.2); color: #00f0ff; border-color: #00f0ff; }
+  .btn-like.liked { background: rgba(0,240,255,0.2); color: #00f0ff; border-color: #00f0ff; cursor: default; }
   
   .comments-section { background: #141414; border-radius: 12px; padding: 20px; border: 1px solid #222; }
   .comments-section h3 { color: #fff; margin-bottom: 15px; font-size: 18px; }
@@ -36,6 +36,9 @@
   .comment-input { flex: 1; padding: 12px; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; color: #fff; outline: none; }
   .comment-input:focus { border-color: #00f0ff; }
   .btn-send { background: #00f0ff; color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+  
+  .login-prompt { text-align: center; padding: 20px; background: #1a1a1a; border-radius: 8px; margin-top: 20px; border: 1px dashed #333; }
+  .login-prompt a { color: #00f0ff; text-decoration: none; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -51,6 +54,7 @@
   <div class="ads-container" id="ads-grid"></div>
 </main>
 
+<!-- MODAL LIGHTBOX -->
 <div class="ad-modal" id="ad-modal">
   <div class="modal-close" onclick="closeModal()">&times;</div>
   <div class="modal-content-wrapper">
@@ -65,10 +69,17 @@
     <div class="comments-section">
       <h3>Komantè</h3>
       <div id="comments-list"></div>
-      <div class="comment-form">
-        <input type="text" id="comment-name" class="comment-input" placeholder="Non w..." style="max-width: 150px;">
+      
+      <!-- Fòm pou moun ki konekte -->
+      <div class="comment-form" id="comment-form-box" style="display:none;">
         <input type="text" id="comment-text" class="comment-input" placeholder="Ekri yon komantè...">
         <button class="btn-send" onclick="postComment()">Voye</button>
+      </div>
+      
+      <!-- Mesaj pou moun ki pa konekte -->
+      <div class="login-prompt" id="login-prompt-box" style="display:none;">
+        <p>Ou dwe konekte pou w ka komante.</p>
+        <a href="/login.html">Klike la pou w konekte</a>
       </div>
     </div>
   </div>
@@ -80,6 +91,10 @@
 <script src="/js/app.js"></script>
 <script>
   let currentAdId = null;
+
+  function getToken() {
+    return localStorage.getItem('panik_customer_token');
+  }
 
   document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -110,7 +125,10 @@
 
   async function openAdModal(id) {
     currentAdId = id;
-    const res = await fetch('/api/ads/' + id);
+    const token = getToken();
+    const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+    
+    const res = await fetch('/api/ads/' + id, { headers });
     const ad = await res.json();
     
     const mediaContainer = document.getElementById('modal-media-container');
@@ -121,7 +139,25 @@
     }
     
     document.getElementById('like-count').textContent = ad.likes || 0;
-    document.getElementById('like-btn').classList.remove('liked');
+    
+    // Si kliyan an te deja like, dezaktive bouton an
+    const likeBtn = document.getElementById('like-btn');
+    if (ad.hasLiked) {
+      likeBtn.classList.add('liked');
+      likeBtn.disabled = true;
+    } else {
+      likeBtn.classList.remove('liked');
+      likeBtn.disabled = false;
+    }
+
+    // Jere koneksyon pou komantè
+    if (token) {
+      document.getElementById('comment-form-box').style.display = 'flex';
+      document.getElementById('login-prompt-box').style.display = 'none';
+    } else {
+      document.getElementById('comment-form-box').style.display = 'none';
+      document.getElementById('login-prompt-box').style.display = 'block';
+    }
 
     loadComments(id);
     document.getElementById('ad-modal').classList.add('open');
@@ -136,13 +172,26 @@
   }
 
   async function likeAd() {
-    if (!currentAdId) return;
+    const token = getToken();
+    if (!token) {
+      alert('Ou dwe konekte pou w ka like piblisite sa a.');
+      window.location.href = '/login.html?redirect=/ads.html';
+      return;
+    }
+
     try {
-      const res = await fetch('/api/ads/' + currentAdId + '/like', { method: 'POST' });
+      const res = await fetch('/api/ads/' + currentAdId + '/like', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
       const data = await res.json();
-      if (data.success) {
+      
+      if (res.ok && data.success) {
         document.getElementById('like-count').textContent = data.likes;
         document.getElementById('like-btn').classList.add('liked');
+        document.getElementById('like-btn').disabled = true;
+      } else {
+        alert(data.error || 'Erè pandan w ap like');
       }
     } catch (e) { console.error(e); }
   }
@@ -169,26 +218,30 @@
   }
 
   async function postComment() {
-    const nameInput = document.getElementById('comment-name');
-    const textInput = document.getElementById('comment-text');
-    
-    let name = nameInput.value.trim();
-    const text = textInput.value.trim();
+    const token = getToken();
+    if (!token) return;
 
-    if (!name && window.CustomerAuth && window.CustomerAuth.isLoggedIn()) {
-      name = window.CustomerAuth.getCustomer().full_name;
-    }
-    if (!name) name = 'Kliyan 100PANIK';
+    const textInput = document.getElementById('comment-text');
+    const text = textInput.value.trim();
     if (!text) return alert('Tanpri ekri yon komantè');
 
     try {
-      await fetch('/api/ads/' + currentAdId + '/comments', {
+      const res = await fetch('/api/ads/' + currentAdId + '/comments', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_name: name, comment: text })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token 
+        },
+        body: JSON.stringify({ comment: text })
       });
-      textInput.value = '';
-      loadComments(currentAdId);
+      
+      if (res.ok) {
+        textInput.value = '';
+        loadComments(currentAdId);
+      } else {
+        const data = await res.json();
+        alert(data.error);
+      }
     } catch (e) { alert('Erè pandan w ap voye komantè a'); }
   }
 </script>
