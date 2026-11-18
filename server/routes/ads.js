@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
-// LIKE (Yon sèl fwa)
+// LIKE (Yon sèl fwa / Toggle)
 router.post('/:id/like', requireCustomer, async (req, res) => {
   try {
     const existing = await db.get('SELECT id FROM ad_likes WHERE ad_id = $1 AND customer_id = $2', [req.params.id, req.customer.id]);
@@ -49,14 +49,6 @@ router.post('/:id/like', requireCustomer, async (req, res) => {
       const ad = await db.get('SELECT likes FROM ads WHERE id = $1', [req.params.id]);
       res.json({ success: true, liked: true, likes: ad.likes });
     }
-  } catch (e) { res.status(500).json({ error: 'Erè' }); }
-});
-    
-    await db.run('INSERT INTO ad_likes (ad_id, customer_id) VALUES ($1, $2)', [req.params.id, req.customer.id]);
-    await db.run('UPDATE ads SET likes = COALESCE(likes, 0) + 1 WHERE id = $1', [req.params.id]);
-    
-    const ad = await db.get('SELECT likes FROM ads WHERE id = $1', [req.params.id]);
-    res.json({ success: true, likes: ad.likes });
   } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
