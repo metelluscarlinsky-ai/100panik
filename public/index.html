@@ -19,23 +19,23 @@
 
 <header class="header">
   <nav class="nav">
-    <a href="/" class="logo" aria-label="100PANIK - Akèy">
+    <a href="/" class="logo" aria-label="100PANIK - Home">
       <span class="logo-dot"></span>
       <span class="logo-text">100PANIK</span>
-      <span class="logo-badge">HT</span>
+      
     </a>
     <ul class="nav-links">
-      <li><a href="/collection.html">Koleksyon</a></li>
+      <li><a href="/collection.html">Collection</a></li>
       <li><a href="/collection.html?category=hoodie">Hoodies</a></li>
       <li><a href="/collection.html?category=t-shirt">T-shirts</a></li>
-      <li><a href="/track.html">Swiv Kòmand</a></li>
+      <li><a href="/track.html">Swiv Order</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="/account.html" class="icon-btn" id="account-btn" aria-label="Kont Mwen">
+      <a href="/account.html" class="icon-btn" id="account-btn" aria-label="My Account">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
       <button class="icon-btn" id="theme-toggle" aria-label="Chanje tèm"></button>
-      <a href="/cart.html" class="icon-btn" aria-label="Panier">
+      <a href="/cart.html" class="icon-btn" aria-label="Cart">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="cart-count" style="display:none;">0</span>
       </a>
@@ -52,12 +52,12 @@
       </span>
       <div class="hero-actions" style="margin-top: 40px;">
         <a href="/collection.html" class="btn btn-primary btn-lg hero-cta">
-          <span>Eksplore Koleksyon</span>
+          <span>Eksplore Collection</span>
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
         <a href="/track.html" class="btn btn-outline btn-lg">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Swiv Kòmand
+          Swiv Order
         </a>
       </div>
     </div>
@@ -66,10 +66,10 @@
   <section class="section">
     <div class="section-title">
       <div>
-        <h2>Nouvo Rive</h2>
+        <h2>New Arrivals</h2>
         <p class="sub">Pyès ki fèk ajoute nan koleksyon an</p>
       </div>
-      <a href="/collection.html" class="btn btn-outline btn-sm">Wè Tout</a>
+      <a href="/collection.html" class="btn btn-outline btn-sm">View All</a>
     </div>
     <div class="products-grid" id="featured-products">
       <p style="color:#888; grid-column:1/-1; text-align:center; padding: 20px;">Ap chaje...</p>
@@ -79,10 +79,10 @@
   <section class="section" id="ads-section" style="display:none;">
     <div class="section-title">
       <div>
-        <h2>Piblisite</h2>
+        <h2>Ads</h2>
         <p class="sub">Dekouvri pi plis</p>
       </div>
-      <a href="/ads.html" class="btn btn-outline btn-sm">Wè Tout</a>
+      <a href="/ads.html" class="btn btn-outline btn-sm">View All</a>
     </div>
     <div class="ads-grid" id="ads-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;"></div>
   </section>
@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', function() {
       products.slice(0, 4).forEach(function(p) {
         var hasImage = p.images && p.images.length > 0 && p.images[0];
         var imgTag = hasImage 
-          ? '<img src="' + p.images[0] + '" class="product-img" onerror="this.parentElement.innerHTML=\'<div class=no-image-box>Erè Foto</div>\'">'
-          : '<div class="no-image-box">Pa Gen Foto</div>';
+          ? '<img src="' + p.images[0] + '" class="product-img" onerror="this.parentElement.innerHTML=\'<div class=no-image-box>Erè Photo</div>\'">'
+          : '<div class="no-image-box">Pa Gen Photo</div>';
           
         html += '<a href="/product.html?slug=' + p.slug + '" class="product-card">' +
           '<div class="product-image" style="position:relative;">' + imgTag + '</div>' +

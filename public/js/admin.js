@@ -243,9 +243,10 @@ function loadAds() {
 
 document.getElementById('form-ad').addEventListener('submit', function(e) {
   e.preventDefault();
-  var body = {
+  
+var body = {
     title: document.getElementById('a-title').value,
-    type: 'image',
+    type: document.getElementById('a-type').value,
     media_url: document.getElementById('a-img-url').value,
     active: 1
   };
@@ -266,20 +267,28 @@ function deleteAd(id) {
 }
 
 // KONFIGIRASYON
+
 function loadSettings() {
   apiCall('/admin/settings').then(function(s) {
-    document.getElementById('set-brand').value = s.brand_name || '';
+    document.getElementById('set-ig').value = s.instagram || '';
+    document.getElementById('set-tiktok').value = s.tiktok || '';
+    document.getElementById('set-yt').value = s.youtube || '';
     document.getElementById('set-email').value = s.contact_email || '';
   });
+});
 }
+
 
 document.getElementById('settings-form').addEventListener('submit', function(e) {
   e.preventDefault();
   var body = {
-    brand_name: document.getElementById('set-brand').value,
+    instagram: document.getElementById('set-ig').value,
+    tiktok: document.getElementById('set-tiktok').value,
+    youtube: document.getElementById('set-yt').value,
     contact_email: document.getElementById('set-email').value
   };
-  apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Konfigirasyon sove!'); });
+  apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Settings saved!'); });
+});
 });
 
 // KÒMANSE

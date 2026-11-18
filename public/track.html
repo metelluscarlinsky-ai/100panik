@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
-<title>Swiv Kòmand — 100PANIK</title>
+<title>Swiv Order — 100PANIK</title>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/icon-180.png?v=1791991632">
   <link rel="apple-touch-icon" sizes="152x152" href="/images/icons/icon-152.png?v=1791991632">
   <link rel="apple-touch-icon" sizes="167x167" href="/images/icons/icon-167.png?v=1791991632">
@@ -21,7 +21,7 @@
 <div id="header-mount"></div>
 
 <main class="section" style="max-width:800px;">
-  <h1 style="margin-bottom:16px;">Swiv Kòmand</h1>
+  <h1 style="margin-bottom:16px;">Swiv Order</h1>
   <p class="text-muted" style="margin-bottom:32px;">Antre nimewo kòmand oswa tracking pou wè estati a.</p>
 
   <form id="track-form" class="card" style="margin-bottom:32px;">
@@ -58,14 +58,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderTimeline(status) {
     const current = STATUS[status]?.step || 0;
     const steps = [
-      { n: 1, label: 'An Atant',   desc: 'Kòmand resevwa' },
+      { n: 1, label: 'An Atant',   desc: 'Order resevwa' },
       { n: 2, label: 'Konfime',    desc: 'Peman verifye' },
       { n: 3, label: 'An Kous',    desc: 'Sou wout livrezon' },
-      { n: 4, label: 'Livre',      desc: 'Kliyan resevwa' }
+      { n: 4, label: 'Livre',      desc: 'Customer resevwa' }
     ];
     if (status === 'cancelled') {
       return `<div class="card" style="border-color:var(--danger);text-align:center;padding:32px;">
-        <h3 style="color:var(--danger);margin-bottom:8px;">Kòmand Anile</h3>
+        <h3 style="color:var(--danger);margin-bottom:8px;">Order Anile</h3>
         <p class="text-muted">Kontakte sipò pou plis enfòmasyon.</p>
       </div>`;
     }
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="card">
           <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
             <div>
-              <div class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Nimewo Kòmand</div>
+              <div class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Nimewo Order</div>
               <div style="font-family:var(--font-display);font-weight:700;font-size:20px;">${escapeHTML(order.order_number)}</div>
             </div>
             <div style="text-align:right;">
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div style="font-weight:600;font-family:monospace;">${escapeHTML(order.tracking)}</div>
             </div>
             <div>
-              <div class="text-muted" style="font-size:12px;">Kliyan</div>
+              <div class="text-muted" style="font-size:12px;">Customer</div>
               <div style="font-weight:600;">${escapeHTML(order.customer_name)}</div>
             </div>
             <div>
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${i.image ? `<img src="${i.image}" style="width:56px;height:56px;border-radius:8px;object-fit:cover;">` : ''}
               <div style="flex:1;">
                 <div style="font-weight:600;font-size:14px;">${escapeHTML(i.name)}</div>
-                <div class="text-muted" style="font-size:12px;">x${i.quantity}${i.size ? ' - Gwosè ' + escapeHTML(i.size) : ''}${i.color ? ' / ' + escapeHTML(i.color) : ''}</div>
+                <div class="text-muted" style="font-size:12px;">x${i.quantity}${i.size ? ' - Size ' + escapeHTML(i.size) : ''}${i.color ? ' / ' + escapeHTML(i.color) : ''}</div>
               </div>
               <div style="font-weight:600;color:var(--neon);">${formatPrice(i.price * i.quantity)}</div>
             </div>
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
       result.innerHTML = `
         <div class="card text-center" style="padding:60px 20px;">
-          <h3>Kòmand pa jwenn</h3>
+          <h3>Order pa jwenn</h3>
           <p class="text-muted" style="margin-top:8px;">Verifye nimewo a epi eseye ankò.</p>
         </div>
       `;
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const saved = sessionStorage.getItem('last_order');
       if (saved) {
         const o = JSON.parse(saved);
-        setTimeout(() => window.Panik.toast(`Kòmand ${o.order_number} konfime. Total: ${formatPrice(o.total)}`, 'success'), 500);
+        setTimeout(() => window.Panik.toast(`Order ${o.order_number} konfime. Total: ${formatPrice(o.total)}`, 'success'), 500);
         sessionStorage.removeItem('last_order');
       }
     }

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
-<title>Kont Mwen - 100PANIK</title>
+<title>My Account - 100PANIK</title>
 <style>
   .acc-hero {
     background:
@@ -194,7 +194,7 @@
     </div>
     <button class="btn btn-outline" id="logout-btn">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      Dekonekte
+      Logout
     </button>
   </div>
 </section>
@@ -207,7 +207,7 @@
   </button>
   <button class="acc-tab-btn" data-tab="orders">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-    Kòmand Mwen
+    Order Mwen
   </button>
   <button class="acc-tab-btn" data-tab="profile">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -227,7 +227,7 @@
         <div class="kpi-icon">
           <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/></svg>
         </div>
-        <div class="kpi-label">Total Kòmand</div>
+        <div class="kpi-label">Total Order</div>
         <div class="kpi-value" id="kpi-orders">0</div>
       </div>
       <div class="kpi-card">
@@ -253,13 +253,13 @@
       </div>
     </div>
 
-    <h2 style="font-size:22px;margin-bottom:16px;">Dènye Kòmand</h2>
+    <h2 style="font-size:22px;margin-bottom:16px;">Dènye Order</h2>
     <div id="recent-orders-list"></div>
   </div>
 
   <!-- KOMAND -->
   <div class="acc-panel" data-panel="orders">
-    <h2 style="font-size:22px;margin-bottom:20px;">Tout Kòmand Mwen</h2>
+    <h2 style="font-size:22px;margin-bottom:20px;">Tout Order Mwen</h2>
     <div id="all-orders-list"></div>
   </div>
 
@@ -269,7 +269,7 @@
     <div class="card" style="max-width:600px;">
       <form id="profile-form">
         <div class="form-group">
-          <label class="form-label">Non konplè</label>
+          <label class="form-label">Name konplè</label>
           <input class="form-input" name="full_name" required>
         </div>
         <div class="form-group">
@@ -294,7 +294,7 @@
             <input class="form-input" name="city" placeholder="Port-au-Prince">
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Anrejistre Chanjman</button>
+        <button type="submit" class="btn btn-primary">Save Chanjman</button>
       </form>
     </div>
   </div>
@@ -317,15 +317,47 @@
     </div>
     <div class="card" style="max-width:520px;margin-top:20px;border-color:rgba(255,0,64,0.3);">
       <h3 style="font-size:16px;margin-bottom:8px;color:#ff0040;">Zòn Danje</h3>
-      <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Dekonekte sou tout aparèy.</p>
-      <button class="btn btn-danger" id="logout-all-btn">Dekonekte Kounye a</button>
+      <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Logout sou tout aparèy.</p>
+      <button class="btn btn-danger" id="logout-all-btn">Logout Kounye a</button>
     </div>
   </div>
 </main>
 
+
+  <div class="card" style="margin-top:20px; max-width:600px;">
+    <h3>Affiliate Program</h3>
+    <p style="color:#888; font-size:13px; margin-bottom:15px;">Share your link and earn commissions on every sale!</p>
+    <div style="display:flex; gap:10px;">
+      <input type="text" id="aff-link" class="form-input" readonly>
+      <button class="btn btn-primary" onclick="copyAff()" style="width:auto;">Copy</button>
+    </div>
+  </div>
+
 <div id="footer-mount"></div>
 
-<script src="/js/app.js"></script>
+<script src="/js/app.js">
+  // Chaje afilye
+  (async () => {
+    const token = localStorage.getItem('panik_customer_token');
+    if (token) {
+      try {
+        const res = await fetch('/api/customer/affiliate', { headers: { Authorization: 'Bearer ' + token } });
+        const data = await res.json();
+        if (data.ref_code) {
+          document.getElementById('aff-link').value = window.location.origin + '/?ref=' + data.ref_code;
+        }
+      } catch (e) {}
+    }
+  })();
+  
+  function copyAff() {
+    const input = document.getElementById('aff-link');
+    input.select();
+    document.execCommand('copy');
+    alert('Link copied!');
+  }
+
+</script>
 <script src="/js/customer.js"></script>
 <script src="/js/pwa.js" defer></script>
 <script>
@@ -497,7 +529,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
-  // Dekonekte
+  // Logout
   document.getElementById('logout-btn').onclick = () => {
     CA.logout();
     location.href = '/';
