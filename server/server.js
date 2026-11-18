@@ -41,6 +41,18 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/ads', require('./routes/ads'));
 app.use('/api/customer', require('./routes/customer-auth'));
 
+
+// Wout piblik pou konfigirasyon (Lyen sosyal)
+app.get('/api/public-settings', async (req, res) => {
+  try {
+    const db = require('./models/db');
+    const rows = await db.all('SELECT * FROM settings');
+    const obj = {};
+    rows.forEach(r => obj[r.key] = r.value);
+    res.json(obj);
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
+});
+
 // ---------- UPLOADS ----------
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
   maxAge: '7d'

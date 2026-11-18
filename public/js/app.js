@@ -151,8 +151,9 @@ function renderFooter() {
         <div>
           <h4>Kontak</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
-          <a href="#">Enstagram</a>
-          <a href="#">TikTok</a>
+          <a href="#" id="footer-ig">Instagram</a>
+          <a href="#" id="footer-tiktok">TikTok</a>
+          <a href="#" id="footer-yt">YouTube</a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -191,6 +192,12 @@ function escapeHTML(s) {
 // ---------- INIT ----------
 document.addEventListener('DOMContentLoaded', () => {
   renderHeader();
+  fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
+    if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
+    if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
+    if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
+  }).catch(function() {});
+    
   renderFooter();
   updateCartBadge();
 });

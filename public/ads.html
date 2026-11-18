@@ -131,10 +131,8 @@
     
     if (ad.hasLiked) {
       likeBtn.classList.add('liked');
-      likeBtn.disabled = true;
     } else {
       likeBtn.classList.remove('liked');
-      likeBtn.disabled = false;
     }
 
     if (token) {
@@ -169,8 +167,12 @@
       const data = await res.json();
       if (res.ok && data.success) {
         document.getElementById('like-count').textContent = data.likes;
-        document.getElementById('like-btn').classList.add('liked');
-        document.getElementById('like-btn').disabled = true;
+        const btn = document.getElementById('like-btn');
+        if (data.liked) {
+          btn.classList.add('liked');
+        } else {
+          btn.classList.remove('liked');
+        }
       } else { alert(data.error); }
     } catch (e) { console.error(e); }
   }

@@ -293,3 +293,19 @@ document.getElementById('settings-form').addEventListener('submit', function(e) 
 
 // KÒMANSE
 if (token) { initApp(); }
+
+        var passForm = document.getElementById('pass-form');
+        if (passForm) {
+          passForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var body = {
+              current: document.getElementById('pass-current').value,
+              next: document.getElementById('pass-new').value
+            };
+            apiCall('/admin/change-password', 'POST', body).then(function() {
+              showToast('Password updated!');
+              passForm.reset();
+            }).catch(function(err) { alert(err.message); });
+          });
+        }
+    
