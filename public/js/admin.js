@@ -255,12 +255,19 @@ function loadAds() {
   });
 }
 
+
 document.getElementById('form-ad').addEventListener('submit', function(e) {
   e.preventDefault();
+  var imgUrl = document.getElementById('a-img-url').value;
+  
+  // Detekte si se yon videyo (mp4, webm, mov) oswa yon foto
+  var isVideo = imgUrl.toLowerCase().match(/\.(mp4|webm|mov|ogg)$/);
+  var adType = isVideo ? 'video' : 'image';
+  
   var body = {
     title: document.getElementById('a-title').value,
-    type: document.getElementById('a-type').value,
-    media_url: document.getElementById('a-img-url').value,
+    type: adType,
+    media_url: imgUrl,
     active: 1
   };
   apiCall('/admin/ads', 'POST', body).then(function() {
@@ -268,6 +275,7 @@ document.getElementById('form-ad').addEventListener('submit', function(e) {
     showToast('Ad saved!');
     loadAds();
   }).catch(function(err) { alert(err.message); });
+});
 });
 
 function deleteAd(id) {

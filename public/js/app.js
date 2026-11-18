@@ -90,6 +90,16 @@ function moonIcon() {
 function renderHeader() {
   const el = document.getElementById('header-mount');
   if (!el) return;
+
+  // Chaje lyen sosyal yo
+  setTimeout(function() {
+    fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
+      if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
+      if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
+      if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
+    }).catch(function(e) { console.log('Erè lyen sosyal:', e); });
+  }, 500);
+
   el.innerHTML = `
     <header class="header">
       <nav class="nav">
@@ -128,6 +138,16 @@ function renderHeader() {
 function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
+
+  // Chaje lyen sosyal yo
+  setTimeout(function() {
+    fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
+      if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
+      if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
+      if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
+    }).catch(function(e) { console.log('Erè lyen sosyal:', e); });
+  }, 500);
+
   el.innerHTML = `
     <footer class="footer">
       <div class="footer-grid">
