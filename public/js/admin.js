@@ -68,27 +68,42 @@ function initApp() {
   document.querySelectorAll('#sizes-container .chip').forEach(function(chip) {
     chip.onclick = function() {
       var val = chip.dataset.val;
-      if (currentSizes.indexOf(val) > -1) {
-        currentSizes = currentSizes.filter(function(v) { return v !== val; });
-        chip.classList.remove('active');
-      } else {
-        currentSizes.push(val);
-        chip.classList.add('active');
-      }
+      if (currentSizes.indexOf(val) > -1) { currentSizes = currentSizes.filter(function(v) { return v !== val; }); chip.classList.remove('active'); } 
+      else { currentSizes.push(val); chip.classList.add('active'); }
     };
   });
 
   document.querySelectorAll('#colors-container .chip').forEach(function(chip) {
     chip.onclick = function() {
       var val = chip.dataset.val;
-      if (currentColors.indexOf(val) > -1) {
-        currentColors = currentColors.filter(function(v) { return v !== val; });
-        chip.classList.remove('active');
-      } else {
-        currentColors.push(val);
-        chip.classList.add('active');
-      }
+      if (currentColors.indexOf(val) > -1) { currentColors = currentColors.filter(function(v) { return v !== val; }); chip.classList.remove('active'); } 
+      else { currentColors.push(val); chip.classList.add('active'); }
     };
+  });
+
+  // KONFIGIRASYON: Sove lyen yo
+  document.getElementById('settings-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var body = {
+      instagram: document.getElementById('set-ig').value,
+      tiktok: document.getElementById('set-tiktok').value,
+      youtube: document.getElementById('set-yt').value,
+      contact_email: document.getElementById('set-email').value
+    };
+    apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Settings saved!'); });
+  });
+
+  // KONFIGIRASYON: Chanje Modpas
+  document.getElementById('pass-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var body = {
+      current: document.getElementById('pass-current').value,
+      next: document.getElementById('pass-new').value
+    };
+    apiCall('/admin/change-password', 'POST', body).then(function() {
+      showToast('Password updated!');
+      document.getElementById('pass-form').reset();
+    }).catch(function(err) { alert(err.message); });
   });
 }
 
@@ -105,12 +120,12 @@ function apiCall(path, method, body) {
   });
 }
 
-// UPLOAD IMAGE
+// UPLOAD IMAGE/VIDEO
 function uploadImg(input, targetId) {
   if (!input.files || !input.files[0]) return;
   var fd = new FormData();
   fd.append('images', input.files[0]);
-  showToast('Ap telechaje imaj la...');
+  showToast('Uploading...');
   fetch(API + '/admin/upload', {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + token },
@@ -119,19 +134,19 @@ function uploadImg(input, targetId) {
   .then(function(res) { return res.json().then(function(data) { if (!res.ok) throw new Error(data.error); return data; }); })
   .then(function(data) {
     document.getElementById(targetId).value = data.files[0];
-    showToast('Imaj sove!');
+    showToast('Upload complete!');
   })
-  .catch(function(err) { alert('Erè Upload: ' + err.message); });
+  .catch(function(err) { alert('Upload Error: ' + err.message); });
 }
 
 // DASHBOARD
 function loadStats() {
   apiCall('/admin/stats').then(function(s) {
     document.getElementById('stats-container').innerHTML = 
-      '<div class="stat-card"><div class="stat-title">Revni</div><div class="stat-value">' + s.revenue + ' HTG</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kòmand</div><div class="stat-value">' + s.totalOrders + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Pwodwi</div><div class="stat-value">' + s.totalProducts + '</div></div>' +
-      '<div class="stat-card"><div class="stat-title">Kliyan</div><div class="stat-value">' + s.totalCustomers + '</div></div>';
+      '<div class="stat-card"><div class="stat-title">Revenue</div><div class="stat-value">' + s.revenue + ' HTG</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Orders</div><div class="stat-value">' + s.totalOrders + '</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Products</div><div class="stat-value">' + s.totalProducts + '</div></div>' +
+      '<div class="stat-card"><div class="stat-title">Customers</div><div class="stat-value">' + s.totalCustomers + '</div></div>';
   }).catch(function(err) { console.log(err); });
 }
 
@@ -139,7 +154,7 @@ function loadStats() {
 function loadProds() {
   apiCall('/admin/products').then(function(prods) {
     window.prodsList = prods;
-    if (!prods.length) { document.getElementById('products-list').innerHTML = '<p style="color:var(--text-muted); text-align:center;">Pa gen pwodwi.</p>'; return; }
+    if (!prods.length) { document.getElementById('products-list').innerHTML = '<p style="color:#888; text-align:center;">No products found.</p>'; return; }
     
     var html = '';
     prods.forEach(function(p) {
@@ -149,11 +164,11 @@ function loadProds() {
           '<img src="' + img + '">' +
           '<div class="product-info">' +
             '<h3>' + p.name + '</h3>' +
-            '<p>Pri: ' + p.price + ' HTG | Stock: ' + (p.stock || 0) + '</p>' +
+            '<p>Price: ' + p.price + ' HTG | Stock: ' + (p.stock || 0) + '</p>' +
           '</div>' +
           '<div class="product-actions">' +
-            '<button class="btn btn-outline" onclick="editProd(' + p.id + ')">Modifye</button>' +
-            '<button class="btn btn-danger" onclick="deleteProd(' + p.id + ')">Efase</button>' +
+            '<button class="btn btn-outline" onclick="editProd(' + p.id + ')">Edit</button>' +
+            '<button class="btn btn-danger" onclick="deleteProd(' + p.id + ')">Delete</button>' +
           '</div>' +
         '</div>';
     });
@@ -181,7 +196,7 @@ document.getElementById('form-prod').addEventListener('submit', function(e) {
   
   apiCall(url, method, body).then(function() {
     closeModal('modal-prod');
-    showToast('Pwodwi sove!');
+    showToast('Product saved!');
     loadProds();
   }).catch(function(err) { alert(err.message); });
 });
@@ -196,14 +211,12 @@ function editProd(id) {
   document.getElementById('p-desc').value = p.description || '';
   document.getElementById('p-img-url').value = (p.images && p.images.length) ? p.images[0] : '';
   
-  // Chaje gwosè yo
   currentSizes = p.sizes || [];
   document.querySelectorAll('#sizes-container .chip').forEach(function(c) {
     if (currentSizes.indexOf(c.dataset.val) > -1) c.classList.add('active');
     else c.classList.remove('active');
   });
 
-  // Chaje koulè yo
   currentColors = p.colors || [];
   document.querySelectorAll('#colors-container .chip').forEach(function(c) {
     if (currentColors.indexOf(c.dataset.val) > -1) c.classList.add('active');
@@ -214,9 +227,9 @@ function editProd(id) {
 }
 
 function deleteProd(id) {
-  if (confirm('Efase pwodwi sa a nèt?')) {
+  if (confirm('Delete this product?')) {
     apiCall('/admin/products/' + id, 'DELETE').then(function() { 
-      showToast('Pwodwi efase'); 
+      showToast('Product deleted'); 
       loadProds(); 
     });
   }
@@ -225,15 +238,16 @@ function deleteProd(id) {
 // PIBLISITE
 function loadAds() {
   apiCall('/admin/ads').then(function(ads) {
-    if (!ads.length) { document.getElementById('ads-list').innerHTML = '<p style="color:var(--text-muted); text-align:center;">Pa gen piblisite.</p>'; return; }
+    if (!ads.length) { document.getElementById('ads-list').innerHTML = '<p style="color:#888; text-align:center;">No ads found.</p>'; return; }
     var html = '';
     ads.forEach(function(a) {
+      var media = a.type === 'image' ? '<img src="' + a.media_url + '">' : '<div style="width:80px; height:80px; background:#222; display:flex; align-items:center; justify-content:center; color:#888; border-radius:12px;">Video</div>';
       html += 
         '<div class="product-card">' +
-          '<img src="' + a.media_url + '">' +
-          '<div class="product-info"><h3>' + (a.title || 'Piblisite') + '</h3></div>' +
+          media +
+          '<div class="product-info"><h3>' + (a.title || 'Ad') + '</h3></div>' +
           '<div class="product-actions">' +
-            '<button class="btn btn-danger" onclick="deleteAd(' + a.id + ')">Efase</button>' +
+            '<button class="btn btn-danger" onclick="deleteAd(' + a.id + ')">Delete</button>' +
           '</div>' +
         '</div>';
     });
@@ -243,8 +257,7 @@ function loadAds() {
 
 document.getElementById('form-ad').addEventListener('submit', function(e) {
   e.preventDefault();
-  
-var body = {
+  var body = {
     title: document.getElementById('a-title').value,
     type: document.getElementById('a-type').value,
     media_url: document.getElementById('a-img-url').value,
@@ -252,22 +265,21 @@ var body = {
   };
   apiCall('/admin/ads', 'POST', body).then(function() {
     closeModal('modal-ad');
-    showToast('Piblisite sove!');
+    showToast('Ad saved!');
     loadAds();
   }).catch(function(err) { alert(err.message); });
 });
 
 function deleteAd(id) {
-  if (confirm('Efase piblisite sa a?')) {
+  if (confirm('Delete this ad?')) {
     apiCall('/admin/ads/' + id, 'DELETE').then(function() { 
-      showToast('Piblisite efase');
+      showToast('Ad deleted');
       loadAds(); 
     });
   }
 }
 
-// KONFIGIRASYON
-
+// KONFIGIRASYON: Chaje
 function loadSettings() {
   apiCall('/admin/settings').then(function(s) {
     document.getElementById('set-ig').value = s.instagram || '';
@@ -275,37 +287,6 @@ function loadSettings() {
     document.getElementById('set-yt').value = s.youtube || '';
     document.getElementById('set-email').value = s.contact_email || '';
   });
-});
 }
 
-
-document.getElementById('settings-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  var body = {
-    instagram: document.getElementById('set-ig').value,
-    tiktok: document.getElementById('set-tiktok').value,
-    youtube: document.getElementById('set-yt').value,
-    contact_email: document.getElementById('set-email').value
-  };
-  apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Settings saved!'); });
-});
-});
-
-// KÒMANSE
 if (token) { initApp(); }
-
-        var passForm = document.getElementById('pass-form');
-        if (passForm) {
-          passForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var body = {
-              current: document.getElementById('pass-current').value,
-              next: document.getElementById('pass-new').value
-            };
-            apiCall('/admin/change-password', 'POST', body).then(function() {
-              showToast('Password updated!');
-              passForm.reset();
-            }).catch(function(err) { alert(err.message); });
-          });
-        }
-    

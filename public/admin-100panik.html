@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -14,10 +14,12 @@
   .login-box { background: var(--bg-card); padding: 40px 30px; border-radius: 24px; border: 1px solid var(--border); width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
   .login-box h1 { margin-bottom: 30px; color: var(--text); font-size: 28px; text-align: center; font-weight: 700; letter-spacing: -1px; }
   .login-box h1 span { color: var(--cyan); }
+  
   .form-group { margin-bottom: 20px; }
   .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
   .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text); outline: none; font-size: 15px; transition: 0.2s; }
   .form-group input:focus, .form-group textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2); }
+  
   .btn { padding: 14px 20px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; font-size: 15px; }
   .btn-primary { background: var(--cyan); color: #000; width: 100%; }
   .btn-primary:hover { opacity: 0.9; }
@@ -29,7 +31,6 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
   .topbar .logo { font-size: 20px; font-weight: 800; color: var(--text); }
   .topbar .logo span { color: var(--cyan); }
-  .topbar .actions { display: flex; gap: 10px; align-items: center; }
   
   .nav-tabs { display: flex; overflow-x: auto; gap: 10px; padding: 15px 20px; background: var(--bg); border-bottom: 1px solid var(--border); }
   .nav-tabs::-webkit-scrollbar { display: none; }
@@ -64,7 +65,6 @@
   .close-btn:hover { color: var(--text); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-  /* CHIPS */
   .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .chip { padding: 8px 16px; border-radius: 100px; background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: 0.2s; user-select: none; }
   .chip:hover { border-color: var(--cyan); }
@@ -94,15 +94,9 @@
   <div class="login-box">
     <h1><span>100</span>PANIK Admin</h1>
     <form id="login-form">
-      <div class="form-group">
-        <label>Imel</label>
-        <input type="email" id="login-email" required>
-      </div>
-      <div class="form-group">
-        <label>Modpas</label>
-        <input type="password" id="login-pass" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Konekte</button>
+      <div class="form-group"><label>Email</label><input type="email" id="login-email" required></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-pass" required></div>
+      <button type="submit" class="btn btn-primary">Login</button>
     </form>
   </div>
 </div>
@@ -111,176 +105,109 @@
   <div class="topbar">
     <div class="logo"><span>100</span>PANIK</div>
     <div class="actions">
-      <button class="btn btn-danger" style="padding: 8px 15px; font-size: 13px;" onclick="logout()">Dekonekte</button>
+      <button class="btn btn-danger" style="padding: 8px 15px; font-size: 13px;" onclick="logout()">Logout</button>
     </div>
   </div>
 
   <div class="nav-tabs" id="mobile-nav">
     <div class="nav-chip active" data-page="dashboard">Dashboard</div>
-    <div class="nav-chip" data-page="products">Pwodwi</div>
-    <div class="nav-chip" data-page="ads">Piblisite</div>
-    <div class="nav-chip" data-page="settings">Konfigirasyon</div>
+    <div class="nav-chip" data-page="products">Products</div>
+    <div class="nav-chip" data-page="ads">Ads</div>
+    <div class="nav-chip" data-page="settings">Settings</div>
   </div>
 
   <div class="app-layout">
     <div class="sidebar hidden" id="desktop-sidebar">
       <div class="nav-chip active" data-page="dashboard">Dashboard</div>
-      <div class="nav-chip" data-page="products">Pwodwi</div>
-      <div class="nav-chip" data-page="ads">Piblisite</div>
-      <div class="nav-chip" data-page="settings">Konfigirasyon</div>
+      <div class="nav-chip" data-page="products">Products</div>
+      <div class="nav-chip" data-page="ads">Ads</div>
+      <div class="nav-chip" data-page="settings">Settings</div>
     </div>
 
     <div class="content-area">
       <div id="page-dashboard" class="page-content">
         <div class="page-header"><h1>Dashboard</h1></div>
-        <div class="stats-grid" id="stats-container">
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
-        </div>
-    </div>
+        <div class="stats-grid" id="stats-container"></div>
       </div>
 
       <div id="page-products" class="page-content hidden">
         <div class="page-header">
-          <h1>Pwodwi</h1>
-          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-prod')">+ Ajoute</button>
+          <h1>Products</h1>
+          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-prod')">+ Add Product</button>
         </div>
-        <div class="products-grid" id="products-list">
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
-        </div>
-    </div>
+        <div class="products-grid" id="products-list"></div>
       </div>
 
       <div id="page-ads" class="page-content hidden">
         <div class="page-header">
-          <h1>Piblisite</h1>
-          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-ad')">+ Ajoute</button>
+          <h1>Ads</h1>
+          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-ad')">+ Add Ad</button>
         </div>
-        <div class="products-grid" id="ads-list">
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
-        </div>
-    </div>
+        <div class="products-grid" id="ads-list"></div>
       </div>
 
       <div id="page-settings" class="page-content hidden">
-        <div class="page-header"><h1>Konfigirasyon</h1></div>
-        <div class="stat-card" style="max-width: 600px;">
-          <form id="settings-form">
-        <div class="form-group"><label>Instagram Link</label><input type="text" id="set-ig" placeholder="https://instagram.com/..."></div>
-        <div class="form-group"><label>TikTok Link</label><input type="text" id="set-tiktok" placeholder="https://tiktok.com/..."></div>
-        <div class="form-group"><label>YouTube Link</label><input type="text" id="set-yt" placeholder="https://youtube.com/..."></div>
-        <div class="form-group"><label>Contact Email</label><input type="email" id="set-email"></div>
-        <button type="submit" class="btn btn-primary">Save Settings</button>
-</form>
+        <div class="page-header"><h1>Settings</h1></div>
         
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
+        <!-- KONFIGIRASYON JENERAL -->
+        <div class="stat-card" style="max-width: 600px; margin-bottom: 20px;">
+          <h3 style="margin-bottom: 20px; color: var(--cyan);">General Settings</h3>
+          <form id="settings-form">
+            <div class="form-group"><label>Instagram Link</label><input type="text" id="set-ig" placeholder="https://instagram.com/..."></div>
+            <div class="form-group"><label>TikTok Link</label><input type="text" id="set-tiktok" placeholder="https://tiktok.com/..."></div>
+            <div class="form-group"><label>YouTube Link</label><input type="text" id="set-yt" placeholder="https://youtube.com/..."></div>
+            <div class="form-group"><label>Contact Email</label><input type="email" id="set-email"></div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+
+        <!-- CHANJE MODPAS -->
+        <div class="stat-card" style="max-width: 600px;">
+          <h3 style="margin-bottom: 20px; color: var(--cyan);">Change Admin Password</h3>
           <form id="pass-form">
             <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
+            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required minlength="6"></div>
             <button type="submit" class="btn btn-primary">Update Password</button>
           </form>
         </div>
-    </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL PWODWI (AK TOUT DETAY) -->
+<!-- MODAL PWODWI -->
 <div class="modal" id="modal-prod">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Pwodwi</h2>
+      <h2>Product</h2>
       <button class="close-btn" onclick="closeModal('modal-prod')">&times;</button>
     </div>
     <form id="form-prod">
       <input type="hidden" id="p-id">
-      <div class="form-group"><label>Non Pwodwi</label><input type="text" id="p-name" required></div>
+      <div class="form-group"><label>Product Name</label><input type="text" id="p-name" required></div>
       <div class="form-row">
-        <div class="form-group"><label>Pri (HTG)</label><input type="number" id="p-price" required></div>
-        <div class="form-group"><label>Kantite (Stock)</label><input type="number" id="p-stock" value="10" required>
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
-        </div>
-    </div>
+        <div class="form-group"><label>Price (HTG)</label><input type="number" id="p-price" required></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="p-stock" value="10" required></div>
       </div>
-      <div class="form-group"><label>Kategori</label><input type="text" id="p-cat" placeholder="Ex: hoodie, t-shirt"></div>
-      <div class="form-group"><label>Deskripsyon</label><textarea id="p-desc" rows="2"></textarea></div>
-      <div class="form-group"><label>Foto</label><input type="file" id="p-file" accept="image/*" onchange="uploadImg(this, 'p-img-url')"></div>
+      <div class="form-group"><label>Category</label><input type="text" id="p-cat" placeholder="Ex: hoodie, t-shirt"></div>
+      <div class="form-group"><label>Description</label><textarea id="p-desc" rows="2"></textarea></div>
+      <div class="form-group"><label>Photo</label><input type="file" id="p-file" accept="image/*" onchange="uploadImg(this, 'p-img-url')"></div>
       <input type="hidden" id="p-img-url">
       
-      <!-- GWOSÈ -->
       <div class="form-group">
-        <label>Gwosè ki Disponib</label>
+        <label>Available Sizes</label>
         <div class="chips-container" id="sizes-container">
-          <div class="chip" data-val="S">S</div>
-          <div class="chip" data-val="M">M</div>
-          <div class="chip" data-val="L">L</div>
-          <div class="chip" data-val="XL">XL</div>
-          <div class="chip" data-val="XXL">XXL</div>
-          <div class="chip" data-val="36">36</div>
-          <div class="chip" data-val="38">38</div>
-          <div class="chip" data-val="40">40</div>
-          <div class="chip" data-val="42">42</div>
-        
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
+          <div class="chip" data-val="S">S</div><div class="chip" data-val="M">M</div><div class="chip" data-val="L">L</div><div class="chip" data-val="XL">XL</div><div class="chip" data-val="XXL">XXL</div>
         </div>
-    </div>
       </div>
 
-      <!-- KOULÈ -->
       <div class="form-group">
-        <label>Koulè ki Disponib</label>
+        <label>Available Colors</label>
         <div class="chips-container" id="colors-container">
-          <div class="chip" data-val="Nwa">Nwa</div>
-          <div class="chip" data-val="Blan">Blan</div>
-          <div class="chip" data-val="Wouj">Wouj</div>
-          <div class="chip" data-val="Ble">Ble</div>
-          <div class="chip" data-val="Vèt">Vèt</div>
-          <div class="chip" data-val="Jòn">Jòn</div>
-          <div class="chip" data-val="Gri">Gri</div>
-        
-        <div class="stat-card" style="max-width: 600px; margin-top: 20px;">
-          <h3>Change Admin Password</h3>
-          <form id="pass-form">
-            <div class="form-group"><label>Current Password</label><input type="password" id="pass-current" required></div>
-            <div class="form-group"><label>New Password</label><input type="password" id="pass-new" required></div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-          </form>
+          <div class="chip" data-val="Nwa">Nwa</div><div class="chip" data-val="Blan">Blan</div><div class="chip" data-val="Wouj">Wouj</div><div class="chip" data-val="Ble">Ble</div><div class="chip" data-val="Vèt">Vèt</div><div class="chip" data-val="Jòn">Jòn</div>
         </div>
-    </div>
       </div>
-
-      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Anrejistre</button>
+      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Save Product</button>
     </form>
   </div>
 </div>
@@ -289,19 +216,26 @@
 <div class="modal" id="modal-ad">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Piblisite</h2>
+      <h2>Ad</h2>
       <button class="close-btn" onclick="closeModal('modal-ad')">&times;</button>
     </div>
     <form id="form-ad">
-      <div class="form-group"><label>Tit (Opsyonel)</label><input type="text" id="a-title"></div>
-      <div class="form-group"><label>Fichye</label><input type="file" id="a-file" accept="image/*,video/mp4" onchange="uploadImg(this, 'a-img-url')"></div>
+      <div class="form-group"><label>Title (Optional)</label><input type="text" id="a-title"></div>
+      <div class="form-group">
+        <label>Media Type</label>
+        <select id="a-type">
+          <option value="image">Image</option>
+          <option value="video">Video (MP4)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>File</label><input type="file" id="a-file" accept="image/*,video/mp4" onchange="uploadImg(this, 'a-img-url')"></div>
       <input type="hidden" id="a-img-url">
-      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Anrejistre</button>
+      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Save Ad</button>
     </form>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
-<script src="/js/admin.js"></script>
+<script src="/js/admin.js?v=1795039042"></script>
 </body>
 </html>
