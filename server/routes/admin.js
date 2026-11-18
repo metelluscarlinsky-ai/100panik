@@ -117,12 +117,23 @@ router.get('/settings', async (req, res) => {
 router.put('/settings', async (req, res) => {
   try {
     const updates = req.body || {};
-    const keys = Object.keys(updates);
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i];
-      await db.run(`INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [k, String(updates[k])]);
+    
+    // Netwaye lyen yo (ajoute https:// si li manke)
+    ['instagram', 'tiktok', 'youtube'].forEach(key => {
+      if (updates[key]) {
+        let url = updates[key].trim();
+        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+          updates[key] = 'https://' + url;
+        }
+      }
+    });
+
+    for (const k of Object.keys(updates)) {
+      await db.run("INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", [k, String(updates[k])]);
     }
     res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: 'Erè' }); }
+});
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

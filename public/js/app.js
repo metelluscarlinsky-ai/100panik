@@ -91,14 +91,27 @@ function renderHeader() {
   const el = document.getElementById('header-mount');
   if (!el) return;
 
-  // Chaje lyen sosyal yo
-  setTimeout(function() {
-    fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
-      if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
-      if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
-      if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
-    }).catch(function(e) { console.log('Erè lyen sosyal:', e); });
+  
   }, 500);
+
+
+  // Chaje lyen sosyal yo soti nan baz done a
+  fetch('/api/public-settings')
+    .then(function(res) { return res.json(); })
+    .then(function(s) {
+      if (s.instagram) {
+        var ig = document.getElementById('footer-ig');
+        if (ig) ig.href = s.instagram;
+      }
+      if (s.tiktok) {
+        var tt = document.getElementById('footer-tiktok');
+        if (tt) tt.href = s.tiktok;
+      }
+      if (s.youtube) {
+        var yt = document.getElementById('footer-yt');
+        if (yt) yt.href = s.youtube;
+      }
+    }).catch(function(e) { console.log('Erè lyen:', e); });
 
   el.innerHTML = `
     <header class="header">
@@ -139,14 +152,27 @@ function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
 
-  // Chaje lyen sosyal yo
-  setTimeout(function() {
-    fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
-      if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
-      if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
-      if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
-    }).catch(function(e) { console.log('Erè lyen sosyal:', e); });
+  
   }, 500);
+
+
+  // Chaje lyen sosyal yo soti nan baz done a
+  fetch('/api/public-settings')
+    .then(function(res) { return res.json(); })
+    .then(function(s) {
+      if (s.instagram) {
+        var ig = document.getElementById('footer-ig');
+        if (ig) ig.href = s.instagram;
+      }
+      if (s.tiktok) {
+        var tt = document.getElementById('footer-tiktok');
+        if (tt) tt.href = s.tiktok;
+      }
+      if (s.youtube) {
+        var yt = document.getElementById('footer-yt');
+        if (yt) yt.href = s.youtube;
+      }
+    }).catch(function(e) { console.log('Erè lyen:', e); });
 
   el.innerHTML = `
     <footer class="footer">
@@ -171,9 +197,9 @@ function renderFooter() {
         <div>
           <h4>Kontak</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
-          <a href="#" id="footer-ig">Instagram</a>
-          <a href="#" id="footer-tiktok">TikTok</a>
-          <a href="#" id="footer-yt">YouTube</a>
+          <a href="#" id="footer-ig" target="_blank" rel="noopener">Instagram</a>
+          <a href="#" id="footer-tiktok" target="_blank" rel="noopener">TikTok</a>
+          <a href="#" id="footer-yt" target="_blank" rel="noopener">YouTube</a>
         </div>
       </div>
       <div class="footer-bottom">
