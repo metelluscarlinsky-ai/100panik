@@ -1,9 +1,8 @@
-
 const express = require('express');
 const db = require('../models/db');
 const router = express.Router();
 
-// Koneksyon Afilye (Sèvi ak Imel ak Kòd la kòm modpas)
+// Koneksyon Afilye
 router.post('/login', async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -18,10 +17,7 @@ router.get('/:id/stats', async (req, res) => {
   try {
     const aff = await db.get('SELECT * FROM affiliates WHERE id = $1', [req.params.id]);
     if (!aff) return res.status(404).json({ error: 'Not found' });
-    
-    // Jwenn kòmand ki fèt ak kòd sa a
     const orders = await db.all('SELECT id, order_number, total, created_at FROM orders WHERE affiliate_code = $1 AND status != $2 ORDER BY created_at DESC', [aff.code, 'cancelled']);
-    
     res.json({ affiliate: aff, orders });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

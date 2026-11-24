@@ -3,42 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Affiliate Dashboard - 100PANIK</title>
+<title>Affiliate Program - 100PANIK</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <style>
-  .aff-login { max-width: 400px; margin: 100px auto; background: #141414; padding: 40px; border-radius: 24px; border: 1px solid #222; }
-  .aff-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
-  .aff-card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #222; }
-  .aff-card h3 { color: #888; font-size: 13px; margin-bottom: 10px; }
-  .aff-card p { color: #00f0ff; font-size: 24px; font-weight: 700; }
-  .order-item { background: #141414; padding: 15px; border-radius: 8px; border: 1px solid #222; margin-bottom: 10px; display: flex; justify-content: space-between; }
+  .aff-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+  .aff-login { max-width: 400px; margin: 80px auto; background: #141414; padding: 40px; border-radius: 24px; border: 1px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  .aff-login h2 { text-align: center; margin-bottom: 30px; color: #00f0ff; }
+  
+  .aff-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+  .aff-card { background: #141414; padding: 25px; border-radius: 16px; border: 1px solid #222; }
+  .aff-card h3 { color: #888; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+  .aff-card p { color: #00f0ff; font-size: 28px; font-weight: 700; }
+  
+  .aff-link-box { background: #141414; padding: 25px; border-radius: 16px; border: 1px solid #222; margin-bottom: 40px; }
+  .aff-link-box h3 { margin-bottom: 15px; color: #fff; }
+  .aff-input-group { display: flex; gap: 10px; }
+  
+  .order-list { background: #141414; border-radius: 16px; border: 1px solid #222; overflow: hidden; }
+  .order-item { padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+  .order-item:last-child { border: none; }
 </style>
 </head>
 <body>
 <div id="header-mount"></div>
 
-<main class="section">
+<div class="aff-container">
+  <!-- KONEKSYON -->
   <div id="login-view" class="aff-login">
-    <h2 style="text-align:center; margin-bottom: 20px;">Affiliate Login</h2>
+    <h2>Affiliate Login</h2>
     <form id="aff-login-form">
-      <div class="form-group"><label>Email</label><input type="email" id="aff-email" required></div>
-      <div class="form-group"><label>Affiliate Code</label><input type="text" id="aff-code" required></div>
-      <button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
+      <div class="form-group"><label>Email</label><input type="email" id="aff-email" required placeholder="Your email"></div>
+      <div class="form-group"><label>Affiliate Code</label><input type="text" id="aff-code" required placeholder="Ex: AFF-X7Y2B"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Login</button>
     </form>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="dashboard-view" style="display:none;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-      <h1>Affiliate Dashboard</h1>
+      <h1 style="font-size: 24px;">Affiliate Dashboard</h1>
       <button class="btn btn-danger" onclick="logout()">Logout</button>
     </div>
 
-    <div class="aff-card" style="margin-bottom:30px; text-align:center;">
+    <div class="aff-link-box">
       <h3>Your Affiliate Link</h3>
-      <div style="display:flex; gap:10px; margin-top:10px;">
+      <p style="color:#888; font-size:13px; margin-bottom:10px;">Share this link. When people buy, you earn commission.</p>
+      <div class="aff-input-group">
         <input type="text" id="aff-link" class="form-input" readonly>
-        <button class="btn btn-primary" onclick="copyLink()">Copy</button>
+        <button class="btn btn-primary" onclick="copyLink()" style="width:auto;">Copy</button>
       </div>
     </div>
 
@@ -47,10 +60,10 @@
       <div class="aff-card"><h3>Total Earnings</h3><p id="stat-earnings">0 HTG</p></div>
     </div>
 
-    <h3 style="margin-bottom:15px;">Recent Orders</h3>
-    <div id="orders-list"></div>
+    <h3 style="margin-bottom:15px; color:#fff;">Recent Orders</h3>
+    <div class="order-list" id="orders-list"></div>
   </div>
-</main>
+</div>
 
 <script src="/js/app.js"></script>
 <script>
@@ -65,7 +78,7 @@
     const input = document.getElementById('aff-link');
     input.select();
     document.execCommand('copy');
-    alert('Link copied!');
+    alert('Link copied to clipboard!');
   }
 
   document.getElementById('aff-login-form').addEventListener('submit', function(e) {
@@ -93,21 +106,21 @@
 
     const link = window.location.origin + '/?ref=' + currentAff.code;
     document.getElementById('aff-link').value = link;
-    document.getElementById('stat-sales').textContent = currentAff.total_sales;
-    document.getElementById('stat-earnings').textContent = currentAff.total_earnings + ' HTG';
+    document.getElementById('stat-sales').textContent = currentAff.total_sales || 0;
+    document.getElementById('stat-earnings').textContent = (currentAff.total_earnings || 0) + ' HTG';
 
     fetch('/api/affiliate/' + currentAff.id + '/stats')
       .then(res => res.json())
       .then(data => {
         const list = document.getElementById('orders-list');
         if (data.orders.length === 0) {
-          list.innerHTML = '<p style="color:#888;">No orders yet.</p>';
+          list.innerHTML = '<div style="padding:20px; color:#888; text-align:center;">No orders yet.</div>';
           return;
         }
         list.innerHTML = data.orders.map(o => `
           <div class="order-item">
             <div>
-              <strong>${o.order_number}</strong><br>
+              <strong style="color:#fff;">${o.order_number}</strong><br>
               <small style="color:#888;">${new Date(o.created_at).toLocaleDateString()}</small>
             </div>
             <div style="color:#00f0ff; font-weight:bold;">${o.total} HTG</div>
@@ -116,7 +129,6 @@
       });
   }
 
-  // Chèche si afilye a te deja konekte
   const saved = localStorage.getItem('affiliate_data');
   if (saved) {
     currentAff = JSON.parse(saved);
