@@ -41,20 +41,6 @@ function toast(msg, type = 'info') {
   }, 3000);
 }
 
-async function api(path, options = {}) {
-  const opts = {
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-    ...options
-  };
-  if (opts.body && typeof opts.body === 'object') opts.body = JSON.stringify(opts.body);
-  const res = await fetch(API + path, opts);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Erè' }));
-    throw new Error(err.error || `Erè ${res.status}`);
-  }
-  return res.json();
-}
-
 function initTheme() {
   const saved = localStorage.getItem('panik_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
@@ -108,6 +94,11 @@ function renderHeader() {
 function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
+  
+  // Mwen mete lyen w yo dirèkteman isit la pou yo pa janm disparèt
+  const igLink = 'https://www.instagram.com/100panik?evlk=Zm56Z3EwaWtkcXFq'\;
+  const tiktokLink = 'https://www.tiktok.com/@100panik_'\;
+
   el.innerHTML = `
     <footer class="footer">
       <div class="footer-grid">
@@ -131,31 +122,24 @@ function renderFooter() {
         <div>
           <h4>Contact</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
-          <a href="#" id="footer-ig" target="_blank">Instagram</a>
-          <a href="#" id="footer-tiktok" target="_blank">TikTok</a>
-          <a href="#" id="footer-yt" target="_blank">YouTube</a>
+          <a href="${igLink}" target="_blank" rel="noopener">Instagram</a>
+          <a href="${tiktokLink}" target="_blank" rel="noopener">TikTok</a>
         </div>
       </div>
       <div class="footer-bottom">© ${new Date().getFullYear()} 100PANIK. All rights reserved.</div>
     </footer>
   `;
-
-  fetch('/api/public-settings').then(res => res.json()).then(s => {
-    if (s.instagram) document.getElementById('footer-ig').href = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
-    if (s.tiktok) document.getElementById('footer-tiktok').href = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
-    if (s.youtube) document.getElementById('footer-yt').href = s.youtube.startsWith('http') ? s.youtube : 'https://' + s.youtube;
-  }).catch(e => console.log(e));
 }
 
 function productCardHTML(p) {
-  const img = (p.images && p.images[0]) || '/images/placeholder.jpg';
+  const img = (p.images && p.images[0]) || '';
   const onSale = p.compare_price > p.price;
   return `
     <a href="/product.html?slug=${encodeURIComponent(p.slug)}" class="product-card">
-      <div class="product-image">
+      <div class="product-image" style="background:#222; position:relative;">
+        ${img ? `<img src="${img}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'">` : ''}
         ${p.featured ? '<span class="product-badge">New</span>' : ''}
         ${onSale ? '<span class="product-badge sale" style="left:auto;right:12px;">SALE</span>' : ''}
-        <img src="${img}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='/images/placeholder.jpg'">
       </div>
       <div class="product-info">
         <h3 class="product-name">${escapeHTML(p.name)}</h3>
@@ -170,6 +154,17 @@ function productCardHTML(p) {
 
 function escapeHTML(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function api(path, options = {}) {
+  const opts = { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options };
+  if (opts.body && typeof opts.body === 'object') opts.body = JSON.stringify(opts.body);
+  const res = await fetch(API + path, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Erè' }));
+    throw new Error(err.error || `Erè ${res.status}`);
+  }
+  return res.json();
 }
 
 window.Panik = { Store, api, toast, formatPrice, productCardHTML, escapeHTML, saveCart, updateCartBadge };

@@ -1194,3 +1194,11 @@ body .hero-content {
   max-width: 500px !important;
   text-align: center !important;
 }
+
+/* FIX FINAL POU FOTO AFICHE A */
+body .hero {
+  background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+}
