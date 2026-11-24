@@ -1107,3 +1107,35 @@ body .footer, body footer.footer {
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
+
+
+/* ==========================================
+   FIX HERO IMAGE - SHOW FULL PHOTO
+========================================== */
+body .hero, body section.hero {
+  background-image: 
+    linear-gradient(135deg, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.4) 100%),
+    url('/images/hero-bg.jpg') !important;
+  background-size: contain !important; 
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-color: #0a0a0a !important;
+  min-height: 80vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 20px !important;
+}
+
+/* Nou mete yon ti bwat glas dèyè tèks la pou l toujou lizib */
+body .hero-content {
+  background: rgba(10, 10, 10, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 40px 25px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}

@@ -1,25 +1,11 @@
+const API = '';
 
-// Trase Afilye
-const urlParams = new URLSearchParams(window.location.search);
-const refCode = urlParams.get('ref');
-if (refCode) {
-  localStorage.setItem('panik_affiliate', refCode);
-}
-
-// ============================================
-// 100PANIK - App loji (shared)
-// ============================================
-
-const API = ''; // menm domèn
-
-// ---------- STATE ----------
 const Store = {
   cart: JSON.parse(localStorage.getItem('panik_cart') || '[]'),
   settings: {},
   products: []
 };
 
-// ---------- UTILS ----------
 function saveCart() {
   localStorage.setItem('panik_cart', JSON.stringify(Store.cart));
   updateCartBadge();
@@ -50,7 +36,6 @@ function toast(msg, type = 'info') {
   container.appendChild(t);
   setTimeout(() => {
     t.style.opacity = '0';
-    t.style.transform = 'translateY(-20px)';
     t.style.transition = 'all 0.3s';
     setTimeout(() => t.remove(), 300);
   }, 3000);
@@ -70,7 +55,6 @@ async function api(path, options = {}) {
   return res.json();
 }
 
-// ---------- THEME ----------
 function initTheme() {
   const saved = localStorage.getItem('panik_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
@@ -87,46 +71,16 @@ function initTheme() {
   }
 }
 
-function sunIcon() {
-  return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`;
-}
-function moonIcon() {
-  return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-}
+function sunIcon() { return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`; }
+function moonIcon() { return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`; }
 
-// ---------- HEADER SHARED ----------
 function renderHeader() {
   const el = document.getElementById('header-mount');
   if (!el) return;
-
-  
-  }, 500);
-
-
-  // Chaje lyen sosyal yo soti nan baz done a
-  fetch('/api/public-settings')
-    .then(function(res) { return res.json(); })
-    .then(function(s) {
-      if (s.instagram) {
-        var ig = document.getElementById('footer-ig');
-        if (ig) ig.href = s.instagram;
-      }
-      if (s.tiktok) {
-        var tt = document.getElementById('footer-tiktok');
-        if (tt) tt.href = s.tiktok;
-      }
-      if (s.youtube) {
-        var yt = document.getElementById('footer-yt');
-        if (yt) yt.href = s.youtube;
-      }
-    }).catch(function(e) { console.log('Erè lyen:', e); });
-
   el.innerHTML = `
     <header class="header">
       <nav class="nav">
-        <a href="/" class="logo">
-          <span class="logo-dot"></span>100PANIK
-        </a>
+        <a href="/" class="logo"><span class="logo-dot"></span>100PANIK</a>
         <ul class="nav-links">
           <li><a href="/collection.html">Collection</a></li>
           <li><a href="/collection.html?category=hoodie">Hoodies</a></li>
@@ -134,17 +88,13 @@ function renderHeader() {
           <li><a href="/track.html">Track Order</a></li>
         </ul>
         <div class="nav-actions">
-          <a href="/login.html" class="icon-btn" id="account-btn" aria-label="My Account" title="Konekte / Enskri">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
+          <a href="/affiliate.html" class="icon-btn" style="width:auto; padding: 0 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">Affiliate</a>
+          <a href="/account.html" class="icon-btn" id="account-btn" aria-label="My Account">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </a>
-          <button class="icon-btn" id="theme-toggle" aria-label="Chanje tèm"></button>
-          <a href="/cart.html" class="icon-btn" aria-label="Panier">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>
-            </svg>
+          <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"></button>
+          <a href="/cart.html" class="icon-btn" aria-label="Cart">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
             <span class="cart-count" style="display:none;">0</span>
           </a>
         </div>
@@ -155,7 +105,6 @@ function renderHeader() {
   updateCartBadge();
 }
 
-// ---------- FOOTER SHARED ----------
 function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
@@ -182,41 +131,30 @@ function renderFooter() {
         <div>
           <h4>Contact</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
-          <a href="#" id="footer-ig" target="_blank" rel="noopener">Instagram</a>
-          <a href="#" id="footer-tiktok" target="_blank" rel="noopener">TikTok</a>
-          <a href="#" id="footer-yt" target="_blank" rel="noopener">YouTube</a>
+          <a href="#" id="footer-ig" target="_blank">Instagram</a>
+          <a href="#" id="footer-tiktok" target="_blank">TikTok</a>
+          <a href="#" id="footer-yt" target="_blank">YouTube</a>
         </div>
       </div>
-      <div class="footer-bottom">
-        © ${new Date().getFullYear()} 100PANIK. All rights reserved.
-      </div>
+      <div class="footer-bottom">© ${new Date().getFullYear()} 100PANIK. All rights reserved.</div>
     </footer>
   `;
 
-  // Kounye a nou chèche lyen yo epi nou mete yo
-  fetch('/api/public-settings')
-    .then(function(res) { return res.json(); })
-    .then(function(s) {
-      var ig = document.getElementById('footer-ig');
-      var tt = document.getElementById('footer-tiktok');
-      var yt = document.getElementById('footer-yt');
-      
-      // Si gen lyen nan baz done a, nou mete l. Si li pa gen https, nou ajoute l.
-      if (s.instagram) ig.href = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
-      if (s.tiktok) tt.href = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
-      if (s.youtube) yt.href = s.youtube.startsWith('http') ? s.youtube : 'https://' + s.youtube;
-    }).catch(function(e) { console.log('Error loading links:', e); });
+  fetch('/api/public-settings').then(res => res.json()).then(s => {
+    if (s.instagram) document.getElementById('footer-ig').href = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
+    if (s.tiktok) document.getElementById('footer-tiktok').href = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
+    if (s.youtube) document.getElementById('footer-yt').href = s.youtube.startsWith('http') ? s.youtube : 'https://' + s.youtube;
+  }).catch(e => console.log(e));
 }
 
-// ---------- PWODWI CARD ----------
 function productCardHTML(p) {
   const img = (p.images && p.images[0]) || '/images/placeholder.jpg';
   const onSale = p.compare_price > p.price;
   return `
     <a href="/product.html?slug=${encodeURIComponent(p.slug)}" class="product-card">
       <div class="product-image">
-        ${p.featured ? '<span class="product-badge">Nouvo</span>' : ''}
-        ${onSale ? '<span class="product-badge sale" style="left:auto;right:12px;">PROMO</span>' : ''}
+        ${p.featured ? '<span class="product-badge">New</span>' : ''}
+        ${onSale ? '<span class="product-badge sale" style="left:auto;right:12px;">SALE</span>' : ''}
         <img src="${img}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='/images/placeholder.jpg'">
       </div>
       <div class="product-info">
@@ -234,18 +172,10 @@ function escapeHTML(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-// ---------- INIT ----------
+window.Panik = { Store, api, toast, formatPrice, productCardHTML, escapeHTML, saveCart, updateCartBadge };
+
 document.addEventListener('DOMContentLoaded', () => {
   renderHeader();
-  fetch('/api/public-settings').then(function(res) { return res.json(); }).then(function(s) {
-    if (s.instagram) { var ig = document.getElementById('footer-ig'); if (ig) ig.href = s.instagram; }
-    if (s.tiktok) { var tt = document.getElementById('footer-tiktok'); if (tt) tt.href = s.tiktok; }
-    if (s.youtube) { var yt = document.getElementById('footer-yt'); if (yt) yt.href = s.youtube; }
-  }).catch(function() {});
-    
   renderFooter();
   updateCartBadge();
 });
-
-// Ekspòte
-window.Panik = { Store, api, toast, formatPrice, productCardHTML, escapeHTML, saveCart, updateCartBadge };
