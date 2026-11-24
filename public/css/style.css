@@ -1099,3 +1099,11 @@ body .hero, body section.hero {
   background-attachment: scroll !important;
 }
 .hero-bg { display: none !important; }
+
+/* FOOTER BACKGROUND */
+body .footer, body footer.footer {
+  background-image: linear-gradient(rgba(10,10,10,0.95), rgba(10,10,10,0.95)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}

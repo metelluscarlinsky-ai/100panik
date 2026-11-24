@@ -33,7 +33,7 @@
           <input type="text" name="customer_name" class="form-input" required placeholder="Jan Batis">
         </div>
         <div class="form-group">
-          <label class="form-label">Telefòn *</label>
+          <label class="form-label">Phone *</label>
           <input type="tel" name="phone" class="form-input" required placeholder="+509 0000-0000">
         </div>
       </div>
@@ -44,19 +44,19 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Adrès *</label>
+        <label class="form-label">Address *</label>
         <input type="text" name="address" class="form-input" required placeholder="Ri, nimewo, katye">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Depatman *</label>
+          <label class="form-label">Department *</label>
           <select name="department" class="form-select" id="department-select" required>
             <option value="">Chwazi...</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Vil / Komin</label>
+          <label class="form-label">City</label>
           <input type="text" name="city" class="form-input" placeholder="Port-au-Prince">
         </div>
       </div>
@@ -82,9 +82,9 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Metòd Peman</label>
+        <label class="form-label">Payment Method</label>
         <select name="payment_method" class="form-select" required>
-          <option value="cod">Peman sou livrezon (Cash)</option>
+          <option value="cod">Cash on delivery (Cash)</option>
           <option value="moncash">MonCash</option>
           <option value="natcash">NatCash</option>
           <option value="transfer">Transfè labank</option>
@@ -97,7 +97,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary btn-lg btn-full" id="submit-btn">
-        Konfime Order
+        Confirmed Order
       </button>
     </form>
 
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Depatman chanje
+  // Department chanje
   document.getElementById('department-select').addEventListener('change', quoteShipping);
 
   async function quoteShipping() {
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.disabled = true;
     btn.textContent = 'Ap trete...';
 
-    const fd = new FormData(form);
+    const fd = new FormDatea(form);
     const body = {
       customer_name: fd.get('customer_name'),
       phone: fd.get('phone'),
@@ -277,6 +277,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       shipping_method: fd.get('shipping_method'),
       payment_method: fd.get('payment_method'),
       promo_code: promoCode,
+      
+      affiliate_code: localStorage.getItem('panik_affiliate') || null,
       items: Store.cart.map(i => ({
         product_id: i.product_id,
         quantity: i.quantity,
@@ -294,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
       toast(err.message, 'error');
       btn.disabled = false;
-      btn.textContent = 'Konfime Order';
+      btn.textContent = 'Confirmed Order';
     }
   });
 

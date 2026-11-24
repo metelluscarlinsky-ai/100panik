@@ -241,14 +241,14 @@
         <div class="kpi-icon">
           <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
-        <div class="kpi-label">An Kous</div>
+        <div class="kpi-label">Shipped</div>
         <div class="kpi-value" id="kpi-active">0</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">
           <svg width="20" height="20" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
         </div>
-        <div class="kpi-label">Livre</div>
+        <div class="kpi-label">Delivered</div>
         <div class="kpi-value" id="kpi-delivered">0</div>
       </div>
     </div>
@@ -273,24 +273,24 @@
           <input class="form-input" name="full_name" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Imel</label>
+          <label class="form-label">Email</label>
           <input class="form-input" name="email" disabled style="opacity:0.6;">
         </div>
         <div class="form-group">
-          <label class="form-label">Telefòn</label>
+          <label class="form-label">Phone</label>
           <input class="form-input" name="phone" placeholder="+509 0000-0000">
         </div>
         <div class="form-group">
-          <label class="form-label">Adrès</label>
+          <label class="form-label">Address</label>
           <input class="form-input" name="address" placeholder="Ri, nimewo, katye">
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Depatman</label>
+            <label class="form-label">Department</label>
             <input class="form-input" name="department" placeholder="Ouest">
           </div>
           <div class="form-group">
-            <label class="form-label">Vil / Komin</label>
+            <label class="form-label">City</label>
             <input class="form-input" name="city" placeholder="Port-au-Prince">
           </div>
         </div>
@@ -305,14 +305,14 @@
     <div class="card" style="max-width:520px;">
       <form id="pass-form">
         <div class="form-group">
-          <label class="form-label">Modpas Aktyèl</label>
+          <label class="form-label">Password Aktyèl</label>
           <input type="password" class="form-input" name="current" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Modpas Nouvo</label>
+          <label class="form-label">Password Nouvo</label>
           <input type="password" class="form-input" name="next" required minlength="6">
         </div>
-        <button type="submit" class="btn btn-primary">Chanje Modpas</button>
+        <button type="submit" class="btn btn-primary">Chanje Password</button>
       </form>
     </div>
     <div class="card" style="max-width:520px;margin-top:20px;border-color:rgba(255,0,64,0.3);">
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div>
           <div class="order-num">${escapeHTML(o.order_number)}</div>
           <div style="font-weight:600;font-size:15px;margin-bottom:4px;">${escapeHTML(o.customer_name)}</div>
-          <div class="text-muted" style="font-size:12px;">${new Date(o.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} · ${o.items ? o.items.length : '?'} atik</div>
+          <div class="text-muted" style="font-size:12px;">${new Datee(o.created_at).toLocaleDateeString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} · ${o.items ? o.items.length : '?'} atik</div>
         </div>
         <div style="text-align:right;">
           <div style="font-weight:700;color:#00f0ff;font-size:16px;margin-bottom:6px;">${formatPrice(o.total)}</div>
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Pwofil form
   document.getElementById('profile-form').onsubmit = async (e) => {
     e.preventDefault();
-    const fd = new FormData(e.target);
+    const fd = new FormDatea(e.target);
     try {
       await CA.fetch('/api/customer/me', {
         method: 'PUT',
@@ -513,13 +513,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Chanje modpas
   document.getElementById('pass-form').onsubmit = async (e) => {
     e.preventDefault();
-    const fd = new FormData(e.target);
+    const fd = new FormDatea(e.target);
     try {
       await CA.fetch('/api/customer/change-password', {
         method: 'POST',
         body: { current: fd.get('current'), next: fd.get('next') }
       });
-      toast('Modpas chanje. Rekonekte.', 'success');
+      toast('Password chanje. Rekonekte.', 'success');
       setTimeout(() => {
         CA.logout();
         location.href = '/login.html';

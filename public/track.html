@@ -48,25 +48,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   const form = document.getElementById('track-form');
 
   const STATUS = {
-    pending:   { label: 'An Atant',   step: 1 },
-    confirmed: { label: 'Konfime',    step: 2 },
-    shipped:   { label: 'An Kous',    step: 3 },
-    delivered: { label: 'Livre',      step: 4 },
-    cancelled: { label: 'Anile',      step: 0 }
+    pending:   { label: 'Pending',   step: 1 },
+    confirmed: { label: 'Confirmed',    step: 2 },
+    shipped:   { label: 'Shipped',    step: 3 },
+    delivered: { label: 'Delivered',      step: 4 },
+    cancelled: { label: 'Cancelled',      step: 0 }
   };
 
   function renderTimeline(status) {
     const current = STATUS[status]?.step || 0;
     const steps = [
-      { n: 1, label: 'An Atant',   desc: 'Order resevwa' },
-      { n: 2, label: 'Konfime',    desc: 'Peman verifye' },
-      { n: 3, label: 'An Kous',    desc: 'Sou wout livrezon' },
-      { n: 4, label: 'Livre',      desc: 'Customer resevwa' }
+      { n: 1, label: 'Pending',   desc: 'Order resevwa' },
+      { n: 2, label: 'Confirmed',    desc: 'Peman verifye' },
+      { n: 3, label: 'Shipped',    desc: 'Sou wout livrezon' },
+      { n: 4, label: 'Delivered',      desc: 'Customer resevwa' }
     ];
     if (status === 'cancelled') {
       return `<div class="card" style="border-color:var(--danger);text-align:center;padding:32px;">
-        <h3 style="color:var(--danger);margin-bottom:8px;">Order Anile</h3>
-        <p class="text-muted">Kontakte sipò pou plis enfòmasyon.</p>
+        <h3 style="color:var(--danger);margin-bottom:8px;">Order Cancelled</h3>
+        <p class="text-muted">Contactte sipò pou plis enfòmasyon.</p>
       </div>`;
     }
     return `
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div style="font-weight:600;">${escapeHTML(order.customer_name)}</div>
             </div>
             <div>
-              <div class="text-muted" style="font-size:12px;">Dat</div>
-              <div style="font-weight:600;">${new Date(order.created_at).toLocaleDateString('fr-FR')}</div>
+              <div class="text-muted" style="font-size:12px;">Date</div>
+              <div style="font-weight:600;">${new Datee(order.created_at).toLocaleDateeString('fr-FR')}</div>
             </div>
             <div>
               <div class="text-muted" style="font-size:12px;">Total</div>
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
 
-          <h3 style="margin:24px 0 12px;">Atik yo</h3>
+          <h3 style="margin:24px 0 12px;">Items</h3>
           ${order.items.map(i => `
             <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
               ${i.image ? `<img src="${i.image}" style="width:56px;height:56px;border-radius:8px;object-fit:cover;">` : ''}

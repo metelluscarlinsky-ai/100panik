@@ -68,6 +68,7 @@ function setupNav(selector) {
       if (item.dataset.page === 'products') loadProds();
       if (item.dataset.page === 'ads') loadAds();
       if (item.dataset.page === 'dashboard') loadStats();
+      if (item.dataset.page === 'affiliates') loadAffiliates();
       if (item.dataset.page === 'settings') loadSettings();
     };
   });
@@ -313,6 +314,57 @@ function loadSettings() {
 }
 
 // ============ BOOT ============
+
+// ============ AFILYE ============
+function loadAffiliates() {
+  apiCall('/admin/affiliates').then(function(affs) {
+    var list = document.getElementById('aff-list');
+    if (!list) return;
+    if (!affs.length) { list.innerHTML = '<p style="color:#888; text-align:center;">No affiliates found.</p>'; return; }
+    
+    var html = '';
+    affs.forEach(function(a) {
+      var color = a.status === 'active' ? '#00ff88' : '#ff0040';
+      html += '<div class="product-card">' +
+        '<div class="product-info">' +
+          '<h3>' + a.name + ' <span style="font-size:12px; color:' + color + ';">(' + a.status + ')</span></h3>' +
+          '<p style="margin-bottom:5px;">Email: ' + a.email + '</p>' +
+          '<p style="margin-bottom:5px; font-weight:bold; color:var(--cyan);">Code: ' + a.code + '</p>' +
+          '<p style="margin-bottom:5px;">Sales: ' + a.total_sales + ' | Earned: ' + a.total_earnings + ' HTG</p>' +
+        '</div>' +
+        '<div class="product-actions">' +
+          '<button class="btn btn-outline" onclick="toggleAffiliate(' + a.id + ', \'' + (a.status === 'active' ? 'inactive' : 'active') + '\')">' + (a.status === 'active' ? 'Disable' : 'Enable') + '</button>' +
+          '<button class="btn btn-danger" onclick="deleteAffiliate(' + a.id + ')">Delete</button>' +
+        '</div>' +
+      '</div>';
+    });
+    list.innerHTML = html;
+  }).catch(function(err) { console.error(err); });
+}
+
+document.getElementById('form-aff').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var body = {
+    name: document.getElementById('aff-name').value,
+    email: document.getElementById('aff-email').value
+  };
+  apiCall('/admin/affiliates', 'POST', body).then(function(data) {
+    closeModal('modal-aff');
+    showToast('Affiliate created! Code: ' + data.code);
+    loadAffiliates();
+  }).catch(function(err) { alert(err.message); });
+});
+
+function toggleAffiliate(id, status) {
+  apiCall('/admin/affiliates/' + id, 'PUT', { status: status }).then(function() { loadAffiliates(); });
+}
+
+function deleteAffiliate(id) {
+  if (confirm('Delete this affiliate?')) {
+    apiCall('/admin/affiliates/' + id, 'DELETE').then(function() { loadAffiliates(); });
+  }
+}
+
 if (token) {
   // Verifye token an toujou valid
   apiCall('/admin/stats').then(function() {

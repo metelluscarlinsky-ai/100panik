@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
        RETURNING id`,
       [order_number, customer_name, email || null, phone, address, department, city || null, notes || null,
        shipping_method || 'standard', shipping_cost, subtotal, discount, total,
-       validPromo ? validPromo.code : null, payment_method || 'cod', 'pending', tracking]
+       validPromo ? validPromo.code : null, payment_method || 'cod', 'pending', tracking, affiliate_code || null]
     );
     const orderId = orderRes.rows[0].id;
 

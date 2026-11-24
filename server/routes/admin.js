@@ -156,4 +156,33 @@ router.post('/change-password', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// ============ AFILYE ============
+router.get('/affiliates', async (req, res) => {
+  try { res.json(await db.all('SELECT * FROM affiliates ORDER BY created_at DESC')); } 
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/affiliates', async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+    const code = 'AFF-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+    await db.run('INSERT INTO affiliates (name, email, code) VALUES ($1, $2, $3)', [name, email, code]);
+    res.json({ success: true, code });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.put('/affiliates/:id', async (req, res) => {
+  try {
+    await db.run('UPDATE affiliates SET status = $1 WHERE id = $2', [req.body.status, req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete('/affiliates/:id', async (req, res) => {
+  try { await db.run('DELETE FROM affiliates WHERE id = $1', [req.params.id]); res.json({ success: true }); } 
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

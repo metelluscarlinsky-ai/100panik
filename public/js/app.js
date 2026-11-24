@@ -1,3 +1,11 @@
+
+// Trase Afilye
+const urlParams = new URLSearchParams(window.location.search);
+const refCode = urlParams.get('ref');
+if (refCode) {
+  localStorage.setItem('panik_affiliate', refCode);
+}
+
 // ============================================
 // 100PANIK - App loji (shared)
 // ============================================
@@ -120,13 +128,13 @@ function renderHeader() {
           <span class="logo-dot"></span>100PANIK
         </a>
         <ul class="nav-links">
-          <li><a href="/collection.html">Koleksyon</a></li>
+          <li><a href="/collection.html">Collection</a></li>
           <li><a href="/collection.html?category=hoodie">Hoodies</a></li>
           <li><a href="/collection.html?category=t-shirt">T-shirts</a></li>
-          <li><a href="/track.html">Swiv Kòmand</a></li>
+          <li><a href="/track.html">Track Order</a></li>
         </ul>
         <div class="nav-actions">
-          <a href="/login.html" class="icon-btn" id="account-btn" aria-label="Kont Mwen" title="Konekte / Enskri">
+          <a href="/login.html" class="icon-btn" id="account-btn" aria-label="My Account" title="Konekte / Enskri">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
@@ -151,51 +159,28 @@ function renderHeader() {
 function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
-
-  
-  }, 500);
-
-
-  // Chaje lyen sosyal yo soti nan baz done a
-  fetch('/api/public-settings')
-    .then(function(res) { return res.json(); })
-    .then(function(s) {
-      if (s.instagram) {
-        var ig = document.getElementById('footer-ig');
-        if (ig) ig.href = s.instagram;
-      }
-      if (s.tiktok) {
-        var tt = document.getElementById('footer-tiktok');
-        if (tt) tt.href = s.tiktok;
-      }
-      if (s.youtube) {
-        var yt = document.getElementById('footer-yt');
-        if (yt) yt.href = s.youtube;
-      }
-    }).catch(function(e) { console.log('Erè lyen:', e); });
-
   el.innerHTML = `
     <footer class="footer">
       <div class="footer-grid">
         <div>
           <div class="logo" style="margin-bottom:16px;"><span class="logo-dot"></span>100PANIK</div>
-          <p class="text-muted" style="font-size:13px;">Rad pou moun ki pa janm kanpe. Koleksyon inik, livrezon rapid.</p>
+          <p class="text-muted" style="font-size:13px;">Clothes for people who never stop. Unique collection, fast delivery.</p>
         </div>
         <div>
-          <h4>Boutik</h4>
-          <a href="/collection.html">Tout Koleksyon</a>
+          <h4>Shop</h4>
+          <a href="/collection.html">All Collections</a>
           <a href="/collection.html?category=hoodie">Hoodies</a>
           <a href="/collection.html?category=t-shirt">T-shirts</a>
-          <a href="/collection.html?category=soulye">Soulye</a>
+          <a href="/collection.html?category=soulye">Shoes</a>
         </div>
         <div>
-          <h4>Kliyan</h4>
-          <a href="/track.html">Swiv Kòmand</a>
-          <a href="/cart.html">Panier</a>
-          <a href="/checkout.html">Kòmande</a>
+          <h4>Customers</h4>
+          <a href="/track.html">Track Order</a>
+          <a href="/cart.html">Cart</a>
+          <a href="/checkout.html">Checkout</a>
         </div>
         <div>
-          <h4>Kontak</h4>
+          <h4>Contact</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
           <a href="#" id="footer-ig" target="_blank" rel="noopener">Instagram</a>
           <a href="#" id="footer-tiktok" target="_blank" rel="noopener">TikTok</a>
@@ -203,10 +188,24 @@ function renderFooter() {
         </div>
       </div>
       <div class="footer-bottom">
-        © ${new Date().getFullYear()} 100PANIK. Tout dwa rezève.
+        © ${new Date().getFullYear()} 100PANIK. All rights reserved.
       </div>
     </footer>
   `;
+
+  // Kounye a nou chèche lyen yo epi nou mete yo
+  fetch('/api/public-settings')
+    .then(function(res) { return res.json(); })
+    .then(function(s) {
+      var ig = document.getElementById('footer-ig');
+      var tt = document.getElementById('footer-tiktok');
+      var yt = document.getElementById('footer-yt');
+      
+      // Si gen lyen nan baz done a, nou mete l. Si li pa gen https, nou ajoute l.
+      if (s.instagram) ig.href = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
+      if (s.tiktok) tt.href = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
+      if (s.youtube) yt.href = s.youtube.startsWith('http') ? s.youtube : 'https://' + s.youtube;
+    }).catch(function(e) { console.log('Error loading links:', e); });
 }
 
 // ---------- PWODWI CARD ----------

@@ -89,15 +89,15 @@
         <input type="text" name="full_name" class="form-input" required placeholder="Jan Batis">
       </div>
       <div class="form-group">
-        <label class="form-label">Imel *</label>
+        <label class="form-label">Email *</label>
         <input type="email" name="email" class="form-input" required placeholder="ou@example.com">
       </div>
       <div class="form-group">
-        <label class="form-label">Telefòn</label>
+        <label class="form-label">Phone</label>
         <input type="tel" name="phone" class="form-input" placeholder="+509 0000-0000">
       </div>
       <div class="form-group">
-        <label class="form-label">Modpas * (6+ karakte)</label>
+        <label class="form-label">Password * (6+ karakte)</label>
         <input type="password" name="password" class="form-input" required minlength="6">
       </div>
       <div id="reg-err" class="err-box"></div>
@@ -113,7 +113,7 @@
 <script>
 document.getElementById('reg-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const fd = new FormData(e.target);
+  const fd = new FormDatea(e.target);
   const err = document.getElementById('reg-err');
   const btn = document.getElementById('reg-btn');
   err.textContent = '';

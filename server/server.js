@@ -38,6 +38,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/shipping', require('./routes/shipping'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/affiliate', require('./routes/affiliate'));
 app.use('/api/ads', require('./routes/ads'));
 app.use('/api/customer', require('./routes/customer-auth'));
 

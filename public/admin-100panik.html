@@ -113,7 +113,8 @@
     <div class="nav-chip active" data-page="dashboard">Dashboard</div>
     <div class="nav-chip" data-page="products">Products</div>
     <div class="nav-chip" data-page="ads">Ads</div>
-    <div class="nav-chip" data-page="settings">Settings</div>
+    <div class="nav-chip" data-page="affiliates">Affiliates</div>
+<div class="nav-chip" data-page="settings">Settings</div>
   </div>
 
   <div class="app-layout">
@@ -121,7 +122,8 @@
       <div class="nav-chip active" data-page="dashboard">Dashboard</div>
       <div class="nav-chip" data-page="products">Products</div>
       <div class="nav-chip" data-page="ads">Ads</div>
-      <div class="nav-chip" data-page="settings">Settings</div>
+      <div class="nav-chip" data-page="affiliates">Affiliates</div>
+<div class="nav-chip" data-page="settings">Settings</div>
     </div>
 
     <div class="content-area">
@@ -146,7 +148,15 @@
         <div class="products-grid" id="ads-list"></div>
       </div>
 
-      <div id="page-settings" class="page-content hidden">
+      
+      <div id="page-affiliates" class="page-content hidden">
+        <div class="page-header">
+          <h1>Affiliates</h1>
+          <button class="btn btn-primary" style="width:auto;" onclick="openModal('modal-aff')">+ Add Affiliate</button>
+        </div>
+        <div class="products-grid" id="aff-list"></div>
+      </div>
+<div id="page-settings" class="page-content hidden">
         <div class="page-header"><h1>Settings</h1></div>
         
         <!-- KONFIGIRASYON JENERAL -->
@@ -220,11 +230,26 @@
       <button class="close-btn" onclick="closeModal('modal-ad')">&times;</button>
     </div>
     <form id="form-ad">
-      <div class="form-group"><label>Title (Optional)</label><input type="text" id="a-title"></div>
+      <div class="form-group"><label>Titlele (Optional)</label><input type="text" id="a-title"></div>
       
       <div class="form-group"><label>File</label><input type="file" id="a-file" onchange="uploadImg(this, 'a-img-url')"></div>
       <input type="hidden" id="a-img-url">
       <button type="submit" class="btn btn-primary" style="margin-top:10px;">Save Ad</button>
+    </form>
+  </div>
+</div>
+
+
+<div class="modal" id="modal-aff">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>New Affiliate</h2>
+      <button class="close-btn" onclick="closeModal('modal-aff')">&times;</button>
+    </div>
+    <form id="form-aff">
+      <div class="form-group"><label>Name</label><input type="text" id="aff-name" required></div>
+      <div class="form-group"><label>Email</label><input type="email" id="aff-email" required></div>
+      <button type="submit" class="btn btn-primary" style="margin-top:10px;">Create Affiliate</button>
     </form>
   </div>
 </div>
