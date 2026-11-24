@@ -1202,3 +1202,28 @@ body .hero {
   background-position: center top !important;
   background-repeat: no-repeat !important;
 }
+
+/* ========== FOOTER KLÈ AK FOTO ========== */
+body .footer, body footer.footer {
+  background-image: linear-gradient(rgba(10,10,10,0.4), rgba(10,10,10,0.7)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  border-top: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+/* Lonbraj pou tèks la rete lizib sou foto a */
+body .footer h4, 
+body .footer a, 
+body .footer p, 
+body .footer .footer-bottom {
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9) !important;
+}
+
+body .footer a {
+  color: #ddd !important;
+}
+body .footer a:hover {
+  color: #00f0ff !important;
+}

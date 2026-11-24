@@ -102,20 +102,20 @@ function renderFooter() {
           <p class="text-muted" style="font-size:13px;">Clothes for people who never stop. Unique collection, fast delivery.</p>
         </div>
         <div>
-          <h4>Shop</h4>
+          <h4>SHOP</h4>
           <a href="/collection.html">All Collections</a>
           <a href="/collection.html?category=hoodie">Hoodies</a>
           <a href="/collection.html?category=t-shirt">T-shirts</a>
           <a href="/collection.html?category=soulye">Shoes</a>
         </div>
         <div>
-          <h4>Customers</h4>
+          <h4>CUSTOMERS</h4>
           <a href="/track.html">Track Order</a>
           <a href="/cart.html">Cart</a>
           <a href="/checkout.html">Checkout</a>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h4>CONTACT</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
           <a href="https://www.instagram.com/100panik?evlk=Zm56Z3EwaWtkcXFq" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="https://www.tiktok.com/@100panik_" target="_blank" rel="noopener noreferrer">TikTok</a>
