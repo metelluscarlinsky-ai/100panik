@@ -94,11 +94,6 @@ function renderHeader() {
 function renderFooter() {
   const el = document.getElementById('footer-mount');
   if (!el) return;
-  
-  // Mwen mete lyen w yo dirèkteman isit la pou yo pa janm disparèt
-  const igLink = 'https://www.instagram.com/100panik?evlk=Zm56Z3EwaWtkcXFq'\;
-  const tiktokLink = 'https://www.tiktok.com/@100panik_'\;
-
   el.innerHTML = `
     <footer class="footer">
       <div class="footer-grid">

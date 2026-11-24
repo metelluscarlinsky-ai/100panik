@@ -63,9 +63,8 @@
 
 <div id="footer-mount"></div>
 
-<!-- Script la chaje dènye -->
 <script src="/js/customer.js"></script>
-<script src="/js/app-v2.js?v=e557"></script>
+<script src="/js/app.js?v=999"></script>
 <script src="/js/cart.js"></script>
 <script src="/js/pwa.js" defer></script>
 <script>
@@ -82,7 +81,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     grid.innerHTML = products.slice(0, 4).map(p => {
-      // Si pa gen foto, kite background lan nwa (nan CSS la)
       let imgTag = '';
       if (p.images && p.images.length > 0 && p.images[0]) {
         imgTag = '<img src="' + p.images[0] + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
