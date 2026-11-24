@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       payment_method: fd.get('payment_method'),
       promo_code: promoCode,
       
-      affiliate_code: localStorage.getItem('panik_affiliate') || null,
+      affiliate_code: document.getElementById('affiliate-input').value.trim() || localStorage.getItem('panik_affiliate') || null,
       items: Store.cart.map(i => ({
         product_id: i.product_id,
         quantity: i.quantity,
