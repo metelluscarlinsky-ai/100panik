@@ -122,8 +122,8 @@ function renderFooter() {
         <div>
           <h4>Contact</h4>
           <a href="mailto:metalluscarlinsky@gmail.com">metalluscarlinsky@gmail.com</a>
-          <a href="${igLink}" target="_blank" rel="noopener">Instagram</a>
-          <a href="${tiktokLink}" target="_blank" rel="noopener">TikTok</a>
+          <a href="https://www.instagram.com/100panik?evlk=Zm56Z3EwaWtkcXFq" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.tiktok.com/@100panik_" target="_blank" rel="noopener noreferrer">TikTok</a>
         </div>
       </div>
       <div class="footer-bottom">© ${new Date().getFullYear()} 100PANIK. All rights reserved.</div>
