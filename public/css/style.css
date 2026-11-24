@@ -1167,3 +1167,30 @@ body .hero-content {
   text-align: center !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
 }
+
+/* ========== FIX HERO POSTER (SHOW FULL IMAGE) ========== */
+body .hero {
+  background-image: url('/images/hero-bg.jpg') !important; /* Retire overlay a pou wè tout bagay */
+  background-size: contain !important; /* Fòse afiche a parèt antye */
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-color: #0a0a0a !important;
+  min-height: 90vh !important; /* Asire gen ase espas pou afiche a */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 100px !important; 
+  padding-bottom: 50px !important;
+}
+
+/* Bwat transparan pou tèks la rete lizib */
+body .hero-content {
+  background: rgba(10, 10, 10, 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  padding: 30px 20px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  max-width: 500px !important;
+  text-align: center !important;
+}

@@ -15,7 +15,7 @@
 <div id="header-mount"></div>
 
 <main>
-  <!-- HERO -->
+  <!-- HERO (POSTER) -->
   <section class="hero">
     <div class="hero-content">
       <span class="hero-tag">
@@ -71,43 +71,47 @@
 <script src="/js/pwa.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. PWODWI YO
+  
+  // 1. CHAJE PWODWI YO (AK SEKIRITE)
   try {
     const resP = await fetch('/api/products');
     const products = await resP.json();
     const grid = document.getElementById('featured-products');
     
-    if (products.length === 0) {
-      grid.innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center;">No products found.</p>';
-      return;
-    }
-
-    grid.innerHTML = products.slice(0, 4).map(p => {
-      const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/400x600/141414/666666?text=No+Image'\;
-      return `
-        <a href="/product.html?slug=${p.slug}" class="product-card">
-          <div class="product-image">
-            <img src="${imgUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x600/141414/666666?text=Error'">
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">${p.name}</h3>
-            <div class="product-price">
-              <span class="price-current">${p.price} HTG</span>
+    if (!Array.isArray(products) || products.length === 0) {
+      grid.innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center; padding: 20px;">No products found.</p>';
+    } else {
+      grid.innerHTML = products.slice(0, 4).map(p => {
+        // Si pa gen foto, nou mete yon foto gri
+        const imgUrl = (p.images && p.images.length > 0 && p.images[0]) ? p.images[0] : 'https://via.placeholder.com/400x600/141414/666666?text=No+Image'\;
+        return `
+          <a href="/product.html?slug=${p.slug}" class="product-card">
+            <div class="product-image">
+              <img src="${imgUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x600/141414/666666?text=Error'">
             </div>
-          </div>
-        </a>
-      `;
-    }).join('');
-  } catch (e) { console.error('Error:', e); }
+            <div class="product-info">
+              <h3 class="product-name">${p.name}</h3>
+              <div class="product-price">
+                <span class="price-current">${p.price} HTG</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+  } catch (e) {
+    console.error('Error products:', e);
+    document.getElementById('featured-products').innerHTML = '<p class="text-muted" style="grid-column: 1/-1; text-align: center; padding: 20px;">Error loading products.</p>';
+  }
 
-  // 2. PIBLISITE YO
+  // 2. CHAJE PIBLISITE YO (AK SEKIRITE)
   try {
     const resA = await fetch('/api/ads');
     const ads = await resA.json();
     const adsSection = document.getElementById('ads-section');
     const adsGrid = document.getElementById('ads-grid');
 
-    if (ads.length > 0) {
+    if (Array.isArray(ads) && ads.length > 0) {
       adsSection.style.display = 'block';
       adsGrid.innerHTML = ads.map(ad => {
         let media = ad.type === 'video' 
@@ -116,7 +120,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return '<a href="/ads.html" style="display:block; aspect-ratio:16/9; border-radius:16px; overflow:hidden; border:1px solid #333;">' + media + '</a>';
       }).join('');
     }
-  } catch (e) { console.error('Error:', e); }
+  } catch (e) {
+    console.error('Error ads:', e);
+  }
 });
 </script>
 </body>
