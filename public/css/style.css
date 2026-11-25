@@ -1076,9 +1076,7 @@ body .hero, body section.hero {
 }
 
 /* Pou l pa parèt twò fonse oswa twò klè sou iPhone */
-body .hero {
-  background-color: #0a0a0a !important;
-}
+
 
 /* FÒSE BACKGROUND IMAGE */
 body .hero, body section.hero {
@@ -1140,10 +1138,7 @@ body .hero-content {
   text-align: center !important;
 }
 
-/* ========== FIX HERO IMAGE (FULL PHOTO, NO CROP) ========== */
-body .hero {
-  background-image: linear-gradient(rgba(10,10,10,0.4), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
-  background-size: 100% auto !important; /* Fòse foto a parèt antye */
+/* Fòse foto a parèt antye */
   background-position: center top !important;
   background-repeat: no-repeat !important;
   background-color: #0a0a0a !important;
@@ -1168,9 +1163,7 @@ body .hero-content {
   box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
 }
 
-/* ========== FIX HERO POSTER (SHOW FULL IMAGE) ========== */
-body .hero {
-  background-image: url('/images/hero-bg.jpg') !important; /* Retire overlay a pou wè tout bagay */
+/* Retire overlay a pou wè tout bagay */
   background-size: contain !important; /* Fòse afiche a parèt antye */
   background-position: center center !important;
   background-repeat: no-repeat !important;
@@ -1196,12 +1189,7 @@ body .hero-content {
 }
 
 /* FIX FINAL POU FOTO AFICHE A */
-body .hero {
-  background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
-  background-size: cover !important;
-  background-position: center top !important;
-  background-repeat: no-repeat !important;
-}
+
 
 /* ========== FOOTER KLÈ AK FOTO ========== */
 body .footer, body footer.footer {
@@ -1228,9 +1216,7 @@ body .footer a:hover {
   color: #00f0ff !important;
 }
 
-/* ========== FÒSE FOTO A PARÈT ANTYE ========== */
-body .hero {
-  background-image: url('/images/hero-bg.jpg') !important; /* Retire gradient lan nèt */
+/* Retire gradient lan nèt */
   background-size: contain !important; /* Sa a fè tout foto a parèt */
   background-position: center center !important;
   background-repeat: no-repeat !important;
@@ -1254,10 +1240,7 @@ body .hero-content {
   text-align: center !important;
 }
 
-/* ========== FIX HERO POSTER - MOBILE OPTIMIZED ========== */
-body .hero {
-  background-image: url('/images/hero-bg.jpg') !important;
-  background-size: 100% auto !important; /* Fòse foto a pran tout lajè a san l pa koupe */
+/* Fòse foto a pran tout lajè a san l pa koupe */
   background-position: center top !important;
   background-repeat: no-repeat !important;
   background-color: #0a0a0a !important;
@@ -1286,10 +1269,7 @@ body .hero-content {
   box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
 }
 
-/* ========== TOUNEN NAN 2YÈM FOTO A (KOUVRI EKRAN AN) ========== */
-body .hero {
-  background-image: linear-gradient(rgba(10,10,10,0.4), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
-  background-size: cover !important; /* Sa a fè foto a kouvri ekran an */
+/* Sa a fè foto a kouvri ekran an */
   background-position: center top !important;
   background-repeat: no-repeat !important;
   background-color: #0a0a0a !important;
@@ -1313,12 +1293,7 @@ body .hero-content {
   box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
 }
 
-/* ========== EKRAN PLEN POU FOTO A ========== */
-html, body { margin: 0; padding: 0; }
-
-body .hero {
-  background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
-  background-size: cover !important; /* Kouvri ekran an nèt */
+/* Kouvri ekran an nèt */
   background-position: center center !important;
   background-repeat: no-repeat !important;
   background-color: #0a0a0a !important;
@@ -1343,4 +1318,45 @@ body .hero-content {
   width: 100% !important;
   text-align: center !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
+}
+
+/* ==========================================
+   FOTO A PRAN TOUT EKRAN AN NÈT (SAN ESPAS NWA)
+========================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body .hero {
+  /* Kalkile wotè ekran an mwens wotè header a (apeprè 65px) */
+  min-height: calc(100vh - 65px) !important; 
+  height: calc(100vh - 65px) !important;
+  width: 100% !important;
+  
+  background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-color: #0a0a0a !important;
+  
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  margin: 0 !important;
+}
+
+body .hero-content {
+  background: rgba(10, 10, 10, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 40px 20px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  max-width: 450px !important;
+  width: 100% !important;
+  text-align: center !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6) !important;
 }
