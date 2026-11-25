@@ -2,112 +2,134 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/images/icons/icon-180.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <title>100PANIK — Futurist Premium Clothing</title>
+<style>
+  /* CSS SEKIRITE POU EKRAN AN */
+  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; }
+  
+  /* FÒSE HEADER A */
+  .custom-header {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px; box-sizing: border-box;
+  }
+  .custom-header .logo { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: #00f0ff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .custom-header .logo-dot { width: 8px; height: 8px; background: #00f0ff; border-radius: 50%; box-shadow: 0 0 10px #00f0ff; }
+  .custom-header .icons { display: flex; gap: 12px; }
+  .custom-header .icon-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; }
+
+  /* FÒSE FOTO A PRAN TOUT EKRAN AN */
+  .custom-hero {
+    height: 100vh; height: 100dvh; width: 100%;
+    background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg');
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    display: flex; align-items: center; justify-content: center;
+    padding-top: 60px; box-sizing: border-box;
+  }
+  .custom-hero-box {
+    background: rgba(10, 10, 10, 0.65); backdrop-filter: blur(12px);
+    padding: 40px 25px; border-radius: 24px; border: 1px solid rgba(0, 240, 255, 0.2);
+    max-width: 450px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .hero-tag {
+    display: inline-block; padding: 8px 16px; border-radius: 100px;
+    background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3);
+    color: #00f0ff; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 30px;
+  }
+  .hero-btn-primary {
+    display: block; width: 100%; padding: 16px; border-radius: 12px; background: #00f0ff; color: #000;
+    font-weight: 700; font-size: 16px; text-decoration: none; margin-bottom: 15px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .hero-btn-secondary {
+    display: block; width: 100%; padding: 16px; border-radius: 12px; background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.2); font-weight: 600; font-size: 16px; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+</style>
 </head>
 <body>
 
-<div id="header-mount"></div>
+<!-- HEADER A DIRÈK NAN HTML LA (PA GEN MOYEN POU L DISPARÈT) -->
+<header class="custom-header">
+  <a href="/" class="logo"><span class="logo-dot"></span>100PANIK</a>
+  <div class="icons">
+    <a href="/account.html" class="icon-btn">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+    <a href="/cart.html" class="icon-btn">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+    </a>
+  </div>
+</header>
 
+<!-- HERO A DIRÈK NAN HTML LA -->
 <main>
-  <section class="hero">
-    <div class="hero-content">
-      <span class="hero-tag">
-        <span class="hero-tag-dot"></span>
-        COLLECTION 100PANIK
-      </span>
-      <div class="hero-actions" style="margin-top: 30px;">
-        <a href="/collection.html" class="btn btn-primary btn-lg hero-cta">
-          <span>Explore Collection</span>
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="/track.html" class="btn btn-outline btn-lg">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Track Order
-        </a>
-      </div>
+  <section class="custom-hero">
+    <div class="custom-hero-box">
+      <span class="hero-tag">COLLECTION 100PANIK</span>
+      <a href="/collection.html" class="hero-btn-primary">
+        Explore Collection <span>&rarr;</span>
+      </a>
+      <a href="/track.html" class="hero-btn-secondary">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Track Order
+      </a>
     </div>
   </section>
 
-  <section class="section">
-    <div class="section-title">
-      <div>
-        <h2>New Arrivals</h2>
-        <p class="sub">Latest pieces added to the collection</p>
-      </div>
-      <a href="/collection.html" class="btn btn-outline btn-sm">View All</a>
-    </div>
-    <div class="products-grid" id="featured-products">
-      <p style="color:#888; grid-column:1/-1; text-align:center; padding:20px;">Loading products...</p>
-    </div>
-  </section>
-
-  <section class="section" id="ads-section" style="display:none;">
-    <div class="section-title">
-      <div>
-        <h2>Ads</h2>
-        <p class="sub">Discover more</p>
+  <!-- SEKSYON PWODWI YO -->
+  <section class="section" style="padding: 60px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; margin-bottom: 30px; color: #fff;">New Arrivals</h2>
+      <div class="products-grid" id="featured-products" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+        <p style="color:#888; grid-column:1/-1; text-align:center;">Loading products...</p>
       </div>
     </div>
-    <div class="ads-grid" id="ads-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;"></div>
   </section>
 </main>
 
 <div id="footer-mount"></div>
 
-<script src="/js/customer.js"></script>
-<script src="/js/app.js?v=9999"></script>
-<script src="/js/cart.js"></script>
-<script src="/js/pwa.js" defer></script>
+<!-- CHAJE SÈLMAN FOOTER A AK KÒMAND YO NAN JS -->
+<script src="/js/app.js?v=99999"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+  // Chaje Footer a soti nan app.js (si app.js gen fonksyon renderFooter)
+  if (window.Panik && window.Panik.renderFooter) window.Panik.renderFooter();
+
+  // Chaje Pwodwi yo
   try {
     const resP = await fetch('/api/products');
     const products = await resP.json();
     const grid = document.getElementById('featured-products');
     
     if (!Array.isArray(products) || products.length === 0) {
-      grid.innerHTML = '<p style="color:#888; grid-column:1/-1; text-align:center; padding:20px;">No products available.</p>';
+      grid.innerHTML = '<p style="color:#888; grid-column:1/-1; text-align:center;">No products available.</p>';
       return;
     }
 
     grid.innerHTML = products.slice(0, 4).map(p => {
       let imgTag = '';
       if (p.images && p.images.length > 0 && p.images[0]) {
-        imgTag = '<img src="' + p.images[0] + '" alt="' + p.name + '" onerror="this.style.display=\'none\'">';
+        imgTag = '<img src="' + p.images[0] + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" onerror="this.style.display=\'none\'">';
       }
-      return '<a href="/product.html?slug=' + p.slug + '" class="product-card">' +
-        '<div class="product-image" style="background:#222; position:relative;">' + imgTag + '</div>' +
-        '<div class="product-info">' +
-          '<h3 class="product-name">' + p.name + '</h3>' +
-          '<div class="product-price"><span class="price-current">' + p.price + ' HTG</span></div>' +
-        '</div>' +
+      return '<a href="/product.html?slug=' + p.slug + '" style="text-decoration:none; color:#fff; display:block;">' +
+        '<div style="aspect-ratio:3/4; background:#222; border-radius:12px; overflow:hidden; margin-bottom:15px;">' + imgTag + '</div>' +
+        '<h3 style="font-size:16px; margin:0 0 5px 0;">' + p.name + '</h3>' +
+        '<div style="color:#00f0ff; font-weight:bold;">' + p.price + ' HTG</div>' +
       '</a>';
     }).join('');
   } catch (e) { 
-    document.getElementById('featured-products').innerHTML = '<p style="color:#ff0040; grid-column:1/-1; text-align:center; padding:20px;">Error loading products.</p>';
+    document.getElementById('featured-products').innerHTML = '<p style="color:#ff0040; grid-column:1/-1; text-align:center;">Error loading products.</p>';
   }
-
-  try {
-    const resA = await fetch('/api/ads');
-    const ads = await resA.json();
-    const adsSection = document.getElementById('ads-section');
-    const adsGrid = document.getElementById('ads-grid');
-    if (Array.isArray(ads) && ads.length > 0) {
-      adsSection.style.display = 'block';
-      adsGrid.innerHTML = ads.map(ad => {
-        let media = ad.type === 'video' 
-          ? '<video src="' + ad.media_url + '" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>'
-          : '<img src="' + ad.media_url + '" style="width:100%;height:100%;object-fit:cover;display:block;">';
-        return '<a href="/ads.html" style="display:block; aspect-ratio:16/9; border-radius:16px; overflow:hidden; border:1px solid #333;">' + media + '</a>';
-      }).join('');
-    }
-  } catch (e) { console.error(e); }
 });
 </script>
 </body>
