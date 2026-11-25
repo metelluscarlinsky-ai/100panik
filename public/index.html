@@ -6,13 +6,11 @@
 <meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/style.css?v=999">
 <title>100PANIK — Futurist Premium Clothing</title>
 <style>
-  /* CSS SEKIRITE POU EKRAN AN */
-  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; }
+  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; }
   
-  /* FÒSE HEADER A */
   .custom-header {
     position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
     background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px);
@@ -22,10 +20,9 @@
   }
   .custom-header .logo { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: #00f0ff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
   .custom-header .logo-dot { width: 8px; height: 8px; background: #00f0ff; border-radius: 50%; box-shadow: 0 0 10px #00f0ff; }
-  .custom-header .icons { display: flex; gap: 12px; }
+  .custom-header .icons { display: flex; gap: 10px; }
   .custom-header .icon-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; }
 
-  /* FÒSE FOTO A PRAN TOUT EKRAN AN */
   .custom-hero {
     height: 100vh; height: 100dvh; width: 100%;
     background-image: linear-gradient(rgba(10,10,10,0.3), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg');
@@ -39,39 +36,28 @@
     max-width: 450px; width: 90%; text-align: center;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
-  .hero-tag {
-    display: inline-block; padding: 8px 16px; border-radius: 100px;
-    background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3);
-    color: #00f0ff; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 30px;
-  }
-  .hero-btn-primary {
-    display: block; width: 100%; padding: 16px; border-radius: 12px; background: #00f0ff; color: #000;
-    font-weight: 700; font-size: 16px; text-decoration: none; margin-bottom: 15px;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
-  .hero-btn-secondary {
-    display: block; width: 100%; padding: 16px; border-radius: 12px; background: transparent; color: #fff;
-    border: 1px solid rgba(255,255,255,0.2); font-weight: 600; font-size: 16px; text-decoration: none;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
+  .hero-tag { display: inline-block; padding: 8px 16px; border-radius: 100px; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: #00f0ff; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 30px; }
+  .hero-btn-primary { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 12px; background: #00f0ff; color: #000; font-weight: 700; font-size: 16px; text-decoration: none; margin-bottom: 15px; box-sizing: border-box; }
+  .hero-btn-secondary { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 12px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); font-weight: 600; font-size: 16px; text-decoration: none; box-sizing: border-box; }
 </style>
 </head>
 <body>
 
-<!-- HEADER A DIRÈK NAN HTML LA (PA GEN MOYEN POU L DISPARÈT) -->
 <header class="custom-header">
   <a href="/" class="logo"><span class="logo-dot"></span>100PANIK</a>
   <div class="icons">
     <a href="/account.html" class="icon-btn">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </a>
+    <button class="icon-btn" onclick="toggleTheme()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
     <a href="/cart.html" class="icon-btn">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
     </a>
   </div>
 </header>
 
-<!-- HERO A DIRÈK NAN HTML LA -->
 <main>
   <section class="custom-hero">
     <div class="custom-hero-box">
@@ -85,27 +71,23 @@
     </div>
   </section>
 
-  <!-- SEKSYON PWODWI YO -->
-  <section class="section" style="padding: 60px 20px;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; margin-bottom: 30px; color: #fff;">New Arrivals</h2>
-      <div class="products-grid" id="featured-products" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
-        <p style="color:#888; grid-column:1/-1; text-align:center;">Loading products...</p>
-      </div>
+  <section style="padding: 60px 20px; max-width: 1200px; margin: 0 auto;">
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; margin-bottom: 30px; color: #fff;">New Arrivals</h2>
+    <div id="featured-products" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+      <p style="color:#888; grid-column:1/-1; text-align:center;">Loading products...</p>
     </div>
   </section>
 </main>
 
 <div id="footer-mount"></div>
 
-<!-- CHAJE SÈLMAN FOOTER A AK KÒMAND YO NAN JS -->
-<script src="/js/app.js?v=99999"></script>
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-  // Chaje Footer a soti nan app.js (si app.js gen fonksyon renderFooter)
-  if (window.Panik && window.Panik.renderFooter) window.Panik.renderFooter();
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+}
 
-  // Chaje Pwodwi yo
+document.addEventListener('DOMContentLoaded', async () => {
   try {
     const resP = await fetch('/api/products');
     const products = await resP.json();
@@ -132,5 +114,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
+
+<!-- Nou chaje app.js jis pou footer a -->
+<script src="/js/app.js?v=999"></script>
 </body>
 </html>
