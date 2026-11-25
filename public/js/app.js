@@ -1,16 +1,7 @@
 const API = '';
+const Store = { cart: JSON.parse(localStorage.getItem('panik_cart') || '[]'), settings: {}, products: [] };
 
-const Store = {
-  cart: JSON.parse(localStorage.getItem('panik_cart') || '[]'),
-  settings: {},
-  products: []
-};
-
-function saveCart() {
-  localStorage.setItem('panik_cart', JSON.stringify(Store.cart));
-  updateCartBadge();
-}
-
+function saveCart() { localStorage.setItem('panik_cart', JSON.stringify(Store.cart)); updateCartBadge(); }
 function updateCartBadge() {
   const count = Store.cart.reduce((s, i) => s + i.quantity, 0);
   document.querySelectorAll('.cart-count').forEach(el => {
@@ -18,27 +9,13 @@ function updateCartBadge() {
     el.style.display = count > 0 ? 'flex' : 'none';
   });
 }
-
-function formatPrice(n) {
-  return new Intl.NumberFormat('fr-HT', { maximumFractionDigits: 0 }).format(n) + ' HTG';
-}
-
+function formatPrice(n) { return new Intl.NumberFormat('fr-HT', { maximumFractionDigits: 0 }).format(n) + ' HTG'; }
 function toast(msg, type = 'info') {
   let container = document.querySelector('.toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.textContent = msg;
+  if (!container) { container = document.createElement('div'); container.className = 'toast-container'; document.body.appendChild(container); }
+  const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = msg;
   container.appendChild(t);
-  setTimeout(() => {
-    t.style.opacity = '0';
-    t.style.transition = 'all 0.3s';
-    setTimeout(() => t.remove(), 300);
-  }, 3000);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'all 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
 }
 
 function initTheme() {
@@ -56,13 +33,13 @@ function initTheme() {
     };
   }
 }
-
 function sunIcon() { return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`; }
 function moonIcon() { return `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`; }
 
 function renderHeader() {
   const el = document.getElementById('header-mount');
   if (!el) return;
+  // MWEN RETIRE BOUTON AFILYE A NOU
   el.innerHTML = `
     <header class="header">
       <nav class="nav">
@@ -74,7 +51,6 @@ function renderHeader() {
           <li><a href="/track.html">Track Order</a></li>
         </ul>
         <div class="nav-actions">
-          <a href="/affiliate.html" class="icon-btn" style="width:auto; padding: 0 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">Affiliate</a>
           <a href="/account.html" class="icon-btn" id="account-btn" aria-label="My Account">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </a>
@@ -87,8 +63,7 @@ function renderHeader() {
       </nav>
     </header>
   `;
-  initTheme();
-  updateCartBadge();
+  initTheme(); updateCartBadge();
 }
 
 function renderFooter() {
@@ -147,25 +122,14 @@ function productCardHTML(p) {
   `;
 }
 
-function escapeHTML(s) {
-  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
+function escapeHTML(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 async function api(path, options = {}) {
   const opts = { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options };
   if (opts.body && typeof opts.body === 'object') opts.body = JSON.stringify(opts.body);
   const res = await fetch(API + path, opts);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Erè' }));
-    throw new Error(err.error || `Erè ${res.status}`);
-  }
+  if (!res.ok) { const err = await res.json().catch(() => ({ error: 'Erè' })); throw new Error(err.error || `Erè ${res.status}`); }
   return res.json();
 }
 
 window.Panik = { Store, api, toast, formatPrice, productCardHTML, escapeHTML, saveCart, updateCartBadge };
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderHeader();
-  renderFooter();
-  updateCartBadge();
-});
+document.addEventListener('DOMContentLoaded', () => { renderHeader(); renderFooter(); updateCartBadge(); });
