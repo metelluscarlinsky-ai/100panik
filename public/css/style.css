@@ -1285,3 +1285,30 @@ body .hero-content {
   text-align: center !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
 }
+
+/* ========== TOUNEN NAN 2YÈM FOTO A (KOUVRI EKRAN AN) ========== */
+body .hero {
+  background-image: linear-gradient(rgba(10,10,10,0.4), rgba(10,10,10,0.6)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important; /* Sa a fè foto a kouvri ekran an */
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-color: #0a0a0a !important;
+  min-height: 100vh !important; /* Pran tout wotè ekran an */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 80px !important; /* Kite espas pou header a */
+  padding-bottom: 40px !important;
+}
+
+body .hero-content {
+  background: rgba(10, 10, 10, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 40px 25px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  max-width: 500px !important;
+  text-align: center !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
+}
