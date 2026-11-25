@@ -1253,3 +1253,35 @@ body .hero-content {
   max-width: 500px !important;
   text-align: center !important;
 }
+
+/* ========== FIX HERO POSTER - MOBILE OPTIMIZED ========== */
+body .hero {
+  background-image: url('/images/hero-bg.jpg') !important;
+  background-size: 100% auto !important; /* Fòse foto a pran tout lajè a san l pa koupe */
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-color: #0a0a0a !important;
+  
+  /* Nou fè seksyon an yon ti jan pi long pou foto a gen plas pou l parèt */
+  min-height: 85vh !important; 
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 60px !important; 
+  padding-bottom: 40px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+/* Bwat pou tèks yo */
+body .hero-content {
+  background: rgba(10, 10, 10, 0.75) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 30px 20px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  max-width: 400px !important; /* Pi piti pou l pa kouvri tout foto a */
+  width: 90% !important;
+  text-align: center !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+}
