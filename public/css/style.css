@@ -1202,3 +1202,34 @@ body .hero-content a.btn-outline {
   backdrop-filter: blur(5px) !important;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
 }
+
+/* ========== RETIRE BWAT NOIR A SOU HERO A NÈT ========== */
+body .hero-content,
+body .custom-hero-box {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid transparent !important; /* Retire bòdi cyan a */
+  padding: 0 !important; /* Retire gwo espas anndan an */
+}
+
+/* Asire bouton "Explore Collection" lan rete ak koulè cyan li */
+body .hero-content .hero-btn-primary,
+body .hero-content a[href="/collection.html"] {
+  background: #00f0ff !important;
+  color: #000 !important;
+}
+
+/* Asire bouton "Track Order" lan gen yon ti transparans pou l vizib */
+body .hero-content .hero-btn-secondary,
+body .hero-content a[href="/track.html"] {
+  background: rgba(10, 10, 10, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Mete yon ti lonbraj fonse sou tèks la pou l lizib sou foto a */
+body .hero-content span,
+body .hero-content a {
+  text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.9), 0px 2px 5px rgba(0, 0, 0, 0.9) !important;
+}
