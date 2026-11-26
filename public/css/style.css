@@ -1132,3 +1132,48 @@ body .hero-content {
   z-index: 1000 !important;
   background: #0a0a0a !important;
 }
+
+/* ========== FOOTER BACKGROUND IMAGE ========== */
+body .footer, body footer.footer {
+  background-image: linear-gradient(rgba(10,10,10,0.85), rgba(10,10,10,0.95)), url('/images/hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+  padding: 60px 20px 30px !important;
+  border-top: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+body .footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 40px !important;
+}
+
+body .footer h4 {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #fff !important;
+  text-transform: uppercase;
+}
+
+body .footer a {
+  color: #a0a0a0 !important;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+
+body .footer a:hover { color: #00f0ff !important; }
+
+body .footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  color: #666 !important;
+  font-size: 12px;
+}
