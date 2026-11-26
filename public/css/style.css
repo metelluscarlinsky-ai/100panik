@@ -1177,3 +1177,28 @@ body .footer-bottom {
   color: #666 !important;
   font-size: 12px;
 }
+
+/* ========== RETIRE BWAT NWA A SOU HERO A ========== */
+body .hero-content {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid transparent !important;
+  padding: 0 !important;
+}
+
+/* Mete yon ti lonbraj sou tèks la pou l pa pèdi nan foto a */
+body .hero-content h1,
+body .hero-content p,
+body .hero-content span,
+body .hero-content a {
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Fè bouton "Track Order" lan pi vizib */
+body .hero-content a.btn-outline {
+  background: rgba(10, 10, 10, 0.4) !important; 
+  backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
