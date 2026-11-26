@@ -1233,3 +1233,16 @@ body .hero-content span,
 body .hero-content a {
   text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.9), 0px 2px 5px rgba(0, 0, 0, 0.9) !important;
 }
+
+/* ========== KILL SWITCH: RETIRE BWAT NOIR A NÈT ========== */
+body .hero-content, 
+body .custom-hero-box,
+.hero-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
