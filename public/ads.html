@@ -181,6 +181,12 @@
 <script>
   let loggedInUser = null;
   let allAds = [];
+
+  let brandAvatar = '/images/new-hero.jpg';
+  fetch('/api/public-settings').then(r => r.json()).then(s => {
+    if (s.brand_avatar) brandAvatar = s.brand_avatar;
+  });
+
   let currentReelAdId = null;
 
   // Verifye koneksyon an dirèkteman pou l pa janm fè erè
@@ -284,7 +290,7 @@
 
         <div class="reel-overlay">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-            <img src="/images/new-hero.jpg" style="width:40px;height:40px;border-radius:50%;border:2px solid #fff; object-fit:cover;">
+            <img src="${brandAvatar}" style="width:40px;height:40px;border-radius:50%;border:2px solid #fff; object-fit:cover;">
             <div class="reel-title" style="margin-bottom:0;">100panik</div>
           </div>
           <div class="reel-actions">
@@ -374,7 +380,7 @@
     return `
       <div class="ig-post" id="post-${ad.id}">
         <div class="ig-header">
-          <img src="/images/new-hero.jpg" class="ig-avatar" alt="100PANIK">
+          <img src="${brandAvatar}" class="ig-avatar" alt="100PANIK">
           <div class="ig-username">100panik</div>
         </div>
         <img src="${ad.media_url}" class="ig-media">
@@ -427,12 +433,22 @@
     } catch (e) {}
   }
 
+  // KONTE VIEWS
+  function recordView(adId) {
+    fetch('/api/ads/' + adId + '/view', { method: 'POST' }).catch(()=>{});
+  }
+
   function setupVideoObserver() {
     const videos = document.querySelectorAll('video.reel-media');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && document.getElementById('reels-view').classList.contains('active')) {
           entry.target.play().catch(()=>{});
+          // Konte view si se premye fwa
+          if (!entry.target.dataset.viewed) {
+            const adId = entry.target.closest('.reel-slide').getAttribute('data-id');
+            if (adId) { recordView(adId); entry.target.dataset.viewed = 'true'; }
+          }
         } else {
           entry.target.pause();
         }

@@ -163,6 +163,12 @@
         <div class="stat-card" style="max-width: 600px; margin-bottom: 20px;">
           <h3 style="margin-bottom: 20px; color: var(--cyan);">General Settings</h3>
           <form id="settings-form">
+            <div class="form-group">
+              <label>Brand Avatar (Photo Profil)</label>
+              <input type="file" id="avatar-file" accept="image/*" onchange="uploadAvatar(this)">
+              <input type="hidden" id="set-avatar">
+            </div>
+    
             <div class="form-group"><label>Instagram Link</label><input type="text" id="set-ig" placeholder="https://instagram.com/..."></div>
             <div class="form-group"><label>TikTok Link</label><input type="text" id="set-tiktok" placeholder="https://tiktok.com/..."></div>
             <div class="form-group"><label>YouTube Link</label><input type="text" id="set-yt" placeholder="https://youtube.com/..."></div>

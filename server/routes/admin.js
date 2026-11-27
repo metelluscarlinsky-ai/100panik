@@ -95,8 +95,16 @@ router.get('/registered-customers', async (req, res) => {
 
 // ============ ADS (PIBLISITE) ============
 router.get('/ads', async (req, res) => {
-  try { res.json(await db.all('SELECT * FROM ads ORDER BY id DESC')); } 
-  catch (e) { res.status(500).json({ error: e.message }); }
+  try {
+    const ads = await db.all(`
+      SELECT a.*,
+      (SELECT COUNT(*)::int FROM ad_likes WHERE ad_id = a.id) as like_count,
+      (SELECT COUNT(*)::int FROM ad_comments WHERE ad_id = a.id) as comment_count
+      FROM ads a ORDER BY a.created_at DESC
+    `);
+    res.json(ads);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+}); }
 });
 
 router.post('/ads', async (req, res) => {

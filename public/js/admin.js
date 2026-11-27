@@ -137,7 +137,8 @@ function setupSettingsForms() {
         instagram: document.getElementById('set-ig').value,
         tiktok: document.getElementById('set-tiktok').value,
         youtube: document.getElementById('set-yt').value,
-        contact_email: document.getElementById('set-email').value
+        contact_email: document.getElementById('set-email').value,
+    brand_avatar: document.getElementById('set-avatar').value
       };
       apiCall('/admin/settings', 'PUT', body).then(function() { showToast('Settings saved!'); })
         .catch(function(err) { alert(err.message); });
@@ -271,12 +272,23 @@ function loadAds() {
     var html = '';
     ads.forEach(function(a) {
       var media = a.type === 'image' ? '<img src="' + a.media_url + '">' : '<div style="width:80px; height:80px; background:#222; display:flex; align-items:center; justify-content:center; color:#888; border-radius:12px; font-size:12px;">Video</div>';
-      html += '<div class="product-card">' + media +
-        '<div class="product-info"><h3>' + (a.title || 'Ad') + '</h3></div>' +
-        '<div class="product-actions"><button class="btn btn-danger" onclick="deleteAd(' + a.id + ')">Delete</button></div></div>';
+      html += '<div class="product-card" style="flex-direction: column; align-items: stretch;">' +
+        '<div style="display:flex; gap:15px; align-items:center; margin-bottom:15px;">' + 
+          media +
+          '<div class="product-info"><h3>' + (a.title || 'Ad') + '</h3></div>' +
+        '</div>' +
+        '<div style="background:#0a0a0a; padding:10px; border-radius:8px; display:flex; justify-content:space-around; font-size:13px; border:1px solid #222;">' +
+          '<div style="text-align:center;"><span style="color:#00f0ff; font-weight:bold; font-size:16px;">' + (a.views || 0) + '</span><br><span style="color:#888;">Views</span></div>' +
+          '<div style="text-align:center;"><span style="color:#ff7f00; font-weight:bold; font-size:16px;">' + (a.like_count || 0) + '</span><br><span style="color:#888;">Likes</span></div>' +
+          '<div style="text-align:center;"><span style="color:#00ff88; font-weight:bold; font-size:16px;">' + (a.comment_count || 0) + '</span><br><span style="color:#888;">Comments</span></div>' +
+        '</div>' +
+        '<div style="margin-top:15px; text-align:right;">' +
+          '<button class="btn btn-danger" onclick="deleteAd(' + a.id + ')">Delete</button>' +
+        '</div>' +
+      '</div>';
     });
     list.innerHTML = html;
-  }).catch(function(err) { console.error('Ads error:', err); });
+  }).catch(function(err) { console.error(err); });
 }
 
 document.getElementById('form-ad').addEventListener('submit', function(e) {
@@ -304,12 +316,33 @@ function deleteAd(id) {
 }
 
 // ============ KONFIGIRASYON ============
+
+function uploadAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  var fd = new FormData();
+  fd.append('images', input.files[0]);
+  showToast('Uploading avatar...');
+  fetch(API + '/admin/upload', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
+    body: fd
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.files && data.files[0]) {
+      document.getElementById('set-avatar').value = data.files[0];
+      showToast('Avatar uploaded! Click Save Settings.');
+    }
+  }).catch(function(err) { alert('Upload Error: ' + err.message); });
+}
+
 function loadSettings() {
   apiCall('/admin/settings').then(function(s) {
     document.getElementById('set-ig').value = s.instagram || '';
     document.getElementById('set-tiktok').value = s.tiktok || '';
     document.getElementById('set-yt').value = s.youtube || '';
     document.getElementById('set-email').value = s.contact_email || '';
+    document.getElementById('set-avatar').value = s.brand_avatar || '';
   }).catch(function(err) { console.error('Settings error:', err); });
 }
 

@@ -87,4 +87,13 @@ router.delete('/comments/:commentId', requireCustomer, async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Erè' }); }
 });
 
+
+// Konte yon View lè yon moun gade yon pub
+router.post('/:id/view', async (req, res) => {
+  try {
+    await db.run('UPDATE ads SET views = COALESCE(views, 0) + 1 WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;
