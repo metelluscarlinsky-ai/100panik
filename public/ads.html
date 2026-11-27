@@ -429,5 +429,21 @@
     videos.forEach(v => observer.observe(v));
   }
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Lè w klike nenpòt kote sou paj la, nou eseye aktive son videyo yo
+  document.body.addEventListener('click', function() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(v => {
+      // Si navigatè a pèmèt li, nou retire silans lan
+      if (v.muted && v.paused) {
+        v.muted = false;
+      }
+    });
+  }, { once: true }); // Sa a ap fèt yon sèl fwa sèlman
+});
+</script>
+
 </body>
 </html>
