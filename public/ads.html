@@ -103,9 +103,9 @@
   }
   .ig-header { display: flex; align-items: center; padding: 12px 16px; gap: 10px; }
   .ig-avatar {
-    width: 32px; height: 32px; border-radius: 50%; background: #fff;
+    width: 36px; height: 36px; border-radius: 50%; background: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 14px; color: #000;
+    object-fit: cover; border: 1px solid #333;
   }
   .ig-username { font-weight: 600; font-size: 14px; }
   .ig-media { width: 100%; max-height: 600px; object-fit: cover; display: block; }
@@ -186,17 +186,30 @@
     try { loggedInUser = JSON.parse(savedCustomer); } catch(e) {}
   }
 
-  function switchView(view) {
+  function switchView(view, scrollToId) {
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(view + '-view').classList.add('active');
     document.getElementById('btn-' + view).classList.add('active');
     
     if (view === 'reels') {
-      document.querySelectorAll('.reel-media').forEach(v => {
-        if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) v.play().catch(()=>{});
-      });
+      // Si w klike sou yon videyo nan feed la, w ap rive sou li
+      if (scrollToId) {
+        const target = document.getElementById('reel-' + scrollToId);
+        if (target) target.scrollIntoView({ behavior: 'instant' });
+      }
+
+      // Jwe videyo ki nan ekran an
+      setTimeout(() => {
+        document.querySelectorAll('.reel-media').forEach(v => {
+          if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) {
+            v.play().catch(()=>{});
+          }
+        });
+      }, 100);
+      
     } else {
+      // Pause videyo lè w ale sou Feed la
       document.querySelectorAll('.reel-media').forEach(v => { if (v.tagName === 'VIDEO') v.pause(); });
     }
   }
@@ -206,8 +219,8 @@
       const res = await fetch('/api/ads');
       allAds = await res.json();
       const videos = allAds.filter(ad => ad.type === 'video');
-      const images = allAds.filter(ad => ad.type === 'image');
 
+      // REELS: Sèlman videyo
       const reelsView = document.getElementById('reels-view');
       if (videos.length > 0) {
         reelsView.innerHTML = videos.map(ad => renderReelSlide(ad)).join('');
@@ -215,12 +228,13 @@
         reelsView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No video reels available.</div>';
       }
 
+      // FEED: Tou sa (Foto ak Videyo)
       const feedView = document.getElementById('feed-posts');
-      if (images.length > 0) {
-        feedView.innerHTML = images.map(ad => renderFeedPost(ad)).join('');
-        images.forEach(ad => loadFeedComments(ad.id));
+      if (allAds.length > 0) {
+        feedView.innerHTML = allAds.map(ad => renderFeedPost(ad)).join('');
+        allAds.forEach(ad => loadFeedComments(ad.id));
       } else {
-        feedView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No image posts available.</div>';
+        feedView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No posts available.</div>';
       }
       setupVideoObserver();
     } catch (e) { console.error(e); }
@@ -231,7 +245,7 @@
   // =========================================
   function renderReelSlide(ad) {
     return `
-      <div class="reel-slide">
+      <div class="reel-slide" id="reel-${ad.id}">
         <video src="${ad.media_url}" class="reel-media" loop muted playsinline autoplay></video>
         
         <!-- BOUTON SON AN ISIT LA -->
@@ -240,7 +254,10 @@
         </button>
 
         <div class="reel-overlay">
-          <div class="reel-title">${ad.title || '100PANIK'}</div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+            <img src="/images/new-hero.jpg" style="width:40px;height:40px;border-radius:50%;border:2px solid #fff; object-fit:cover;">
+            <div class="reel-title" style="margin-bottom:0;">100panik</div>
+          </div>
           <div class="reel-actions">
             <button class="action-btn ${ad.hasLiked ? 'liked' : ''}" id="reel-like-btn-${ad.id}" onclick="toggleReelLike(${ad.id})">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -325,7 +342,7 @@
     return `
       <div class="ig-post" id="post-${ad.id}">
         <div class="ig-header">
-          <div class="ig-avatar">100</div>
+          <img src="/images/new-hero.jpg" class="ig-avatar" alt="100PANIK">
           <div class="ig-username">100panik</div>
         </div>
         <img src="${ad.media_url}" class="ig-media">
