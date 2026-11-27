@@ -172,14 +172,18 @@
   </div>
 </div>
 
-<script src="/js/app.js?v=sound_fix"></script>
+<script src="/js/customer.js"></script>
+<script src="/js/app.js?v=17354811"></script>
 <script>
   let loggedInUser = null;
   let allAds = [];
   let currentReelAdId = null;
 
-  if (window.CustomerAuth && window.CustomerAuth.isLoggedIn()) {
-    loggedInUser = window.CustomerAuth.getCustomer();
+  // Verifye koneksyon an dirèkteman pou l pa janm fè erè
+  const savedToken = localStorage.getItem('panik_customer_token');
+  const savedCustomer = localStorage.getItem('panik_customer_data');
+  if (savedToken && savedCustomer) {
+    try { loggedInUser = JSON.parse(savedCustomer); } catch(e) {}
   }
 
   function switchView(view) {
@@ -265,7 +269,8 @@
   }
 
   async function toggleReelLike(id) {
-    if (!loggedInUser) { window.location.href = '/login.html?redirect=/ads.html'; return; }
+    const currentToken = localStorage.getItem('panik_customer_token');
+    if (!currentToken) { window.location.href = '/login.html?redirect=/ads.html'; return; }
     const token = localStorage.getItem('panik_customer_token');
     try {
       const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
@@ -281,7 +286,7 @@
   async function openReelComments(id) {
     currentReelAdId = id;
     document.getElementById('comments-modal').classList.add('open');
-    document.getElementById('modal-comment-form').style.display = loggedInUser ? 'flex' : 'none';
+    document.getElementById('modal-comment-form').style.display = localStorage.getItem('panik_customer_token') ? 'flex' : 'none';
     loadReelComments(id);
   }
 
@@ -310,7 +315,7 @@
   // FONKSYON POU RANN FEED (FOTO)
   // =========================================
   function renderFeedPost(ad) {
-    let form = loggedInUser ? 
+    let form = localStorage.getItem('panik_customer_token') ? 
       `<div class="ig-add-comment">
         <input type="text" placeholder="Add a comment..." id="feed-input-${ad.id}">
         <button onclick="postFeedComment(${ad.id})">Post</button>
@@ -338,7 +343,8 @@
   }
 
   async function toggleFeedLike(id) {
-    if (!loggedInUser) { window.location.href = '/login.html?redirect=/ads.html'; return; }
+    const currentToken = localStorage.getItem('panik_customer_token');
+    if (!currentToken) { window.location.href = '/login.html?redirect=/ads.html'; return; }
     const token = localStorage.getItem('panik_customer_token');
     try {
       const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
