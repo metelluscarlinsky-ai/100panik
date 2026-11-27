@@ -13,7 +13,7 @@
     --text: #fff;
     --text-muted: #888;
     --cyan: #00f0ff;
-    --danger: #ff0040;
+    --orange: #ff7f00; /* Koulè Zoranj pou Like a */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
   body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
@@ -36,39 +36,32 @@
   /* KONTENÈ JENERAL */
   .view-container {
     height: 100vh; width: 100%; display: none;
-    padding-top: 60px; /* Kite plas pou top-nav la */
+    padding-top: 60px;
   }
   .view-container.active { display: block; }
 
   /* =========================================
      1. REELS VIEW (TIKTOK STYLE - VIDEYO SÈLMAN)
   ========================================= */
-  #reels-view {
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scrollbar-width: none;
-  }
+  #reels-view { overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
   #reels-view::-webkit-scrollbar { display: none; }
   
   .reel-slide {
-    height: calc(100vh - 60px);
-    width: 100%;
-    scroll-snap-align: start;
-    position: relative;
+    height: calc(100vh - 60px); width: 100%;
+    scroll-snap-align: start; position: relative;
     display: flex; align-items: center; justify-content: center;
     background: #000;
   }
-  .reel-media {
-    width: 100%; height: 100%; object-fit: cover;
-  }
+  .reel-media { width: 100%; height: 100%; object-fit: cover; }
+  
   .reel-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 40%);
     display: flex; flex-direction: column; justify-content: flex-end;
     padding: 20px;
   }
-  .reel-info { margin-bottom: 20px; }
-  .reel-title { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+  .reel-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  
   .reel-actions {
     position: absolute; right: 15px; bottom: 80px;
     display: flex; flex-direction: column; gap: 20px; align-items: center;
@@ -77,19 +70,31 @@
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%; width: 50px; height: 50px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #fff; cursor: pointer;
+    color: #fff; cursor: pointer; transition: 0.2s;
   }
   .action-btn svg { width: 22px; height: 22px; }
-  .action-btn.liked { background: rgba(255, 127, 0, 0.2); border-color: #ff7f00; color: #ff7f00; }
-  .action-btn.liked svg { fill: #ff7f00; stroke: #ff7f00; }
+  
+  /* KOULÈ ZORANJ POU LIKE A */
+  .action-btn.liked { background: rgba(255, 127, 0, 0.2); border-color: var(--orange); color: var(--orange); }
+  .action-btn.liked svg { fill: var(--orange); stroke: var(--orange); }
+
+  /* BOUTON SON AN */
+  .sound-btn {
+    position: absolute;
+    top: 70px; right: 15px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    width: 35px; height: 35px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; cursor: pointer; z-index: 100;
+  }
+  .sound-btn svg { width: 18px; height: 18px; }
 
   /* =========================================
      2. FEED VIEW (INSTAGRAM STYLE - FOTO)
   ========================================= */
-  #feed-view {
-    overflow-y: auto;
-    padding-bottom: 50px;
-  }
+  #feed-view { overflow-y: auto; padding-bottom: 50px; }
   .feed-content { max-width: 500px; margin: 0 auto; width: 100%; }
   
   .ig-post {
@@ -108,7 +113,9 @@
   .ig-actions { padding: 12px 16px 8px; display: flex; gap: 16px; }
   .ig-btn { background: none; border: none; color: var(--text); cursor: pointer; }
   .ig-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; }
-  .ig-btn.liked svg { fill: #ff7f00; stroke: #ff7f00; }
+  
+  /* KOULÈ ZORANJ POU LIKE FEED LA */
+  .ig-btn.liked svg { fill: var(--orange); stroke: var(--orange); }
   
   .ig-likes { padding: 0 16px; font-weight: 600; font-size: 14px; margin-bottom: 8px; }
   .ig-caption { padding: 0 16px; font-size: 14px; margin-bottom: 8px; }
@@ -117,11 +124,10 @@
   .ig-comments-section { padding: 0 16px; margin-bottom: 12px; }
   .ig-comment-item { font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
   .ig-comment-item span { font-weight: 600; margin-right: 5px; }
-  .ig-comment-del { background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; }
   
   .ig-add-comment { display: flex; padding: 12px 16px; border-top: 1px solid var(--border); gap: 10px; }
   .ig-add-comment input { flex: 1; background: transparent; border: none; color: #fff; outline: none; }
-  .ig-add-comment button { background: none; border: none; color: var(--cyan); font-weight: 600; opacity: 0.5; }
+  .ig-add-comment button { background: none; border: none; color: var(--cyan); font-weight: 600; cursor: pointer; }
   .ig-login-prompt { padding: 12px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-muted); text-align: center; }
   .ig-login-prompt a { color: var(--cyan); text-decoration: none; font-weight: 600; }
 
@@ -140,46 +146,18 @@
   .modal-comments-list { flex: 1; overflow-y: auto; }
   .modal-comment-item { margin-bottom: 12px; font-size: 14px; }
   .modal-comment-item span { font-weight: 600; color: var(--cyan); margin-right: 5px; }
-
-  .sound-btn {
-    position: absolute;
-    top: 70px; right: 15px;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    width: 35px; height: 35px;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; cursor: pointer; z-index: 10;
-  }
-  .sound-btn svg { width: 18px; height: 18px; }
-
 </style>
 </head>
 <body>
 
-<!-- TOP NAVIGATION -->
 <div class="top-nav">
   <button class="nav-btn active" onclick="switchView('reels')" id="btn-reels">Reels</button>
   <button class="nav-btn" onclick="switchView('feed')" id="btn-feed">Feed</button>
 </div>
 
-<!-- =========================================
-     REELS VIEW (TIKTOK STYLE)
-========================================== -->
-<div id="reels-view" class="view-container active">
-  <!-- Videyo yo ap chaje isit la -->
-</div>
+<div id="reels-view" class="view-container active"></div>
+<div id="feed-view" class="view-container"><div class="feed-content" id="feed-posts"></div></div>
 
-<!-- =========================================
-     FEED VIEW (INSTAGRAM STYLE)
-========================================== -->
-<div id="feed-view" class="view-container">
-  <div class="feed-content" id="feed-posts">
-    <!-- Foto yo ap chaje isit la -->
-  </div>
-</div>
-
-<!-- MODAL POU KOMANTÈ REELS -->
 <div class="modal-comments" id="comments-modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -194,7 +172,7 @@
   </div>
 </div>
 
-<script src="/js/app.js?v=hybrid_media"></script>
+<script src="/js/app.js?v=sound_fix"></script>
 <script>
   let loggedInUser = null;
   let allAds = [];
@@ -204,26 +182,18 @@
     loggedInUser = window.CustomerAuth.getCustomer();
   }
 
-  // CHANJE VIEW (REELS OSWA FEED)
   function switchView(view) {
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
     document.getElementById(view + '-view').classList.add('active');
     document.getElementById('btn-' + view).classList.add('active');
-
-    // Si nou ale sou Reels, nou fè videyo yo jwe
+    
     if (view === 'reels') {
       document.querySelectorAll('.reel-media').forEach(v => {
-        if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) {
-          v.play().catch(()=>{});
-        }
+        if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) v.play().catch(()=>{});
       });
     } else {
-      // Si nou ale sou Feed, nou pause tout videyo Reels yo
-      document.querySelectorAll('.reel-media').forEach(v => {
-        if (v.tagName === 'VIDEO') v.pause();
-      });
+      document.querySelectorAll('.reel-media').forEach(v => { if (v.tagName === 'VIDEO') v.pause(); });
     }
   }
 
@@ -231,18 +201,9 @@
     try {
       const res = await fetch('/api/ads');
       allAds = await res.json();
-
-      if (!Array.isArray(allAds) || allAds.length === 0) {
-        document.getElementById('reels-view').innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No media available.</div>';
-        document.getElementById('feed-posts').innerHTML = '<div style="color:#888; text-align:center; padding:50px;">No media available.</div>';
-        return;
-      }
-
-      // Separe Videyo ak Foto
       const videos = allAds.filter(ad => ad.type === 'video');
       const images = allAds.filter(ad => ad.type === 'image');
 
-      // 1. Rann REELS yo (Videyo)
       const reelsView = document.getElementById('reels-view');
       if (videos.length > 0) {
         reelsView.innerHTML = videos.map(ad => renderReelSlide(ad)).join('');
@@ -250,7 +211,6 @@
         reelsView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No video reels available.</div>';
       }
 
-      // 2. Rann FEED la (Foto)
       const feedView = document.getElementById('feed-posts');
       if (images.length > 0) {
         feedView.innerHTML = images.map(ad => renderFeedPost(ad)).join('');
@@ -258,23 +218,25 @@
       } else {
         feedView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No image posts available.</div>';
       }
-
       setupVideoObserver();
-
     } catch (e) { console.error(e); }
   });
 
   // =========================================
-  // FONKSYON POU RANN REELS (TIKTOK STYLE)
+  // FONKSYON POU RANN REELS (AK BOUTON SON)
   // =========================================
   function renderReelSlide(ad) {
     return `
       <div class="reel-slide">
         <video src="${ad.media_url}" class="reel-media" loop muted playsinline autoplay></video>
+        
+        <!-- BOUTON SON AN ISIT LA -->
+        <button class="sound-btn" onclick="toggleSound(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+
         <div class="reel-overlay">
-          <div class="reel-info">
-            <div class="reel-title">${ad.title || '100PANIK'}</div>
-          </div>
+          <div class="reel-title">${ad.title || '100PANIK'}</div>
           <div class="reel-actions">
             <button class="action-btn ${ad.hasLiked ? 'liked' : ''}" id="reel-like-btn-${ad.id}" onclick="toggleReelLike(${ad.id})">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -289,6 +251,19 @@
     `;
   }
 
+  // FONKSYON POU JWE SON AN
+  function toggleSound(btn) {
+    const video = btn.parentElement.querySelector('video');
+    if (!video) return;
+    if (video.muted) {
+      video.muted = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+    } else {
+      video.muted = true;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+    }
+  }
+
   async function toggleReelLike(id) {
     if (!loggedInUser) { window.location.href = '/login.html?redirect=/ads.html'; return; }
     const token = localStorage.getItem('panik_customer_token');
@@ -300,17 +275,13 @@
         const btn = document.getElementById('reel-like-btn-' + id);
         if (data.liked) btn.classList.add('liked'); else btn.classList.remove('liked');
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {}
   }
 
   async function openReelComments(id) {
     currentReelAdId = id;
     document.getElementById('comments-modal').classList.add('open');
-    if (loggedInUser) {
-      document.getElementById('modal-comment-form').style.display = 'flex';
-    } else {
-      document.getElementById('modal-comment-form').style.display = 'none';
-    }
+    document.getElementById('modal-comment-form').style.display = loggedInUser ? 'flex' : 'none';
     loadReelComments(id);
   }
 
@@ -336,7 +307,7 @@
   }
 
   // =========================================
-  // FONKSYON POU RANN FEED (INSTAGRAM STYLE)
+  // FONKSYON POU RANN FEED (FOTO)
   // =========================================
   function renderFeedPost(ad) {
     let form = loggedInUser ? 
@@ -401,20 +372,6 @@
     } catch (e) {}
   }
 
-  // OBSERVER POU JWE VIDEYO LÈ W RIVE SOU YO
-  
-  function toggleSound(btn) {
-    const video = btn.parentElement.querySelector('video');
-    if (!video) return;
-    if (video.muted) {
-      video.muted = false;
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
-    } else {
-      video.muted = true;
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
-    }
-  }
-
   function setupVideoObserver() {
     const videos = document.querySelectorAll('video.reel-media');
     const observer = new IntersectionObserver((entries) => {
@@ -429,21 +386,5 @@
     videos.forEach(v => observer.observe(v));
   }
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Lè w klike nenpòt kote sou paj la, nou eseye aktive son videyo yo
-  document.body.addEventListener('click', function() {
-    const videos = document.querySelectorAll('video');
-    videos.forEach(v => {
-      // Si navigatè a pèmèt li, nou retire silans lan
-      if (v.muted && v.paused) {
-        v.muted = false;
-      }
-    });
-  }, { once: true }); // Sa a ap fèt yon sèl fwa sèlman
-});
-</script>
-
 </body>
 </html>
