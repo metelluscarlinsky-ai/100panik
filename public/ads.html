@@ -3,153 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>100PANIK - Media</title>
+<title>100PANIK - Community</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #000;
-    --card-bg: #0a0a0a;
-    --border: #222;
-    --text: #fff;
-    --text-muted: #888;
-    --cyan: #00f0ff;
-    --orange: #ff7f00; /* Koulè Zoranj pou Like a */
-  }
+  :root { --bg: #000; --card-bg: #0a0a0a; --border: #222; --text: #fff; --text-muted: #888; --cyan: #00f0ff; --orange: #ff7f00; }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
   body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-  /* TOP NAVIGATION TABS */
-  .top-nav {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px);
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: center; gap: 20px;
-    padding: 15px;
-  }
-  .nav-btn {
-    background: none; border: none; color: var(--text-muted);
-    font-size: 16px; font-weight: 600; cursor: pointer; padding-bottom: 5px;
-    transition: color 0.2s;
-  }
+  .top-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: 20px; padding: 15px; }
+  .nav-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; font-weight: 600; cursor: pointer; padding-bottom: 5px; }
   .nav-btn.active { color: var(--text); border-bottom: 2px solid var(--cyan); }
 
-  /* KONTENÈ JENERAL */
-  .view-container {
-    height: 100vh; width: 100%; display: none;
-    padding-top: 60px;
-  }
+  .view-container { height: 100vh; width: 100%; display: none; padding-top: 60px; }
   .view-container.active { display: block; }
 
-  /* =========================================
-     1. REELS VIEW (TIKTOK STYLE - VIDEYO SÈLMAN)
-  ========================================= */
+  /* REELS */
   #reels-view { overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
   #reels-view::-webkit-scrollbar { display: none; }
-  
-  .reel-slide {
-    height: calc(100vh - 60px); width: 100%;
-    scroll-snap-align: start; position: relative;
-    display: flex; align-items: center; justify-content: center;
-    background: #000;
-  }
-  .reel-media { width: 100%; height: 100%; object-fit: cover; }
-  
-  .reel-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 40%);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 20px;
-  }
-  .reel-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
-  
-  .reel-actions {
-    position: absolute; right: 15px; bottom: 80px;
-    display: flex; flex-direction: column; gap: 20px; align-items: center;
-  }
-  .action-btn {
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 50%; width: 50px; height: 50px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #fff; cursor: pointer; transition: 0.2s;
-  }
+  .reel-slide { height: calc(100vh - 60px); width: 100%; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+  .reel-media { width: 100%; height: 100%; object-fit: cover; background: #000; }
+  .reel-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 40%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+  .reel-actions { position: absolute; right: 15px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+  .action-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
   .action-btn svg { width: 22px; height: 22px; }
-  
-  /* KOULÈ ZORANJ POU LIKE A */
   .action-btn.liked { background: rgba(255, 127, 0, 0.2); border-color: var(--orange); color: var(--orange); }
   .action-btn.liked svg { fill: var(--orange); stroke: var(--orange); }
+  .action-btn.saved { color: #ffd700; border-color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+  .sound-btn { position: absolute; top: 70px; right: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; z-index: 100; }
 
-  /* BOUTON SON AN */
-  .sound-btn {
-    position: absolute;
-    top: 70px; right: 15px;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    width: 35px; height: 35px;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; cursor: pointer; z-index: 100;
-  }
-  .sound-btn svg { width: 18px; height: 18px; }
-
-  /* =========================================
-     2. FEED VIEW (INSTAGRAM STYLE - FOTO)
-  ========================================= */
-  #feed-view { overflow-y: auto; padding-bottom: 50px; }
+  /* FEED */
+  #feed-view { overflow-y: auto; padding-bottom: 80px; }
   .feed-content { max-width: 500px; margin: 0 auto; width: 100%; }
-  
-  .ig-post {
-    background: var(--card-bg); border-bottom: 1px solid var(--border);
-    margin-bottom: 10px; display: flex; flex-direction: column;
-  }
+  .ig-post { background: var(--card-bg); border-bottom: 1px solid var(--border); margin-bottom: 10px; display: flex; flex-direction: column; position: relative; }
   .ig-header { display: flex; align-items: center; padding: 12px 16px; gap: 10px; }
-  .ig-avatar {
-    width: 36px; height: 36px; border-radius: 50%; background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    object-fit: cover; border: 1px solid #333;
-  }
+  .ig-avatar { width: 36px; height: 36px; border-radius: 50%; background: #fff; object-fit: cover; border: 1px solid #333; }
   .ig-username { font-weight: 600; font-size: 14px; }
-  .ig-media { width: 100%; max-height: 600px; object-fit: cover; display: block; }
+  
+  /* MEDIA NAN FEED LA */
+  .ig-media-container { width: 100%; min-height: 300px; max-height: 600px; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  .ig-media { width: 100%; height: 100%; max-height: 600px; object-fit: cover; display: block; }
   
   .ig-actions { padding: 12px 16px 8px; display: flex; gap: 16px; }
   .ig-btn { background: none; border: none; color: var(--text); cursor: pointer; }
   .ig-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; }
-  
-  /* KOULÈ ZORANJ POU LIKE FEED LA */
   .ig-btn.liked svg { fill: var(--orange); stroke: var(--orange); }
+  .ig-btn.saved svg { fill: #ffd700; stroke: #ffd700; }
   
   .ig-likes { padding: 0 16px; font-weight: 600; font-size: 14px; margin-bottom: 8px; }
   .ig-caption { padding: 0 16px; font-size: 14px; margin-bottom: 8px; }
   .ig-caption span { font-weight: 600; margin-right: 5px; }
-  
   .ig-comments-section { padding: 0 16px; margin-bottom: 12px; }
   .ig-comment-item { font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
   .ig-comment-item span { font-weight: 600; margin-right: 5px; }
+  .ig-comment-del { background: none; border: none; color: var(--orange); font-size: 12px; cursor: pointer; }
   
   .ig-add-comment { display: flex; padding: 12px 16px; border-top: 1px solid var(--border); gap: 10px; }
   .ig-add-comment input { flex: 1; background: transparent; border: none; color: #fff; outline: none; }
   .ig-add-comment button { background: none; border: none; color: var(--cyan); font-weight: 600; cursor: pointer; }
   .ig-login-prompt { padding: 12px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-muted); text-align: center; }
   .ig-login-prompt a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+  
+  .delete-post-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: #ff0040; padding: 5px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; z-index: 10; }
 
-  /* MODAL KOMANTÈ POU REELS */
-  .modal-comments {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999;
-    display: none; align-items: flex-end;
-  }
-  .modal-comments.open { display: flex; }
-  .modal-content {
-    background: #141414; width: 100%; height: 60vh;
-    border-radius: 20px 20px 0 0; padding: 20px;
-    display: flex; flex-direction: column;
-  }
-  .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-  .modal-comments-list { flex: 1; overflow-y: auto; }
-  .modal-comment-item { margin-bottom: 12px; font-size: 14px; }
-  .modal-comment-item span { font-weight: 600; color: var(--cyan); margin-right: 5px; }
-
-  .action-btn.saved { color: #ffd700; border-color: #ffd700; background: rgba(255, 215, 0, 0.1); }
-  .ig-btn.saved svg { fill: #ffd700; stroke: #ffd700; }
-
+  /* UPLOAD BUTTON & MODAL */
+  .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--cyan); color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,240,255,0.4); cursor: pointer; z-index: 9999; border: none; }
+  .fab svg { width: 30px; height: 30px; }
+  
+  .upload-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+  .upload-modal.open { display: flex; }
+  .upload-content { background: #141414; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
+  .upload-content h3 { margin-bottom: 15px; color: var(--cyan); }
 </style>
 </head>
 <body>
@@ -162,64 +85,40 @@
 <div id="reels-view" class="view-container active"></div>
 <div id="feed-view" class="view-container"><div class="feed-content" id="feed-posts"></div></div>
 
-<div class="modal-comments" id="comments-modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Comments</h3>
-      <button onclick="document.getElementById('comments-modal').classList.remove('open')" style="background:none; border:none; color:#fff; font-size:24px;">&times;</button>
-    </div>
-    <div class="modal-comments-list" id="modal-comments-list"></div>
-    <div class="ig-add-comment" id="modal-comment-form" style="display:none; padding:12px 0 0 0;">
-      <input type="text" id="modal-comment-input" placeholder="Add a comment...">
-      <button onclick="postReelComment()">Post</button>
-    </div>
+<!-- BOUTON POU AJOUTE PÒS -->
+<button class="fab" onclick="openUploadModal()">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<!-- MODAL UPLOAD -->
+<div class="upload-modal" id="upload-modal">
+  <div class="upload-content">
+    <h3>New Post</h3>
+    <form id="upload-form">
+      <div style="margin-bottom: 15px;">
+        <input type="file" id="post-file" accept="image/*,video/*" style="color: #fff;" required>
+      </div>
+      <div style="margin-bottom: 15px;">
+        <input type="text" id="post-caption" placeholder="Write a caption..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0a0a0a; color: #fff; outline: none;">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; border-radius:8px; background:var(--cyan); color:#000; font-weight:bold; border:none;">Post</button>
+      <button type="button" onclick="document.getElementById('upload-modal').classList.remove('open')" style="width:100%; margin-top:10px; background:none; border:none; color:#888; cursor:pointer;">Cancel</button>
+    </form>
   </div>
 </div>
 
-<script src="/js/customer.js"></script>
-<script src="/js/app.js?v=1795803148"></script>
+<script src="/js/app.js?v=final_media_fix"></script>
 <script>
-  let loggedInUser = null;
   let allAds = [];
-
-  let brandAvatar = '/images/new-hero.jpg';
-  fetch('/api/public-settings').then(r => r.json()).then(s => {
-    if (s.brand_avatar) brandAvatar = s.brand_avatar;
-  });
-
+  let allUserPosts = [];
   let currentReelAdId = null;
+  let brandAvatar = '/images/new-hero.jpg';
 
-  // Verifye koneksyon an dirèkteman pou l pa janm fè erè
-  const savedToken = localStorage.getItem('panik_customer_token');
-  const savedCustomer = localStorage.getItem('panik_customer_data');
-  if (savedToken && savedCustomer) {
-    try { loggedInUser = JSON.parse(savedCustomer); } catch(e) {}
-  }
+  // Chaje avatar la
+  fetch('/api/public-settings').then(r => r.json()).then(s => { if (s.brand_avatar) brandAvatar = s.brand_avatar; });
 
-  
-  // FONKSYON POU ARCHIVE (SAVE)
-  function isSaved(url) {
-    let archive = JSON.parse(localStorage.getItem('panik_archive') || '[]');
-    return archive.includes(url);
-  }
-
-  function toggleArchive(btn, url) {
-    let archive = JSON.parse(localStorage.getItem('panik_archive') || '[]');
-    const index = archive.indexOf(url);
-    
-    if (index > -1) {
-      // Retire l
-      archive.splice(index, 1);
-      btn.classList.remove('saved');
-      alert('Removed from your archive.');
-    } else {
-      // Sove l
-      archive.push(url);
-      btn.classList.add('saved');
-      alert('Saved to your archive!');
-    }
-    localStorage.setItem('panik_archive', JSON.stringify(archive));
-  }
+  function isLoggedIn() { return !!localStorage.getItem('panik_customer_token'); }
+  function getCustomer() { try { return JSON.parse(localStorage.getItem('panik_customer_data')); } catch(e) { return null; } }
 
   function switchView(view, scrollToId) {
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
@@ -228,233 +127,228 @@
     document.getElementById('btn-' + view).classList.add('active');
     
     if (view === 'reels') {
-      // Si w klike sou yon videyo nan feed la, w ap rive sou li
       if (scrollToId) {
         const target = document.getElementById('reel-' + scrollToId);
         if (target) target.scrollIntoView({ behavior: 'instant' });
       }
-
-      // Jwe videyo ki nan ekran an
-      setTimeout(() => {
-        document.querySelectorAll('.reel-media').forEach(v => {
-          if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) {
-            v.play().catch(()=>{});
-          }
-        });
-      }, 100);
-      
+      document.querySelectorAll('.reel-media').forEach(v => {
+        if (v.tagName === 'VIDEO' && v.getBoundingClientRect().top >= 0 && v.getBoundingClientRect().bottom <= window.innerHeight) v.play().catch(()=>{});
+      });
     } else {
-      // Pause videyo lè w ale sou Feed la
       document.querySelectorAll('.reel-media').forEach(v => { if (v.tagName === 'VIDEO') v.pause(); });
     }
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const res = await fetch('/api/ads');
-      allAds = await res.json();
-      const videos = allAds.filter(ad => ad.type === 'video');
-
-      // REELS: Sèlman videyo
-      const reelsView = document.getElementById('reels-view');
-      if (videos.length > 0) {
-        reelsView.innerHTML = videos.map(ad => renderReelSlide(ad)).join('');
-      } else {
-        reelsView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No video reels available.</div>';
-      }
-
-      // FEED: Tou sa (Foto ak Videyo)
-      const feedView = document.getElementById('feed-posts');
-      if (allAds.length > 0) {
-        feedView.innerHTML = allAds.map(ad => renderFeedPost(ad)).join('');
-        allAds.forEach(ad => loadFeedComments(ad.id));
-      } else {
-        feedView.innerHTML = '<div style="color:#888; text-align:center; padding-top:50px;">No posts available.</div>';
-      }
-      setupVideoObserver();
-    } catch (e) { console.error(e); }
+    if (!isLoggedIn()) document.querySelector('.fab').style.display = 'none';
+    await fetchAllData();
+    renderAll();
   });
 
-  // =========================================
-  // FONKSYON POU RANN REELS (AK BOUTON SON)
-  // =========================================
+  async function fetchAllData() {
+    try {
+      const [resAds, resPosts] = await Promise.all([ fetch('/api/ads'), fetch('/api/customer-posts') ]);
+      allAds = await resAds.json();
+      allUserPosts = await resPosts.json();
+    } catch (e) { console.error(e); }
+  }
+
+  // Verifye si yon medya se videyo vre
+  function checkIsVideo(url, type) {
+    if (type === 'video') return true;
+    if (url && url.match(/\.(mp4|webm|mov|ogg)$/i)) return true;
+    return false;
+  }
+
+  function renderAll() {
+    // 1. REELS
+    const videos = allAds.filter(ad => checkIsVideo(ad.media_url, ad.type));
+    document.getElementById('reels-view').innerHTML = videos.length ? videos.map(ad => renderReelSlide(ad)).join('') : '<div style="color:#888; text-align:center; padding-top:50px;">No reels yet.</div>';
+
+    // 2. FEED
+    let combined = [];
+    allAds.forEach(ad => combined.push({ ...ad, source: 'admin' }));
+    allUserPosts.forEach(p => combined.push({ ...p, source: 'user', likes: 0, hasLiked: false }));
+    combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    document.getElementById('feed-posts').innerHTML = combined.map(item => renderFeedPost(item)).join('');
+    combined.forEach(item => loadFeedComments(item.id, item.source));
+    setupVideoObserver();
+  }
+
   function renderReelSlide(ad) {
     return `
       <div class="reel-slide" id="reel-${ad.id}">
         <video src="${ad.media_url}" class="reel-media" loop muted playsinline autoplay></video>
-        
-        <!-- BOUTON SON AN ISIT LA -->
-        <button class="sound-btn" onclick="toggleSound(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-        </button>
-
+        <button class="sound-btn" onclick="toggleSound(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg></button>
         <div class="reel-overlay">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
             <img src="${brandAvatar}" style="width:40px;height:40px;border-radius:50%;border:2px solid #fff; object-fit:cover;">
-            <div class="reel-title" style="margin-bottom:0;">100panik</div>
+            <div style="font-size: 20px; font-weight: 700;">${ad.title || '100PANIK'}</div>
           </div>
           <div class="reel-actions">
-            <button class="action-btn ${ad.hasLiked ? 'liked' : ''}" id="reel-like-btn-${ad.id}" onclick="toggleReelLike(${ad.id})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              <span id="reel-like-count-${ad.id}" style="font-size:11px;">${ad.likes || 0}</span>
-            </button>
-            <button class="action-btn" onclick="openReelComments(${ad.id})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-            </button>
-            <button class="action-btn ${isSaved(ad.media_url) ? 'saved' : ''}" id="archive-btn-reel-${ad.id}" onclick="toggleArchive(this, '${ad.media_url}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-            </button>
+            <button class="action-btn ${ad.hasLiked ? 'liked' : ''}" onclick="toggleReelLike(${ad.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span style="font-size:11px;">${ad.likes || 0}</span></button>
+            <button class="action-btn" onclick="openReelComments(${ad.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+            <button class="action-btn ${isSaved(ad.media_url) ? 'saved' : ''}" onclick="toggleArchive(this, '${ad.media_url}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
           </div>
         </div>
       </div>
     `;
   }
 
-  // FONKSYON POU JWE SON AN
-  function toggleSound(btn) {
-    const video = btn.parentElement.querySelector('video');
-    if (!video) return;
-    if (video.muted) {
-      video.muted = false;
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
-    } else {
-      video.muted = true;
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
-    }
-  }
-
-  async function toggleReelLike(id) {
-    const currentToken = localStorage.getItem('panik_customer_token');
-    if (!currentToken) { window.location.href = '/login.html?redirect=/ads.html'; return; }
-    const token = localStorage.getItem('panik_customer_token');
-    try {
-      const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        document.getElementById('reel-like-count-' + id).textContent = data.likes;
-        const btn = document.getElementById('reel-like-btn-' + id);
-        if (data.liked) btn.classList.add('liked'); else btn.classList.remove('liked');
-      }
-    } catch (e) {}
-  }
-
-  async function openReelComments(id) {
-    currentReelAdId = id;
-    document.getElementById('comments-modal').classList.add('open');
-    document.getElementById('modal-comment-form').style.display = localStorage.getItem('panik_customer_token') ? 'flex' : 'none';
-    loadReelComments(id);
-  }
-
-  async function loadReelComments(id) {
-    const res = await fetch('/api/ads/' + id + '/comments');
-    const comments = await res.json();
-    const list = document.getElementById('modal-comments-list');
-    list.innerHTML = comments.map(c => `<div class="modal-comment-item"><span>${c.user_name}</span> ${c.comment}</div>`).join('') || '<p style="color:#888;">No comments yet.</p>';
-  }
-
-  async function postReelComment() {
-    const input = document.getElementById('modal-comment-input');
-    const text = input.value.trim();
-    if (!text) return;
-    const token = localStorage.getItem('panik_customer_token');
-    try {
-      const res = await fetch('/api/ads/' + currentReelAdId + '/comments', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ comment: text })
-      });
-      if (res.ok) { input.value = ''; loadReelComments(currentReelAdId); }
-    } catch (e) {}
-  }
-
-  // =========================================
-  // FONKSYON POU RANN FEED (FOTO)
-  // =========================================
   function renderFeedPost(ad) {
-    let form = localStorage.getItem('panik_customer_token') ? 
-      `<div class="ig-add-comment">
-        <input type="text" placeholder="Add a comment..." id="feed-input-${ad.id}">
-        <button onclick="postFeedComment(${ad.id})">Post</button>
-      </div>` : 
-      `<div class="ig-login-prompt"><a href="/login.html?redirect=/ads.html">Log in</a> to like or comment.</div>`;
+    const isUserPost = ad.source === 'user';
+    const customer = getCustomer();
+    const canDelete = isUserPost && customer && ad.customer_id === customer.id;
+    
+    let mediaHTML = '';
+    const isVid = checkIsVideo(ad.media_url, ad.type);
+    
+    if (isVid) {
+      mediaHTML = `
+        <div class="ig-media-container" style="cursor:pointer;" onclick="switchView('reels', ${ad.id})">
+          <video src="${ad.media_url}" class="ig-media" muted playsinline preload="metadata" style="filter: brightness(0.7);"></video>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+            <svg width="60" height="60" fill="white" viewBox="0 0 24 24" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </div>
+        </div>
+      `;
+    } else {
+      mediaHTML = `<div class="ig-media-container"><img src="${ad.media_url}" class="ig-media" onerror="this.src='https://via.placeholder.com/500x600/141414/666666?text=No+Image'"></div>`;
+    }
+
+    let userAvatar = isUserPost ? `<div class="ig-avatar" style="display:flex;align-items:center;justify-content:center;background:#333;color:#fff;">${ad.user_name.charAt(0)}</div>` : `<img src="${brandAvatar}" class="ig-avatar">`;
+    let userName = isUserPost ? ad.user_name : '100panik';
+    let deleteBtn = canDelete ? `<button class="delete-post-btn" onclick="deleteUserPost(${ad.id})">Delete</button>` : '';
+    let form = isLoggedIn() ? `<div class="ig-add-comment"><input type="text" placeholder="Add a comment..." id="feed-input-${ad.id}"><button onclick="postFeedComment(${ad.id}, '${ad.source}')">Post</button></div>` : `<div class="ig-login-prompt"><a href="/login.html?redirect=/ads.html">Log in</a> to comment.</div>`;
 
     return `
       <div class="ig-post" id="post-${ad.id}">
+        ${deleteBtn}
         <div class="ig-header">
-          <img src="${brandAvatar}" class="ig-avatar" alt="100PANIK">
-          <div class="ig-username">100panik</div>
+          ${userAvatar}
+          <div class="ig-username">${userName}</div>
         </div>
-        <img src="${ad.media_url}" class="ig-media">
-        <div class="ig-actions">
-          <button class="ig-btn ${ad.hasLiked ? 'liked' : ''}" id="feed-like-btn-${ad.id}" onclick="toggleFeedLike(${ad.id})">
-            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </button>
-        </div>
-        <div class="ig-likes" id="feed-likes-${ad.id}">${ad.likes || 0} likes</div>
-        <div class="ig-caption"><span>100panik</span> ${ad.title || ''}</div>
-        <div class="ig-comments-section" id="feed-comments-${ad.id}"></div>
+        ${mediaHTML}
+        ${!isUserPost ? `
+          <div class="ig-actions">
+            <button class="ig-btn ${ad.hasLiked ? 'liked' : ''}" onclick="toggleFeedLike(${ad.id})"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="ig-btn ${isSaved(ad.media_url) ? 'saved' : ''}" onclick="toggleArchive(this, '${ad.media_url}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+          </div>
+          <div class="ig-likes">${ad.likes || 0} likes</div>
+        ` : ''}
+        <div class="ig-caption"><span>${userName}</span> ${ad.caption || ad.title || ''}</div>
+        <div class="ig-comments-section" id="feed-comments-${ad.id}-${ad.source}"></div>
         ${form}
       </div>
     `;
   }
 
-  async function toggleFeedLike(id) {
-    const currentToken = localStorage.getItem('panik_customer_token');
-    if (!currentToken) { window.location.href = '/login.html?redirect=/ads.html'; return; }
-    const token = localStorage.getItem('panik_customer_token');
-    try {
-      const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        document.getElementById('feed-likes-' + id).textContent = data.likes + ' likes';
-        const btn = document.getElementById('feed-like-btn-' + id);
-        if (data.liked) btn.classList.add('liked'); else btn.classList.remove('liked');
-      }
-    } catch (e) {}
-  }
-
-  async function loadFeedComments(id) {
+  // FONKSYON YO (KOMANTÈ, LIKE, SOUND, ETC.)
+  async function loadFeedComments(id, source) {
+    if (source === 'user') return; 
     const res = await fetch('/api/ads/' + id + '/comments');
     const comments = await res.json();
-    const container = document.getElementById('feed-comments-' + id);
-    container.innerHTML = comments.slice(0, 3).map(c => `<div class="ig-comment-item"><div><span>${c.user_name}</span> ${c.comment}</div></div>`).join('');
+    const container = document.getElementById(`feed-comments-${id}-${source}`);
+    const customer = getCustomer();
+    if (!container) return;
+    container.innerHTML = comments.map(c => {
+      let delBtn = (customer && c.customer_id === customer.id) ? `<button class="ig-comment-del" onclick="deleteComment(${c.id})">Delete</button>` : '';
+      return `<div class="ig-comment-item" id="comment-${c.id}"><div><span>${c.user_name}</span> ${c.comment}</div>${delBtn}</div>`;
+    }).join('');
   }
 
-  async function postFeedComment(id) {
-    const input = document.getElementById('feed-input-' + id);
+  async function postFeedComment(id, source) {
+    if (source === 'user') return alert('Comments on user posts are not enabled yet.');
+    const input = document.getElementById(`feed-input-${id}`);
     const text = input.value.trim();
     if (!text) return;
-    const token = localStorage.getItem('panik_customer_token');
-    try {
-      const res = await fetch('/api/ads/' + id + '/comments', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ comment: text })
-      });
-      if (res.ok) { input.value = ''; loadFeedComments(id); }
-    } catch (e) {}
+    await fetch('/api/ads/' + id + '/comments', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') }, body: JSON.stringify({ comment: text }) });
+    input.value = '';
+    loadFeedComments(id, source);
   }
 
-  // KONTE VIEWS
-  function recordView(adId) {
-    fetch('/api/ads/' + adId + '/view', { method: 'POST' }).catch(()=>{});
+  async function deleteComment(id) {
+    if (!confirm('Delete your comment?')) return;
+    await fetch('/api/ads/comments/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') } });
+    document.getElementById('comment-' + id).remove();
+  }
+
+  async function toggleReelLike(id) {
+    if (!isLoggedIn()) return window.location.href = '/login.html?redirect=/ads.html';
+    const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') } });
+    if (res.ok) fetchAllData().then(renderAll);
+  }
+
+  async function toggleFeedLike(id) {
+    if (!isLoggedIn()) return window.location.href = '/login.html?redirect=/ads.html';
+    const res = await fetch('/api/ads/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') } });
+    if (res.ok) fetchAllData().then(renderAll);
+  }
+
+  function openUploadModal() {
+    if (!isLoggedIn()) return window.location.href = '/login.html?redirect=/ads.html';
+    document.getElementById('upload-modal').classList.add('open');
+  }
+
+  document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = document.getElementById('post-file').files[0];
+    const caption = document.getElementById('post-caption').value;
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('media', file);
+    formData.append('caption', caption);
+    const res = await fetch('/api/customer-posts', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') }, body: formData });
+    if (res.ok) {
+      document.getElementById('upload-modal').classList.remove('open');
+      await fetchAllData();
+      renderAll();
+      switchView('feed');
+    } else { alert('Upload failed'); }
+  });
+
+  async function deleteUserPost(id) {
+    if (!confirm('Delete this post?')) return;
+    await fetch('/api/customer-posts/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('panik_customer_token') } });
+    await fetchAllData();
+    renderAll();
+  }
+
+  function isSaved(url) { return JSON.parse(localStorage.getItem('panik_archive') || '[]').includes(url); }
+  function toggleArchive(btn, url) {
+    let archive = JSON.parse(localStorage.getItem('panik_archive') || '[]');
+    const index = archive.indexOf(url);
+    if (index > -1) { archive.splice(index, 1); btn.classList.remove('saved'); alert('Removed from archive.'); } 
+    else { archive.push(url); btn.classList.add('saved'); alert('Saved to archive!'); }
+    localStorage.setItem('panik_archive', JSON.stringify(archive));
+  }
+
+  function toggleSound(btn) {
+    const video = btn.parentElement.querySelector('video');
+    if (!video) return;
+    if (video.muted) { video.muted = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>'; } 
+    else { video.muted = true; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>'; }
   }
 
   function setupVideoObserver() {
     const videos = document.querySelectorAll('video.reel-media');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && document.getElementById('reels-view').classList.contains('active')) {
-          entry.target.play().catch(()=>{});
-          // Konte view si se premye fwa
-          if (!entry.target.dataset.viewed) {
-            const adId = entry.target.closest('.reel-slide').getAttribute('data-id');
-            if (adId) { recordView(adId); entry.target.dataset.viewed = 'true'; }
-          }
-        } else {
-          entry.target.pause();
-        }
+        if (entry.isIntersecting && document.getElementById('reels-view').classList.contains('active')) entry.target.play().catch(()=>{});
+        else entry.target.pause();
       });
     }, { threshold: 0.6 });
     videos.forEach(v => observer.observe(v));
+  }
+
+  // MODAL KOMANTÈ REELS
+  async function openReelComments(id) {
+    currentReelAdId = id;
+    document.getElementById('comments-modal').classList.add('open');
+    const res = await fetch('/api/ads/' + id + '/comments');
+    const comments = await res.json();
+    document.getElementById('modal-comments-list').innerHTML = comments.map(c => `<div class="modal-comment-item"><span>${c.user_name}</span> ${c.comment}</div>`).join('') || '<p style="color:#888;">No comments yet.</p>';
   }
 </script>
 </body>
